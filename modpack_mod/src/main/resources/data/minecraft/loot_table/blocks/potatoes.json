@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "minecraft:potato",
+              "conditions": [
+                {
+                  "block": "minecraft:potatoes",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "age": "7"
+                  }
+                },
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": "#minecraft:hoes"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "shadows_over_elaria:potato_seed"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

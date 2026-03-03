@@ -1,9 +1,13 @@
 package com.lucab.shadows_over_elaria.item;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.lucab.shadows_over_elaria.ShadowsOverElaria;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.registries.DeferredItem;
 
@@ -26,6 +30,12 @@ public class Crops {
                 }
             });
 
-    public static void init() {
+    public static void register() {
+    }
+
+    public static Collection<ItemStack> getItems() {
+        return List.of(
+                new ItemStack(CARROT_SEEDS.get()),
+                new ItemStack(POTATO_SEEDS.get()));
     }
 }

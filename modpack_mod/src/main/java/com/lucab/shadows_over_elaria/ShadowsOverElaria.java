@@ -3,6 +3,9 @@ package com.lucab.shadows_over_elaria;
 import org.slf4j.Logger;
 
 import com.lucab.shadows_over_elaria.item.Crops;
+import com.lucab.shadows_over_elaria.item.Plates;
+import com.lucab.shadows_over_elaria.item.RepairKits;
+import com.lucab.shadows_over_elaria.item.Rods;
 import com.mojang.logging.LogUtils;
 
 import net.neoforged.bus.api.IEventBus;
@@ -26,7 +29,10 @@ public class ShadowsOverElaria {
         ITEMS.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
-        Crops.init();
+        Crops.register();
+        Plates.register();
+        Rods.register();
+        RepairKits.register();
     }
 
     @SubscribeEvent

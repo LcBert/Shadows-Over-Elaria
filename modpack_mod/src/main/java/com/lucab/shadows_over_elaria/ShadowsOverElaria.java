@@ -24,6 +24,8 @@ public class ShadowsOverElaria {
         NeoForge.EVENT_BUS.register(this);
 
         ITEMS.register(modEventBus);
+        ModCreativeTabs.register(modEventBus);
+
         Crops.init();
     }
 

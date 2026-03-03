@@ -9,13 +9,13 @@
           "children": [
             {
               "type": "minecraft:item",
-              "name": "minecraft:carrot",
+              "name": "minecraft:beetroot",
               "conditions": [
                 {
-                  "block": "minecraft:carrots",
+                  "block": "minecraft:beetroots",
                   "condition": "minecraft:block_state_property",
                   "properties": {
-                    "age": "7"
+                    "age": "3"
                   }
                 },
                 {
@@ -28,7 +28,7 @@
             },
             {
               "type": "minecraft:item",
-              "name": "shadows_over_elaria:carrot_seeds"
+              "name": "minecraft:beetroot_seeds"
             }
           ]
         }

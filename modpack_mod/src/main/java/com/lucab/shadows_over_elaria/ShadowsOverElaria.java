@@ -2,7 +2,7 @@ package com.lucab.shadows_over_elaria;
 
 import org.slf4j.Logger;
 
-import com.lucab.shadows_over_elaria.item.ItemsRegistry;
+import com.lucab.shadows_over_elaria.item.Crops;
 import com.mojang.logging.LogUtils;
 
 import net.neoforged.bus.api.IEventBus;
@@ -24,7 +24,7 @@ public class ShadowsOverElaria {
         NeoForge.EVENT_BUS.register(this);
 
         ITEMS.register(modEventBus);
-        ItemsRegistry.init();
+        Crops.init();
     }
 
     @SubscribeEvent

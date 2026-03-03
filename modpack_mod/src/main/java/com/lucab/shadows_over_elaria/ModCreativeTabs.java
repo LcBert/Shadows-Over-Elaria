@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import com.lucab.shadows_over_elaria.block.BlocksRegister;
 import com.lucab.shadows_over_elaria.item.Crops;
 import com.lucab.shadows_over_elaria.item.Plates;
 import com.lucab.shadows_over_elaria.item.RepairKits;
@@ -28,6 +29,7 @@ public class ModCreativeTabs {
                         output.acceptAll(Plates.getItems());
                         output.acceptAll(Rods.getItems());
                         output.acceptAll(RepairKits.getItems());
+                        output.acceptAll(BlocksRegister.getItems());
                     })
                     .build());
 

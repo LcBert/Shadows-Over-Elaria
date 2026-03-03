@@ -2,6 +2,7 @@ package com.lucab.shadows_over_elaria;
 
 import org.slf4j.Logger;
 
+import com.lucab.shadows_over_elaria.attachments.ExhaustionAttachments;
 import com.lucab.shadows_over_elaria.block.BlocksRegister;
 import com.lucab.shadows_over_elaria.item.Crops;
 import com.lucab.shadows_over_elaria.item.Plates;
@@ -15,9 +16,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 @Mod(ShadowsOverElaria.MODID)
 public class ShadowsOverElaria {
@@ -30,12 +33,16 @@ public class ShadowsOverElaria {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, MODID);
 
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister
+            .create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
+
     public ShadowsOverElaria(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
 
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        ATTACHMENT_TYPES.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
         // Items register
@@ -46,6 +53,9 @@ public class ShadowsOverElaria {
 
         // Blocks register
         BlocksRegister.register();
+
+        // Attackment register
+        ExhaustionAttachments.register();
     }
 
     @SubscribeEvent

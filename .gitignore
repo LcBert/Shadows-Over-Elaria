@@ -1,3 +1,9 @@
+# FOLDERS
+.vscode
+downloads
+logs
+saves
+
 # FILES
 .curseclient
 options.txt

@@ -1,10 +1,20 @@
 # FOLDERS
 .idea
+.mixin.out
 .vscode
+crash-reports
+data
 downloads
 logs
 saves
+screenshots
 
 # FILES
 .curseclient
+command_history.txt
 options.txt
+usercache.json
+usernamecache.json
+
+# To remove when dev in the modpack
+mods

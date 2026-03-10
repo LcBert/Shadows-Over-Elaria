@@ -159,10 +159,28 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
+
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
     module {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+// Task to copy the built jar to ../mods as ShadowsThings.jar after build
+tasks.register('copyModJar', Copy) {
+    dependsOn tasks.named('jar')
+    def jarBaseName = project.hasProperty('archivesName') ? project.archivesName : project.mod_id
+    def jarFileName = "${jarBaseName}-${mod_version}.jar"
+    from("${buildDir}/libs") {
+        include jarFileName
+        rename { String fileName -> 'ShadowsThings.jar' }
+    }
+    into "${projectDir}/../mods"
+}
+
+// Make 'build' depend on 'copyModJar' so it runs automatically
+tasks.named('build') {
+    finalizedBy tasks.named('copyModJar')
 }

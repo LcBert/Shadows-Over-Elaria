@@ -1,4 +1,21 @@
 {
+    "itemGroup.shadows_things": "Shadows Things",
     "item.shadows_things.carrot_seeds": "Carrot Seeds",
-    "item.shadows_things.potato_seeds": "Potato Seeds"
+    "item.shadows_things.potato_seeds": "Potato Seeds",
+    "item.shadows_things.copper_plate": "Copper Plate",
+    "item.shadows_things.iron_plate": "Iron Plate",
+    "item.shadows_things.gold_plate": "Gold Plate",
+    "item.shadows_things.diamond_plate": "Diamond Plate",
+    "item.shadows_things.netherite_plate": "Netherite Plate",
+    "item.shadows_things.copper_rod": "Copper Rod",
+    "item.shadows_things.iron_rod": "Iron Rod",
+    "item.shadows_things.gold_rod": "Gold Rod",
+    "item.shadows_things.diamond_rod": "Diamond Rod",
+    "item.shadows_things.netherite_rod": "Netherite Rod",
+    "item.shadows_things.copper_repair_kit": "Copper Repair Kit",
+    "item.shadows_things.iron_repair_kit": "Iron Repair Kit",
+    "item.shadows_things.gold_repair_kit": "Gold Repair Kit",
+    "item.shadows_things.diamond_repair_kit": "Diamond Repair Kit",
+    "item.shadows_things.netherite_repair_kit": "Netherite Repair Kit",
+    "block.shadows_things.repair_table": "Repair Table"
 }

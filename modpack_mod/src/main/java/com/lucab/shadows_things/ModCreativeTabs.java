@@ -22,7 +22,7 @@ public class ModCreativeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SHADOWS_TAB = CREATIVE_TABS
             .register("shadows_tab", () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.shadows_over_elaria"))
+                    .title(Component.translatable("itemGroup." + ShadowsThings.MODID))
                     .icon(() -> new ItemStack(Items.CARROT))
                     .displayItems((parameters, output) -> {
                         output.acceptAll(Crops.getItems());

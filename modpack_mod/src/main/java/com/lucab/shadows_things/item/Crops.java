@@ -1,6 +1,5 @@
 package com.lucab.shadows_things.item;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.lucab.shadows_things.ShadowsThings;
@@ -19,7 +18,7 @@ public class Crops {
     public static void register() {
     }
 
-    public static Collection<ItemStack> getItems() {
+    public static List<ItemStack> getItems() {
         return List.of(
                 new ItemStack(CARROT_SEEDS.get()),
                 new ItemStack(POTATO_SEEDS.get()));

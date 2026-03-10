@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.item.Crops;
+import com.lucab.shadows_things.item.Hilts;
 import com.lucab.shadows_things.item.Plates;
 import com.lucab.shadows_things.item.RepairKits;
 import com.lucab.shadows_things.item.Rods;
@@ -28,6 +29,7 @@ public class ModCreativeTabs {
                         output.acceptAll(Crops.getItems());
                         output.acceptAll(Plates.getItems());
                         output.acceptAll(Rods.getItems());
+                        output.acceptAll(Hilts.getItems());
                         output.acceptAll(RepairKits.getItems());
                         output.acceptAll(BlocksRegister.getItems());
                     })

@@ -1,6 +1,5 @@
 package com.lucab.shadows_things.item;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.lucab.shadows_things.ShadowsThings;
@@ -28,7 +27,7 @@ public class Plates {
     public static void register() {
     }
 
-    public static Collection<ItemStack> getItems() {
+    public static List<ItemStack> getItems() {
         return List.of(
                 new ItemStack(COPPER_PLATE.get()),
                 new ItemStack(IRON_PLATE.get()),

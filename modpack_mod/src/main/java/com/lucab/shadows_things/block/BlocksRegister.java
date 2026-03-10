@@ -1,6 +1,5 @@
 package com.lucab.shadows_things.block;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.lucab.shadows_things.ShadowsThings;
@@ -30,7 +29,7 @@ public class BlocksRegister {
     public static void register() {
     }
 
-    public static Collection<ItemStack> getItems() {
+    public static List<ItemStack> getItems() {
         return List.of(
                 new ItemStack(REPAIR_TABLE_ITEM.get()));
     }

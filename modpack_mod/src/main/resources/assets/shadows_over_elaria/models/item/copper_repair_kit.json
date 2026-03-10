@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "shadows_over_elaria:item/copper_repair_kit"
+    }
+}

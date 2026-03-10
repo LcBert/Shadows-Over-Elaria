@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "shadows_over_elaria:item/iron_rod"
+    }
+}

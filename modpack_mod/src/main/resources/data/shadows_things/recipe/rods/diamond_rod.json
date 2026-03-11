@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:smithing_transform",
+    "template": {
+        "item": "minecraft:diamond_ingot"
+    },
+    "base": {
+        "item": "minecraft:diamond_ingot"
+    },
+    "addition": {
+        "item": "minecraft:diamond_ingot"
+    },
+    "result": {
+        "id": "shadows_things:diamond_rod"
+    }
+}

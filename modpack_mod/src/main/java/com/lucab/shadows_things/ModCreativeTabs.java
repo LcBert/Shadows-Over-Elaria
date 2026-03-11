@@ -14,6 +14,7 @@ import com.lucab.shadows_things.item.Hilts;
 import com.lucab.shadows_things.item.Plates;
 import com.lucab.shadows_things.item.RepairKits;
 import com.lucab.shadows_things.item.Rods;
+import com.lucab.shadows_things.item.Various;
 
 import net.minecraft.core.registries.Registries;
 
@@ -31,6 +32,7 @@ public class ModCreativeTabs {
                         output.acceptAll(Rods.getItems());
                         output.acceptAll(Hilts.getItems());
                         output.acceptAll(RepairKits.getItems());
+                        output.acceptAll(Various.getItems());
                         output.acceptAll(BlocksRegister.getItems());
                     })
                     .build());

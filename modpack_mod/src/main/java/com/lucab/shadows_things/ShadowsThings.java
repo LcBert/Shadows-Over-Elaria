@@ -9,6 +9,7 @@ import com.lucab.shadows_things.item.Hilts;
 import com.lucab.shadows_things.item.Plates;
 import com.lucab.shadows_things.item.RepairKits;
 import com.lucab.shadows_things.item.Rods;
+import com.lucab.shadows_things.item.Various;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -52,6 +53,7 @@ public class ShadowsThings {
         Rods.register();
         Hilts.register();
         RepairKits.register();
+        Various.register();
 
         // Blocks register
         BlocksRegister.register();

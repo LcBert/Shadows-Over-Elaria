@@ -1,0 +1,19 @@
+{
+    "type": "shadows_things:add_tree_bark",
+    "conditions": [
+        {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+                "items": "shadows_things:flint_axe"
+            }
+        },
+        {
+            "condition": "minecraft:location_check",
+            "predicate": {
+                "block": {
+                    "tag": "minecraft:logs"
+                }
+            }
+        }
+    ]
+}

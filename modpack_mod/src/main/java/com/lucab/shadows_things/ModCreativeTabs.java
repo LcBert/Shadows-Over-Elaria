@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.item.Crops;
+import com.lucab.shadows_things.item.FlintTools;
 import com.lucab.shadows_things.item.Hilts;
 import com.lucab.shadows_things.item.Plates;
 import com.lucab.shadows_things.item.RepairKits;
@@ -26,6 +27,7 @@ public class ModCreativeTabs {
                     .title(Component.translatable("itemGroup." + ShadowsThings.MODID))
                     .icon(() -> new ItemStack(Items.CARROT))
                     .displayItems((parameters, output) -> {
+                        output.acceptAll(FlintTools.getItems());
                         output.acceptAll(Crops.getItems());
                         output.acceptAll(Plates.getItems());
                         output.acceptAll(Rods.getItems());

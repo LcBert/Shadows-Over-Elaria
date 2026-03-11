@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class ExhaustionHandler {
-    private static final int FOOD_TICK = 20;
+    private static final int FOOD_TICK = 6000;
     private static boolean isActive;
 
     @SubscribeEvent

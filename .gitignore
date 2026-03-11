@@ -2,6 +2,7 @@
 .idea
 .mixin.out
 .vscode
+config
 crash-reports
 downloads
 logs

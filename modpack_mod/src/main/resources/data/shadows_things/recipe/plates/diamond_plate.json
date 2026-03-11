@@ -1,13 +1,13 @@
 {
     "type": "minecraft:smithing_transform",
     "template": {
-        "item": "minecraft:diamond_ingot"
+        "item": "minecraft:diamond"
     },
     "base": {
-        "item": "minecraft:diamond_ingot"
+        "item": "minecraft:diamond"
     },
     "addition": {
-        "item": "minecraft:diamond_ingot"
+        "item": "minecraft:diamond"
     },
     "result": {
         "id": "shadows_things:diamond_plate"

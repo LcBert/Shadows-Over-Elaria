@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "equipment",
+    "pattern": [
+        "CC",
+        " S",
+        " S"
+    ],
+    "key": {
+        "C": {
+            "item": "minecraft:stone"
+        },
+        "S": {
+            "item": "magistuarmory:hilt"
+        }
+    },
+    "result": {
+        "count": 1,
+        "id": "minecraft:stone_hoe"
+    }
+}

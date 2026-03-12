@@ -2,9 +2,11 @@
 .idea
 .mixin.out
 .vscode
+.probe
 config
 crash-reports
 downloads
+local
 logs
 saves
 screenshots
@@ -12,6 +14,7 @@ screenshots
 # FILES
 .curseclient
 command_history.txt
+kubejs/README.txt
 options.txt
 usercache.json
 usernamecache.json

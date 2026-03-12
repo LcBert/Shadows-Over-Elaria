@@ -41,6 +41,7 @@ public class BlocksRegister {
                     .mapColor(MapColor.STONE)
                     .sound(SoundType.STONE)
                     .strength(0.3f)
+                    .requiresCorrectToolForDrops()
                     .noOcclusion()) {
                 protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
                         CollisionContext context) {

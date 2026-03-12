@@ -16,6 +16,7 @@ public class ModifyBurnTime {
     public static Map<String, Integer> burnValues = new HashMap<>();
     static {
         burnValues.put("minecraft:coal", 40);
+        burnValues.put("farmersdelight:tree_bark", 100);
     }
 
     @SubscribeEvent
@@ -25,9 +26,9 @@ public class ModifyBurnTime {
             ResourceLocation itemLocation = BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem());
             String itemKey = itemLocation.toString();
 
+            // Remove burn time
+            event.setBurnTime(0);
             if (burnValues.containsKey(itemKey)) {
-                // Remove burn time
-                event.setBurnTime(0);
                 // Set custom burn time
                 event.setBurnTime(burnValues.get(itemKey));
             }

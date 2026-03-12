@@ -30,11 +30,9 @@ public class AddTreeBarkModifier extends LootModifier {
         // 1. Check if the block is a log
         if (state != null && state.is(BlockTags.LOGS)) {
             boolean isLog = state.is(BlockTags.LOGS);
-            boolean isStrippedLog = state.is(BlockTags.create(ResourceLocation.parse("c:stripped_logs")));
-            boolean isStrippedWood = state.is(BlockTags.create(ResourceLocation.parse("c:stripped_woods")));
 
             // 2. Check if it's NOT a stripped log or wood (Check by name or tag)
-            if (isLog && !isStrippedLog && !isStrippedWood) {
+            if (isLog) {
                 generatedLoot.clear();
                 generatedLoot.add(new ItemStack(BuiltInRegistries.ITEM.get(
                         ResourceLocation.fromNamespaceAndPath("farmersdelight", "tree_bark"))));

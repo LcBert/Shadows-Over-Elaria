@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "pattern": [
+        "RF",
+        "FS"
+    ],
+    "key": {
+        "F": {
+            "item": "minecraft:flint"
+        },
+        "R": {
+            "item": "farmersdelight:straw"
+        },
+        "S": {
+            "item": "minecraft:stick"
+        }
+    },
+    "result": {
+        "count": 1,
+        "id": "shadows_things:flint_pickaxe"
+    }
+}

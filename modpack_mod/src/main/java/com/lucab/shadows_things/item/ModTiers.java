@@ -11,7 +11,10 @@ import net.minecraft.world.level.block.Block;
 
 public enum ModTiers implements Tier {
     FLINT(BlockTags.INCORRECT_FOR_STONE_TOOL, 60, 1.0f, 4.0f, 15,
-            () -> Ingredient.of(Items.FLINT));
+            () -> Ingredient.of(Items.FLINT)),
+
+    COPPER(BlockTags.INCORRECT_FOR_STONE_TOOL, 180, 3.0f, 4.0f, 15,
+            () -> Ingredient.of(Items.COPPER_INGOT));
 
     private final TagKey<Block> incorrectBlocksForDrops;
     private final int uses;

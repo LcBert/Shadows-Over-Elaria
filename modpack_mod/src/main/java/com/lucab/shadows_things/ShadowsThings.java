@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
 import com.lucab.shadows_things.block.BlocksRegister;
+import com.lucab.shadows_things.item.CopperTools;
 import com.lucab.shadows_things.item.Crops;
 import com.lucab.shadows_things.item.FlintTools;
 import com.lucab.shadows_things.item.Hilts;
@@ -57,6 +58,7 @@ public class ShadowsThings {
 
         // Items register
         FlintTools.register();
+        CopperTools.register();
         Crops.register();
         Plates.register();
         Rods.register();

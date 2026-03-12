@@ -1,0 +1,19 @@
+{
+    "type": "farmersdelight:cutting",
+    "ingredients": [
+        {
+            "item": "minecraft:leather"
+        }
+    ],
+    "result": [
+        {
+            "item": {
+                "count": 1,
+                "id": "magistuarmory:leather_strip"
+            }
+        }
+    ],
+    "tool": {
+        "tag": "c:tools/knife"
+    }
+}

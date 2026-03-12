@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "pattern": [
+        "##",
+        "##"
+    ],
+    "key": {
+        "#": {
+            "item": "farmersdelight:tree_bark"
+        }
+    },
+    "result": {
+        "count": 1,
+        "id": "minecraft:oak_planks"
+    }
+}

@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import com.lucab.shadows_things.block.BlocksRegister;
+import com.lucab.shadows_things.item.CopperTools;
 import com.lucab.shadows_things.item.Crops;
 import com.lucab.shadows_things.item.FlintTools;
 import com.lucab.shadows_things.item.Hilts;
@@ -28,6 +29,7 @@ public class ModCreativeTabs {
                     .icon(() -> new ItemStack(Items.CARROT))
                     .displayItems((parameters, output) -> {
                         output.acceptAll(FlintTools.getItems());
+                        output.acceptAll(CopperTools.getItems());
                         output.acceptAll(Crops.getItems());
                         output.acceptAll(Plates.getItems());
                         output.acceptAll(Rods.getItems());

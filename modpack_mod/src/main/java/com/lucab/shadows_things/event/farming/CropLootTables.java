@@ -39,10 +39,11 @@ public class CropLootTables {
          * block id
          */
         WHEAT("minecraft:blocks/wheat", "minecraft:wheat_seeds", "minecraft:wheat", "minecraft:wheat"),
-        CARROT("minecraft:blocks/carrots", "shadows_over_elaria:carrot_seeds", "minecraft:carrot", "minecraft:carrots"),
-        POTATO("minecraft:blocks/potatoes", "shadows_over_elaria:potato_seeds", "minecraft:potato",
-                "minecraft:potatoes"),
-        BEETROOT("minecraft:blocks/beetroots", "minecraft:beetroot_seeds", "minecraft:beetroot", "minecraft:beetroots");
+        CARROT("minecraft:blocks/carrots", "shadows_things:carrot_seeds", "minecraft:carrot", "minecraft:carrots"),
+        POTATO("minecraft:blocks/potatoes", "shadows_things:potato_seeds", "minecraft:potato", "minecraft:potatoes"),
+        BEETROOT("minecraft:blocks/beetroots", "minecraft:beetroot_seeds", "minecraft:beetroot", "minecraft:beetroots"),
+        ONION("farmersdelight:blocks/onions", "shadows_things:onion_seeds", "farmersdelight:onion", "farmersdelight:onions"),
+        CABBAGE("farmersdelight:blocks/cabbages", "farmersdelight:cabbage_seeds", "farmersdelight:cabbage", "farmersdelight:cabbages");
 
         private final ResourceLocation lootTable;
         private final String seed;

@@ -10,7 +10,8 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
 public class ExhaustionAttachments implements INBTSerializable<CompoundTag> {
-    public int exhaustion_tick = 0;
+    public static final int FOOD_TICK = 6000;
+    public int exhaustion_tick = FOOD_TICK;
     public int food_value = 20;
 
     @Override

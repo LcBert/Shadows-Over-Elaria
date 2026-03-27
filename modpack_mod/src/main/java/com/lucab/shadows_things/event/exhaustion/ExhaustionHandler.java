@@ -13,7 +13,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class ExhaustionHandler {
-    private static final int FOOD_TICK = 6000;
     private static boolean isActive;
 
     @SubscribeEvent
@@ -31,7 +30,7 @@ public class ExhaustionHandler {
 
         if (!isActive) {
             exhaustionData.setFoodValue(playerFood.getFoodLevel());
-            exhaustionData.setExhaustionTick(FOOD_TICK);
+            exhaustionData.setExhaustionTick(ExhaustionAttachments.FOOD_TICK);
             return;
         }
 
@@ -41,7 +40,7 @@ public class ExhaustionHandler {
         exhaustionData.decreaseExhaustionTick();
 
         if (exhaustionData.getExhaustionTick() <= 0 && playerFood.getFoodLevel() > 0) {
-            exhaustionData.setExhaustionTick(FOOD_TICK);
+            exhaustionData.setExhaustionTick(ExhaustionAttachments.FOOD_TICK);
             exhaustionData.decreaseFoodValue();
             playerFood.setFoodLevel(exhaustionData.getFoodValue());
         }

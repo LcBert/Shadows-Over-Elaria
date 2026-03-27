@@ -16,7 +16,7 @@ public class ModifyBurnTime {
     public static Map<String, Integer> burnValues = new HashMap<>();
     static {
         burnValues.put("minecraft:coal", 40);
-        burnValues.put("farmersdelight:tree_bark", 100);
+        burnValues.put("farmersdelight:tree_bark", 200);
     }
 
     @SubscribeEvent

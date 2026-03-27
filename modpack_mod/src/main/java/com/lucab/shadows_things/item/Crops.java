@@ -15,12 +15,16 @@ public class Crops {
     public static final DeferredItem<BlockItem> POTATO_SEEDS = ShadowsThings.ITEMS.register(
             "potato_seeds", () -> new CropItem("potato_seeds", "minecraft:potatoes"));
 
+    public static final DeferredItem<BlockItem> ONION_SEEDS = ShadowsThings.ITEMS.register(
+            "onion_seeds", () -> new CropItem("onion_seeds", "farmersdelight:onions"));
+
     public static void register() {
     }
 
     public static List<ItemStack> getItems() {
         return List.of(
                 new ItemStack(CARROT_SEEDS.get()),
-                new ItemStack(POTATO_SEEDS.get()));
+                new ItemStack(POTATO_SEEDS.get()),
+                new ItemStack(ONION_SEEDS.get()));
     }
 }

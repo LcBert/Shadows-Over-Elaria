@@ -12,16 +12,20 @@ import com.lucab.shadows_things.item.Plates;
 import com.lucab.shadows_things.item.RepairKits;
 import com.lucab.shadows_things.item.Rods;
 import com.lucab.shadows_things.loot.AddTreeBarkModifier;
+import com.lucab.shadows_things.rpg_class.ClassCommand;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -49,6 +53,8 @@ public class ShadowsThings {
             .create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
 
     public ShadowsThings(IEventBus modEventBus, ModContainer modContainer) {
+        NeoForge.EVENT_BUS.register(this);
+
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
@@ -70,5 +76,10 @@ public class ShadowsThings {
 
         // Attachment register
         ExhaustionAttachments.register();
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        ClassCommand.register(event.getDispatcher());
     }
 }

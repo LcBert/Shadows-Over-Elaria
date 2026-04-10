@@ -53,9 +53,7 @@ public class ExhaustionAttachments implements INBTSerializable<CompoundTag> {
     }
 
     public static final Supplier<AttachmentType<ExhaustionAttachments>> EXHAUSTION = ShadowsThings.ATTACHMENT_TYPES
-            .register(
-                    "exhaustion",
-                    () -> AttachmentType.serializable(ExhaustionAttachments::new).build());
+            .register("exhaustion", () -> AttachmentType.serializable(ExhaustionAttachments::new).build());
 
     public static void register() {
     }

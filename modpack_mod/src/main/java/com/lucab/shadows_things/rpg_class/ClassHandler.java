@@ -10,24 +10,22 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class ClassHandler {
-    /**
-     * Set player class to WANDERER if he doesn't have one
-     */
+
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
-        if (!ClassManager.hasClass(player))
+        if (!ClassManager.hasClass(player)) {
             ClassManager.resetClass(player);
+        }
     }
 
     @SubscribeEvent
     public static void onPlayerAttack(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof Player player)) return;
+        if (player.isCreative()) return;
         if (!ClassManager.hasClass(player)) return;
 
         Item heldItem = player.getMainHandItem().getItem();
-        ClassManager.RPGClass playerClass = ClassManager.getClass(player);
-        int playerTier = ClassManager.getTier(player);
 
         if (!ItemsManager.isCorrectItem(player, heldItem)) {
             event.setCanceled(true);

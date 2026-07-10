@@ -1,5 +1,7 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.rpg_class.RpgClassDataReader;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.slf4j.Logger;
 
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
@@ -34,6 +36,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public class ShadowsThings {
     public static final String MODID = "shadows_things";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static final RpgClassDataReader RPG_READER = new RpgClassDataReader();
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
 
@@ -81,5 +85,10 @@ public class ShadowsThings {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         ClassCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onAddReloadListener(AddReloadListenerEvent event) {
+        event.addListener(RPG_READER);
     }
 }

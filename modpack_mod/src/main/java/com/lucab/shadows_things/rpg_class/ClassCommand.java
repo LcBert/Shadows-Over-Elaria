@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.rpg_class;
 
+import com.lucab.shadows_things.ShadowsThings;
 import com.mojang.brigadier.CommandDispatcher;
-
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -39,9 +39,9 @@ public class ClassCommand {
     }
 
     private static CompletableFuture<Suggestions> suggestClasses(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
-        for (ClassManager.RPGClass rpgClass : ClassManager.RPGClass.values()) {
-            if (rpgClass != ClassManager.RPGClass.WANDERER)
-                builder.suggest(rpgClass.name().toLowerCase());
+        // Dynamically suggests names registered via JSON file
+        for (String className : ShadowsThings.RPG_READER.getAllClasses().keySet()) {
+            builder.suggest(className);
         }
         return builder.buildFuture();
     }
@@ -63,7 +63,7 @@ public class ClassCommand {
             ClassManager.setClass(player, className, tier);
             source.sendSuccess(() -> Component.literal(String.format("Set %s class to %s (Tier %d)", player.getName().getString(), ClassManager.getClassName(player), tier)), false);
         } catch (IllegalArgumentException e) {
-            source.sendSuccess(() -> Component.literal("Invalid class name: " + className).withColor(0xFF0000), false);
+            source.sendSuccess(() -> Component.literal("Invalid class name or tier: " + className).withColor(0xFF0000), false);
         }
 
         return 1;
@@ -74,19 +74,11 @@ public class ClassCommand {
         Player player = EntityArgument.getPlayer(context, "player");
 
         if (!ClassManager.hasClass(player)) {
-            source.sendSuccess(() -> Component.literal(String.format("%s has not class",
-                    player.getName().getString())), false);
-        } else if (ClassManager.getClass(player) == ClassManager.RPGClass.WANDERER) {
-            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s",
-                            player.getName().getString(),
-                            ClassManager.getClassName(player))),
-                    false);
+            source.sendSuccess(() -> Component.literal(String.format("%s has no class", player.getName().getString())), false);
+        } else if (ClassManager.getClassName(player).equals(ClassManager.WANDERER)) {
+            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s", player.getName().getString(), ClassManager.getClassName(player).toUpperCase())), false);
         } else {
-            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s (Tier %d)",
-                            player.getName().getString(),
-                            ClassManager.getClassName(player),
-                            ClassManager.getTier(player))),
-                    false);
+            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s (Tier %d)", player.getName().getString(), ClassManager.getClassName(player).toUpperCase(), ClassManager.getTier(player))), false);
         }
         return 1;
     }
@@ -96,7 +88,7 @@ public class ClassCommand {
         Player player = EntityArgument.getPlayer(context, "player");
 
         ClassManager.resetClass(player);
-        source.sendSuccess(() -> Component.literal(String.format("Reset %s's class to %s", player.getName().getString(), ClassManager.RPGClass.WANDERER.name())), false);
+        source.sendSuccess(() -> Component.literal(String.format("Reset %s's class to %s", player.getName().getString(), ClassManager.WANDERER)), false);
         return 1;
     }
 

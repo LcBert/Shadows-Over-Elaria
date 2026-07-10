@@ -6,7 +6,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "shadows_things:stone_pebble"
+                    "name": "minecraft:flint"
                 }
             ]
         }

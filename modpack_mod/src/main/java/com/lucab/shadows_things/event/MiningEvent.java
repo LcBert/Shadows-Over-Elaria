@@ -40,8 +40,8 @@ public class MiningEvent {
         boolean isPickaxe = event.getItemStack().is(ItemTags.create(ResourceLocation.parse("minecraft:pickaxes")));
         boolean isFlintPickaxe = event.getItemStack().getItem() == FlintTools.FLINT_PICKAXE.get();
 
-        if ((isStone || isCobblestone) && isFlintPickaxe)
-            event.setCanceled(true);
+//        if ((isStone || isCobblestone) && isFlintPickaxe)
+//            event.setCanceled(true);
 
         if (isMineablePickaxe && !isPickaxe)
             event.setCanceled(true);

@@ -1,5 +1,5 @@
 {
-  "feature": "shadows_things:configured_stone_pebble",
+  "feature": "shadows_things:configured_flint_pebble",
   "placement": [
     {
       "type": "minecraft:count",

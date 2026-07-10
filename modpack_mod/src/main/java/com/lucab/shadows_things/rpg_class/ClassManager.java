@@ -53,6 +53,7 @@ public class ClassManager {
     }
 
     public static RPGClass getClass(Player player) {
+        if (!hasClass(player)) return null;
         String className = getClassName(player);
         return RPGClass.valueOf(className);
     }

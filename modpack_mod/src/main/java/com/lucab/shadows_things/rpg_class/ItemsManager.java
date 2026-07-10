@@ -59,7 +59,7 @@ public class ItemsManager {
         return null;
     }
 
-    public static boolean isCorrectItem(Item item, Player player) {
+    public static boolean isCorrectItem(Player player, Item item) {
         if (!ALL_ITEMS.contains(item)) return true;
 
         ClassManager.RPGClass playerClass = ClassManager.getClass(player);

@@ -73,11 +73,21 @@ public class ClassCommand {
         CommandSourceStack source = context.getSource();
         Player player = EntityArgument.getPlayer(context, "player");
 
-        source.sendSuccess(() -> Component.literal(String.format("%s's class: %s (Tier %d)",
-                        player.getName().getString(),
-                        ClassManager.getClassName(player),
-                        ClassManager.getTier(player))),
-                false);
+        if (!ClassManager.hasClass(player)) {
+            source.sendSuccess(() -> Component.literal(String.format("%s has not class",
+                    player.getName().getString())), false);
+        } else if (ClassManager.getClass(player) == ClassManager.RPGClass.WANDERER) {
+            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s",
+                            player.getName().getString(),
+                            ClassManager.getClassName(player))),
+                    false);
+        } else {
+            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s (Tier %d)",
+                            player.getName().getString(),
+                            ClassManager.getClassName(player),
+                            ClassManager.getTier(player))),
+                    false);
+        }
         return 1;
     }
 

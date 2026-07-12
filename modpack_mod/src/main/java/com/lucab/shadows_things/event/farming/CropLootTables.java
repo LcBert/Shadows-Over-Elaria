@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 public class CropLootTables {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private enum CropLootType {
+    protected enum CropLootType {
         /**
          * lootTable resourceLocation
          * seed item id
@@ -45,15 +45,15 @@ public class CropLootTables {
         ONION("farmersdelight:blocks/onions", "shadows_things:onion_seeds", "farmersdelight:onion", "farmersdelight:onions"),
         CABBAGE("farmersdelight:blocks/cabbages", "farmersdelight:cabbage_seeds", "farmersdelight:cabbage", "farmersdelight:cabbages");
 
-        private final ResourceLocation lootTable;
-        private final String seed;
-        private final String result;
-        private final ResourceLocation blockId;
+        protected final ResourceLocation lootTable;
+        protected final ResourceLocation seed;
+        protected final ResourceLocation result;
+        protected final ResourceLocation blockId;
 
         CropLootType(String lootTable, String seed, String result, String blockId) {
             this.lootTable = ResourceLocation.parse(lootTable);
-            this.seed = seed;
-            this.result = result;
+            this.seed = ResourceLocation.parse(seed);
+            this.result = ResourceLocation.parse(result);
             this.blockId = ResourceLocation.parse(blockId);
         }
     }
@@ -63,41 +63,37 @@ public class CropLootTables {
         for (CropLootType type : CropLootType.values()) {
             if (event.getName().equals(type.lootTable)) {
 
-                try {
-                    Field poolsField = ObfuscationReflectionHelper.findField(LootTable.class, "pools");
-                    poolsField.setAccessible(true);
-
-                    List<?> pools = (List<?>) poolsField.get(event.getTable());
-                    pools.clear();
-
-                    LOGGER.info("Successfully cleared vanilla pools for: {}", event.getName());
-                } catch (Exception e) {
-                    LOGGER.error("Failed to clear loot pools via reflection!", e);
-                }
-
-                Item outputItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(type.result));
-                Item inputItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(type.seed));
+                Item outputItem = BuiltInRegistries.ITEM.get(type.result);
+                Item seedItem = BuiltInRegistries.ITEM.get(type.seed);
                 Block block = BuiltInRegistries.BLOCK.get(type.blockId);
 
                 if (block instanceof CropBlock cropBlock) {
                     int maxAge = cropBlock.getMaxAge();
 
+                    // Creiamo una nuova tabella da zero, ignorando completamente quella vecchia
+                    LootTable.Builder newTable = LootTable.lootTable();
+
                     LootPool.Builder pool = LootPool.lootPool()
-                            .name("so_elaria_logic")
+                            .name("shadows_crop_control")
                             .setRolls(ConstantValue.exactly(1))
-                            .add(AlternativesEntry.alternatives(
-                                    // Option 1: Grown + Hoe = Drop Result
-                                    LootItem.lootTableItem(outputItem)
-                                            .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                                                    .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                            .hasProperty(CropBlock.AGE, maxAge)))
-                                            .when(MatchTool
-                                                    .toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES))),
+                            // Condizione 1: Prodotto (Solo se Maturo + Zappa)
+                            .add(LootItem.lootTableItem(outputItem)
+                                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                            .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                    .hasProperty(CropBlock.AGE, maxAge)))
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
+                            )
+                            // Condizione 2: Seme (Se NON maturo OR senza Zappa)
+                            .add(LootItem.lootTableItem(seedItem)
+                                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                            .setProperties(StatePropertiesPredicate.Builder.properties()
+                                                    .hasProperty(CropBlock.AGE, maxAge)).invert()) // NON maturo
+                            )
+                            .add(LootItem.lootTableItem(seedItem)
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)).invert()) // SENZA zappa
+                            );
 
-                                    // Option 2: Fallback (Not grown OR no hoe) = Drop Seed
-                                    LootItem.lootTableItem(inputItem)));
-
-                    event.getTable().addPool(pool.build());
+                    event.setTable(newTable.withPool(pool).build());
                 }
             }
         }

@@ -61,9 +61,12 @@ public class ClassCommand {
 
         try {
             ClassManager.setClass(player, className, tier);
-            source.sendSuccess(() -> Component.literal(String.format("Set %s class to %s (Tier %d)", player.getName().getString(), ClassManager.getClassName(player), tier)), false);
+            // SUCCESS: Green message, styled layout for class and tier updates
+            source.sendSuccess(() -> Component.literal(String.format("§aSuccessfully set %s's class to §b%s§a (Tier §6%d§a)§r",
+                    player.getName().getString(), ClassManager.getClassName(player).toUpperCase(), tier)), false);
         } catch (IllegalArgumentException e) {
-            source.sendSuccess(() -> Component.literal("Invalid class name or tier: " + className).withColor(0xFF0000), false);
+            // FAILURE: Standard red error notification
+            source.sendSuccess(() -> Component.literal(String.format("§cInvalid class name or tier: %s§r", className)), false);
         }
 
         return 1;
@@ -73,12 +76,16 @@ public class ClassCommand {
         CommandSourceStack source = context.getSource();
         Player player = EntityArgument.getPlayer(context, "player");
 
+        // GET Responses: Beautiful formatted layouts using consistent colors
         if (!ClassManager.hasClass(player)) {
-            source.sendSuccess(() -> Component.literal(String.format("%s has no class", player.getName().getString())), false);
+            source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7%s currently has §cno class§7.§r",
+                    player.getName().getString())), false);
         } else if (ClassManager.getClassName(player).equals(ClassManager.WANDERER)) {
-            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s", player.getName().getString(), ClassManager.getClassName(player).toUpperCase())), false);
+            source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7Player: §f%s§r\n§7Class:  §b%s§r",
+                    player.getName().getString(), ClassManager.getClassName(player).toUpperCase())), false);
         } else {
-            source.sendSuccess(() -> Component.literal(String.format("%s's class: %s (Tier %d)", player.getName().getString(), ClassManager.getClassName(player).toUpperCase(), ClassManager.getTier(player))), false);
+            source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7Player: §f%s§r\n§7Class:  §b%s§r\n§7Tier:   §6%d§r",
+                    player.getName().getString(), ClassManager.getClassName(player).toUpperCase(), ClassManager.getTier(player))), false);
         }
         return 1;
     }
@@ -88,7 +95,9 @@ public class ClassCommand {
         Player player = EntityArgument.getPlayer(context, "player");
 
         ClassManager.resetClass(player);
-        source.sendSuccess(() -> Component.literal(String.format("Reset %s's class to %s", player.getName().getString(), ClassManager.WANDERER)), false);
+        // RESET: Gold warning / feedback color to indicate status reset to default
+        source.sendSuccess(() -> Component.literal(String.format("§eReset %s's class back to §b%s§r",
+                player.getName().getString(), ClassManager.WANDERER.toUpperCase())), false);
         return 1;
     }
 
@@ -97,7 +106,9 @@ public class ClassCommand {
         Player player = EntityArgument.getPlayer(context, "player");
 
         ClassManager.removeClass(player);
-        source.sendSuccess(() -> Component.literal(String.format("Removed %s's class", player.getName().getString())), false);
+        // REMOVE: Distinct format indicating permanent removal of the active role
+        source.sendSuccess(() -> Component.literal(String.format("§eSuccessfully removed all active RPG classes from %s§r",
+                player.getName().getString())), false);
 
         return 1;
     }

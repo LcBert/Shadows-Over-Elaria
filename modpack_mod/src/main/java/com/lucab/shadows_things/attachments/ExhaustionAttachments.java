@@ -14,14 +14,6 @@ public class ExhaustionAttachments implements INBTSerializable<CompoundTag> {
     public int exhaustion_tick = FOOD_TICK;
     public int food_value = 20;
 
-    @Override
-    public CompoundTag serializeNBT(Provider provider) {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putInt("ExhaustionTick", this.exhaustion_tick);
-        nbt.putInt("FoodValue", this.food_value);
-        return nbt;
-    }
-
     public void setExhaustionTick(int tick) {
         this.exhaustion_tick = tick;
     }
@@ -44,6 +36,14 @@ public class ExhaustionAttachments implements INBTSerializable<CompoundTag> {
 
     public int getFoodValue() {
         return this.food_value;
+    }
+
+    @Override
+    public CompoundTag serializeNBT(Provider provider) {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putInt("ExhaustionTick", this.exhaustion_tick);
+        nbt.putInt("FoodValue", this.food_value);
+        return nbt;
     }
 
     @Override

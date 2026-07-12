@@ -4,6 +4,8 @@ import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.item.*;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg.classes.ClassDataReader;
+import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
+import com.lucab.shadows_things.rpg.professions.ProfessionCommand;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
@@ -89,11 +91,13 @@ public class ShadowsThings {
 
         // Attachment register
         ExhaustionAttachments.register();
+        ProfessionAttachments.register();
     }
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         ClassCommand.register(event.getDispatcher());
+        ProfessionCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent

@@ -59,7 +59,7 @@ public class RepairTable extends BaseEntityBlock {
                 if (remainder.getCount() != stack.getCount())
                     player.setItemInHand(hand, remainder);
             } else if (Utils.isRepairHammer(stack)) {
-                if (table.repair(level, pos, state)) {
+                if (table.repair(level, pos, state, player)) {
                     stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
                 }
             }

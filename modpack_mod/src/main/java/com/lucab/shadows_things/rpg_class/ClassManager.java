@@ -2,6 +2,7 @@ package com.lucab.shadows_things.rpg_class;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.world.entity.player.Player;
+
 import java.util.Optional;
 
 public class ClassManager {
@@ -25,6 +26,7 @@ public class ClassManager {
 
         removeClass(player);
         player.getTags().add(String.format("shadow_tags/class/%s/%d", formattedClass, tier));
+        ClassModifierApplier.updatePlayerAttributes(player, rpgClass);
     }
 
     public static void resetClass(Player player) {
@@ -33,6 +35,7 @@ public class ClassManager {
 
     public static void removeClass(Player player) {
         player.getTags().removeIf(tag -> tag.startsWith("shadow_tags/class/"));
+        ClassModifierApplier.updatePlayerAttributes(player, "none");
     }
 
     public static boolean hasClass(Player player) {

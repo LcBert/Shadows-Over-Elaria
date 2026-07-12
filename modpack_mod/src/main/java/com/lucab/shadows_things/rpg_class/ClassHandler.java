@@ -17,6 +17,9 @@ public class ClassHandler {
         if (!ClassManager.hasClass(player)) {
             ClassManager.resetClass(player);
         }
+
+        String playerClass = ClassManager.getClassName(player);
+        ClassModifierApplier.updatePlayerAttributes(player, playerClass);
     }
 
     @SubscribeEvent

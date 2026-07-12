@@ -2,6 +2,19 @@
   "tiers": {
     "1": [
       "minecraft:wooden_sword"
+    ],
+    "2": [
+      "minecraft:stone_sword"
     ]
+  },
+  "attributes": {
+    "minecraft:generic.max_health": {
+      "operation": "add_value",
+      "value": 6.0
+    },
+    "minecraft:generic.attack_speed": {
+      "operation": "add_value",
+      "value": 5.0
+    }
   }
 }

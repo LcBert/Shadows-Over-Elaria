@@ -7,13 +7,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 
 import java.util.*;
 
 public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
+    public record ClassAttribute(
+            ResourceLocation attributeId,
+            AttributeModifier.Operation operation,
+            double value
+    ) {
+    }
 
-    public record RpgClassData(String className, Map<Integer, List<Item>> tiers) {
+    public record RpgClassData(
+            String className,
+            Map<Integer, List<Item>> tiers,
+            List<ClassAttribute> attributes
+    ) {
     }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -41,6 +52,7 @@ public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
             try {
                 JsonObject jsonObject = entry.getValue().getAsJsonObject();
                 Map<Integer, List<Item>> tiersMap = new HashMap<>();
+                List<ClassAttribute> attributesList = new ArrayList<>();
 
                 if (jsonObject.has("tiers")) {
                     JsonObject tiersObj = jsonObject.getAsJsonObject("tiers");
@@ -65,7 +77,23 @@ public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
                         tiersMap.put(i, items);
                     }
                 }
-                newClasses.put(className, new RpgClassData(className, tiersMap));
+
+                if (jsonObject.has("attributes")) {
+                    JsonObject attributesObj = jsonObject.getAsJsonObject("attributes");
+                    for (Map.Entry<String, JsonElement> attrEntry : attributesObj.entrySet()) {
+                        ResourceLocation attributeId = ResourceLocation.parse(attrEntry.getKey());
+                        JsonObject modifierObj = attrEntry.getValue().getAsJsonObject();
+
+                        String opStr = modifierObj.get("operation").getAsString().toUpperCase();
+                        AttributeModifier.Operation operation = AttributeModifier.Operation.valueOf(opStr);
+
+                        double value = modifierObj.get("value").getAsDouble();
+
+                        attributesList.add(new ClassAttribute(attributeId, operation, value));
+                    }
+                }
+
+                newClasses.put(className, new RpgClassData(className, tiersMap, attributesList));
             } catch (Exception e) {
                 ShadowsThings.LOGGER.error("Error while parsing RPG Class datapack for file: {}", resLoc, e);
             }

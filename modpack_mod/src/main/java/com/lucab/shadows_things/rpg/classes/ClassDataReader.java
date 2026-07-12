@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.rpg_class;
+package com.lucab.shadows_things.rpg.classes;
 
 import com.google.gson.*;
 import com.lucab.shadows_things.ShadowsThings;
@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.*;
 
-public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
+public class ClassDataReader extends SimpleJsonResourceReloadListener {
     public record ClassAttribute(
             ResourceLocation attributeId,
             AttributeModifier.Operation operation,
@@ -20,7 +20,7 @@ public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
     ) {
     }
 
-    public record RpgClassData(
+    public record ClassData(
             String className,
             Map<Integer, List<Item>> tiers,
             List<ClassAttribute> attributes
@@ -30,15 +30,15 @@ public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final String TARGET_NAMESPACE = "shadows_things";
 
-    public Map<String, RpgClassData> rpgClasses = new HashMap<>();
+    public Map<String, ClassData> rpgClasses = new HashMap<>();
 
-    public RpgClassDataReader() {
+    public ClassDataReader() {
         super(GSON, "rpg_class");
     }
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
-        Map<String, RpgClassData> newClasses = new HashMap<>();
+        Map<String, ClassData> newClasses = new HashMap<>();
 
         for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
             ResourceLocation resLoc = entry.getKey();
@@ -93,7 +93,7 @@ public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
                     }
                 }
 
-                newClasses.put(className, new RpgClassData(className, tiersMap, attributesList));
+                newClasses.put(className, new ClassData(className, tiersMap, attributesList));
             } catch (Exception e) {
                 ShadowsThings.LOGGER.error("Error while parsing RPG Class datapack for file: {}", resLoc, e);
             }
@@ -103,11 +103,11 @@ public class RpgClassDataReader extends SimpleJsonResourceReloadListener {
         ShadowsThings.LOGGER.info("Successfully loaded {} RPG Classes from datapacks", this.rpgClasses.size());
     }
 
-    public Optional<RpgClassData> getClassData(String className) {
+    public Optional<ClassData> getClassData(String className) {
         return Optional.ofNullable(this.rpgClasses.get(className.toLowerCase()));
     }
 
-    public Map<String, RpgClassData> getAllClasses() {
+    public Map<String, ClassData> getAllClasses() {
         return Collections.unmodifiableMap(this.rpgClasses);
     }
 }

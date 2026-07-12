@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.rpg_class;
+package com.lucab.shadows_things.rpg.classes;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,7 +27,7 @@ public class ClassModifierApplier {
         }
 
         ShadowsThings.RPG_READER.getClassData(className).ifPresent(data -> {
-            for (RpgClassDataReader.ClassAttribute parsedAttr : data.attributes()) {
+            for (ClassDataReader.ClassAttribute parsedAttr : data.attributes()) {
                 Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(parsedAttr.attributeId());
                 if (attribute != null) {
                     AttributeInstance instance = player.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute));

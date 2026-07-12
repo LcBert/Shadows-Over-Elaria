@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.rpg_class;
+package com.lucab.shadows_things.rpg.classes;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +27,7 @@ public class ItemsManager {
         var classDataOpt = ShadowsThings.RPG_READER.getClassData(playerClass);
         if (classDataOpt.isEmpty()) return false;
 
-        RpgClassDataReader.RpgClassData data = classDataOpt.get();
+        ClassDataReader.ClassData data = classDataOpt.get();
 
         // Allows usage if the item is present in the current tier or lower ones.
         for (int tier = playerTier; tier >= 1; tier--) {
@@ -44,7 +44,7 @@ public class ItemsManager {
      * Checks if the item is present within the loaded datapack JSON files.
      */
     private static boolean isItemBoundToAnyClass(Item item) {
-        for (RpgClassDataReader.RpgClassData classData : ShadowsThings.RPG_READER.getAllClasses().values()) {
+        for (ClassDataReader.ClassData classData : ShadowsThings.RPG_READER.getAllClasses().values()) {
             for (List<Item> tierItems : classData.tiers().values()) {
                 if (tierItems.contains(item)) {
                     return true;

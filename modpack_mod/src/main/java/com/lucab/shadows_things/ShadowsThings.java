@@ -3,7 +3,7 @@ package com.lucab.shadows_things;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.item.*;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
-import com.lucab.shadows_things.rpg_class.RpgClassDataReader;
+import com.lucab.shadows_things.rpg.classes.ClassDataReader;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
 import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.loot.AddTreeBarkModifier;
-import com.lucab.shadows_things.rpg_class.ClassCommand;
+import com.lucab.shadows_things.rpg.classes.ClassCommand;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 
@@ -35,7 +35,7 @@ public class ShadowsThings {
     public static final String MODID = "shadows_things";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final RpgClassDataReader RPG_READER = new RpgClassDataReader();
+    public static final ClassDataReader RPG_READER = new ClassDataReader();
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
 

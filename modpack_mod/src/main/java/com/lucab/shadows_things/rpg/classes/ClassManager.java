@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.rpg_class;
+package com.lucab.shadows_things.rpg.classes;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +13,7 @@ public class ClassManager {
         String formattedClass = rpgClass.toLowerCase();
 
         if (!formattedClass.equals(WANDERER)) {
-            Optional<RpgClassDataReader.RpgClassData> classData = ShadowsThings.RPG_READER.getClassData(formattedClass);
+            Optional<ClassDataReader.ClassData> classData = ShadowsThings.RPG_READER.getClassData(formattedClass);
             if (classData.isEmpty()) {
                 throw new IllegalArgumentException("The class " + rpgClass + " does not exist in the datapacks.");
             }

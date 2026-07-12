@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.rpg_class;
+package com.lucab.shadows_things.rpg.classes;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.world.entity.player.Player;

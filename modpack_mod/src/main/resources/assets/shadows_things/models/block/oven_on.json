@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "shadows_things:block/oven/oven_front_on",
+    "side": "shadows_things:block/oven/oven_side",
+    "top": "shadows_things:block/oven/oven_top"
+  }
+}

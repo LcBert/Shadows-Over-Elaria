@@ -3,6 +3,8 @@ package com.lucab.shadows_things.block;
 import java.util.List;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.block.oven.OvenBlock;
+import com.lucab.shadows_things.block.oven.OvenBlockEntity;
 import com.lucab.shadows_things.block.repair_table.RepairTable;
 import com.lucab.shadows_things.block.repair_table.RepairTableEntity;
 
@@ -35,6 +37,19 @@ public class BlocksRegister {
     public static final DeferredItem<BlockItem> REPAIR_TABLE_ITEM = ShadowsThings.ITEMS.register("repair_table",
             () -> new BlockItem(REPAIR_TABLE.get(), new Item.Properties()));
 
+    // Oven
+    public static final DeferredBlock<OvenBlock> OVEN_BlOCK = ShadowsThings.BLOCKS.register(
+            "oven", () -> new OvenBlock());
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<OvenBlockEntity>> OVEN_BLOCK_ENTITY = ShadowsThings.BLOCK_ENTITIES
+            .register("oven",
+                    () -> BlockEntityType.Builder.of(OvenBlockEntity::new,
+                            OVEN_BlOCK.get()).build(null));
+
+    public static final DeferredItem<BlockItem> OVEN_BLOCK_ITEM = ShadowsThings.ITEMS.register("oven",
+            () -> new BlockItem(OVEN_BlOCK.get(), new Item.Properties())
+    );
+
     // Stone Pebble
     public static final DeferredBlock<Block> FLINT_PEBBLE = ShadowsThings.BLOCKS.register("flint_pebble",
             () -> new Block(Block.Properties.of()
@@ -64,7 +79,8 @@ public class BlocksRegister {
 
     public static List<ItemStack> getItems() {
         return List.of(
-                new ItemStack(REPAIR_TABLE_ITEM.get())
+                new ItemStack(REPAIR_TABLE_ITEM.get()),
+                new ItemStack(OVEN_BLOCK_ITEM.get())
         );
     }
 }

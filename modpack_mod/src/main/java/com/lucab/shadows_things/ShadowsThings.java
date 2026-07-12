@@ -1,18 +1,16 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.menus.MenuRegistries;
+import com.lucab.shadows_things.item.*;
+import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg_class.RpgClassDataReader;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.slf4j.Logger;
 
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
 import com.lucab.shadows_things.block.BlocksRegister;
-import com.lucab.shadows_things.item.CopperTools;
-import com.lucab.shadows_things.item.Crops;
-import com.lucab.shadows_things.item.FlintTools;
-import com.lucab.shadows_things.item.Hilts;
-import com.lucab.shadows_things.item.Plates;
-import com.lucab.shadows_things.item.RepairKits;
-import com.lucab.shadows_things.item.Rods;
 import com.lucab.shadows_things.loot.AddTreeBarkModifier;
 import com.lucab.shadows_things.rpg_class.ClassCommand;
 import com.mojang.logging.LogUtils;
@@ -45,6 +43,9 @@ public class ShadowsThings {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, MODID);
 
+    // Menu
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
+
     // In your Mod Loot Modifier class or Registry class
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS = DeferredRegister
             .create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, "shadows_things");
@@ -62,6 +63,7 @@ public class ShadowsThings {
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        MENUS.register(modEventBus);
         LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
         ATTACHMENT_TYPES.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
@@ -74,9 +76,16 @@ public class ShadowsThings {
         Rods.register();
         Hilts.register();
         RepairKits.register();
+        Various.register();
 
         // Blocks register
         BlocksRegister.register();
+
+        // Menus register
+        MenuRegistries.register();
+
+        //Recipes register
+        RecipesRegistries.register(modEventBus);
 
         // Attachment register
         ExhaustionAttachments.register();

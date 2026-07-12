@@ -37,14 +37,10 @@ public class RepairTableEntity extends BlockEntity {
                 return true;
 
             if (slot == 0) {
-                if (stack.is(ItemTags.create(
-                        ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "repair_kits")))) {
-                    return true;
-                }
-                return false;
+                return stack.is(ItemTags.create(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "repair_kits")));
             }
             return true;
-        };
+        }
     };
 
     public ItemStack insertKit(ItemStack stack) {
@@ -52,8 +48,7 @@ public class RepairTableEntity extends BlockEntity {
     }
 
     public ItemStack removeKit() {
-        ItemStack returnStack = this.inventory.extractItem(0, 64, false);
-        return returnStack;
+        return this.inventory.extractItem(0, 64, false);
     }
 
     public void consumeKit() {
@@ -73,8 +68,7 @@ public class RepairTableEntity extends BlockEntity {
     }
 
     public ItemStack removeItem() {
-        ItemStack returnStack = this.inventory.extractItem(1, 1, false);
-        return returnStack;
+        return this.inventory.extractItem(1, 1, false);
     }
 
     public ItemStack getItem() {
@@ -144,7 +138,7 @@ public class RepairTableEntity extends BlockEntity {
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt,
-            HolderLookup.Provider lookupProvider) {
+                             HolderLookup.Provider lookupProvider) {
         CompoundTag tag = pkt.getTag();
         if (tag != null) {
             handleUpdateTag(tag, lookupProvider);

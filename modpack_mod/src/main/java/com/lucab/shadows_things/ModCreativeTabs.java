@@ -1,5 +1,6 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.item.*;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -9,13 +10,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import com.lucab.shadows_things.block.BlocksRegister;
-import com.lucab.shadows_things.item.CopperTools;
-import com.lucab.shadows_things.item.Crops;
-import com.lucab.shadows_things.item.FlintTools;
-import com.lucab.shadows_things.item.Hilts;
-import com.lucab.shadows_things.item.Plates;
-import com.lucab.shadows_things.item.RepairKits;
-import com.lucab.shadows_things.item.Rods;
 
 import net.minecraft.core.registries.Registries;
 
@@ -28,14 +22,15 @@ public class ModCreativeTabs {
                     .title(Component.translatable("itemGroup." + ShadowsThings.MODID))
                     .icon(() -> new ItemStack(Items.CARROT))
                     .displayItems((parameters, output) -> {
+                        output.acceptAll(BlocksRegister.getItems());
                         output.acceptAll(FlintTools.getItems());
                         output.acceptAll(CopperTools.getItems());
                         output.acceptAll(Crops.getItems());
                         output.acceptAll(Plates.getItems());
                         output.acceptAll(Rods.getItems());
                         output.acceptAll(Hilts.getItems());
+                        output.acceptAll(Various.getItems());
                         output.acceptAll(RepairKits.getItems());
-                        output.acceptAll(BlocksRegister.getItems());
                     })
                     .build());
 

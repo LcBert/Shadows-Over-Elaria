@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:cave",
+  "config": {
+    "probability": 0.6,
+    "y": {
+      "type": "uniform",
+      "min_inclusive": {
+        "absolute": -64
+      },
+      "max_inclusive": {
+        "absolute": 320
+      }
+    },
+    "yScale": {
+      "type": "uniform",
+      "min_inclusive": 0.5,
+      "max_exclusive": 1.5
+    },
+    "lava_level": {
+      "absolute": -127
+    },
+    "horizontal_radius_multiplier": {
+      "type": "uniform",
+      "min_inclusive": 1,
+      "max_exclusive": 2
+    },
+    "vertical_radius_multiplier": {
+      "type": "uniform",
+      "min_inclusive": 1,
+      "max_exclusive": 2
+    },
+    "floor_level": {
+      "type": "uniform",
+      "min_inclusive": -1,
+      "max_exclusive": -0.5
+    },
+    "replaceable": "#minecraft:base_stone_overworld"
+  }
+}

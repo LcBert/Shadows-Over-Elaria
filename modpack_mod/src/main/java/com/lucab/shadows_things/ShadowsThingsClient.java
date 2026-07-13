@@ -1,15 +1,18 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.client.DeepCaveEffects;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.client.renderer.RepairTableRenderer;
 
 import com.lucab.shadows_things.client.screen.OvenScreen;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -20,6 +23,11 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 public class ShadowsThingsClient {
     public ShadowsThingsClient(ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+    }
+
+    @SubscribeEvent
+    public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event) {
+        event.register(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "deep_cave_effects"), new DeepCaveEffects());
     }
 
     @SubscribeEvent

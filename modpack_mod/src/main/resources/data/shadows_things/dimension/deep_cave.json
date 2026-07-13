@@ -5,7 +5,7 @@
     "settings": "shadows_things:deep_cave",
     "biome_source": {
       "type": "minecraft:fixed",
-      "biome": "shadows_things:cave"
+      "biome": "shadows_things:deep_cave"
     }
   }
 }

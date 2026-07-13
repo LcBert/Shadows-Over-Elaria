@@ -21,7 +21,8 @@
   "spawn_costs": {},
   "carvers": {
     "air": [
-      "minecraft:cave"
+      "shadows_things:custom_cave_carver",
+      "shadows_things:large_chamber_carver"
     ]
   },
   "features": [

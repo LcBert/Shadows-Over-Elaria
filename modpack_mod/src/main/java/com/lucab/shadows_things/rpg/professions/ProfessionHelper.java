@@ -33,6 +33,39 @@ public class ProfessionHelper {
         return getProfessionData(player).professionLevels.getOrDefault(profession, 0);
     }
 
+    public static boolean tryLevelUp(Player player) {
+        int currentXp = getExperience(player);
+        int requiredXp = getExperienceRequired(player);
+
+        if (currentXp >= requiredXp) {
+            removeExperience(player, requiredXp);
+            addPoints(player, 1);
+            return true;
+        }
+        return false;
+    }
+
+    public static void setExperience(Player player, int xp) {
+        getProfessionData(player).experience = Math.max(0, xp);
+    }
+
+    public static void addExperience(Player player, int xp) {
+        setExperience(player, getExperience(player) + xp);
+    }
+
+    public static void removeExperience(Player player, int xp) {
+        setExperience(player, getExperience(player) - xp);
+    }
+
+    public static int getExperience(Player player) {
+        return getProfessionData(player).experience;
+    }
+
+    public static int getExperienceRequired(Player player) {
+        int totalPoints = getTotalPoints(player);
+        return (int) (500 * Math.pow(1.2, totalPoints));
+    }
+
     public static void setPoints(Player player, int points) {
         getProfessionData(player).points = Math.clamp(points, 0, 5);
     }
@@ -47,5 +80,15 @@ public class ProfessionHelper {
 
     public static int getPoints(Player player) {
         return getProfessionData(player).points;
+    }
+
+    public static int getTotalPoints(Player player) {
+        int total = 0;
+        for (Professions profession : Professions.values()) {
+            total += ProfessionHelper.getLevel(player, profession);
+        }
+
+        total += ProfessionHelper.getPoints(player);
+        return total;
     }
 }

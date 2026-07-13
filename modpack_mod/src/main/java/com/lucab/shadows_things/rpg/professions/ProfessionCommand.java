@@ -46,10 +46,16 @@ public class ProfessionCommand {
                                                         .suggests(ProfessionCommand::suggestProfessions)
                                                         .executes(ProfessionCommand::resetSpecificProfession)))
 
+                                        // Level Up
+                                        .then(Commands.literal("levelUp")
+                                                .executes(ProfessionCommand::levelUp))
+
                                         // 4. POINTS Branch: Handles lookups, setting, adding, and removing points using attachment methods
                                         .then(Commands.literal("points")
                                                 .then(Commands.literal("get")
                                                         .executes(ProfessionCommand::getPointsLevel))
+                                                .then(Commands.literal("getTotal")
+                                                        .executes(ProfessionCommand::getTotalPointsLevel))
                                                 .then(Commands.literal("set")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(0))
                                                                 .executes(ctx -> handlePoints(ctx, PointOperation.SET))))
@@ -58,7 +64,24 @@ public class ProfessionCommand {
                                                                 .executes(ctx -> handlePoints(ctx, PointOperation.ADD))))
                                                 .then(Commands.literal("remove")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                                                                .executes(ctx -> handlePoints(ctx, PointOperation.REMOVE))))
+                                                                .executes(ctx -> handlePoints(ctx, PointOperation.REMOVE)))))
+
+
+                                        // 5. EXPERIENCE Branch
+                                        .then(Commands.literal("experience")
+                                                .then(Commands.literal("get")
+                                                        .executes(ProfessionCommand::getExperience))
+                                                .then(Commands.literal("getTotalForLeveling")
+                                                        .executes(ProfessionCommand::getTotalForLeveling))
+                                                .then(Commands.literal("set")
+                                                        .then(Commands.argument("amount", IntegerArgumentType.integer(0))
+                                                                .executes(ctx -> handleExperience(ctx, PointOperation.SET))))
+                                                .then(Commands.literal("add")
+                                                        .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                                                .executes(ctx -> handleExperience(ctx, PointOperation.ADD))))
+                                                .then(Commands.literal("remove")
+                                                        .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                                                .executes(ctx -> handleExperience(ctx, PointOperation.REMOVE))))
                                         )
                                 )
                         )
@@ -135,6 +158,27 @@ public class ProfessionCommand {
         return 1;
     }
 
+    private static int levelUp(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(context, "player");
+        boolean result = ProfessionHelper.tryLevelUp(player);
+
+        if (result) {
+            context.getSource().sendSuccess(() -> Component.literal(String.format(
+                    "§aLevel up successful!§r\n§7%s has gained a new profession point.§r\n§7Available points: §6%d§r",
+                    player.getName().getString(), ProfessionHelper.getPoints(player))), false);
+        } else {
+            int currentXp = ProfessionHelper.getExperience(player);
+            int requiredXp = ProfessionHelper.getExperienceRequired(player);
+            int diff = requiredXp - currentXp;
+
+            context.getSource().sendFailure(Component.literal(String.format(
+                    "§eLevel up failed: Insufficient XP.§r\n§7Progress: §f%d/%d §7XP. §c%d §7XP missing.§r",
+                    currentXp, requiredXp, diff)));
+        }
+
+        return 1;
+    }
+
     // Resets only the requested single profession to level 0 via ProfessionHelper
     private static int resetSpecificProfession(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(context, "player");
@@ -161,6 +205,14 @@ public class ProfessionCommand {
         return 1;
     }
 
+    private static int getTotalPointsLevel(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(context, "player");
+
+        context.getSource().sendSuccess(() -> Component.literal(String.format("§7%s has §6%d§7 total profession points.§r",
+                player.getName().getString(), ProfessionHelper.getTotalPoints(player))), false);
+        return 1;
+    }
+
     // Direct interface handler managing points adjustments using encapsulation math from the attachment file
     private static int handlePoints(CommandContext<CommandSourceStack> context, PointOperation op) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(context, "player");
@@ -174,6 +226,39 @@ public class ProfessionCommand {
 
         context.getSource().sendSuccess(() -> Component.literal(String.format("§aProfession points updated for %s. Current points balance: %d§r",
                 player.getName().getString(), ProfessionHelper.getPoints(player))), false);
+        return 1;
+    }
+
+    // Fetches and prints the current available job points from the player's attachment data
+    private static int getExperience(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(context, "player");
+
+        context.getSource().sendSuccess(() -> Component.literal(String.format("§7%s has §6%d§7 profession experience.§r",
+                player.getName().getString(), ProfessionHelper.getExperience(player))), false);
+        return 1;
+    }
+
+    private static int getTotalForLeveling(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(context, "player");
+
+        context.getSource().sendSuccess(() -> Component.literal(String.format("§7%s needs §6%d§7 profession experience for leveling, current: §6%d§r.§r",
+                player.getName().getString(), ProfessionHelper.getExperienceRequired(player), ProfessionHelper.getExperience(player))), false);
+        return 1;
+    }
+
+    // Direct interface handler managing points adjustments using encapsulation math from the attachment file
+    private static int handleExperience(CommandContext<CommandSourceStack> context, PointOperation op) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(context, "player");
+        int amount = IntegerArgumentType.getInteger(context, "amount");
+
+        switch (op) {
+            case SET -> ProfessionHelper.setExperience(player, amount);
+            case ADD -> ProfessionHelper.addExperience(player, amount);
+            case REMOVE -> ProfessionHelper.removeExperience(player, amount);
+        }
+
+        context.getSource().sendSuccess(() -> Component.literal(String.format("§aProfession experience updated for %s. Current experience balance: %d§r",
+                player.getName().getString(), ProfessionHelper.getExperience(player))), false);
         return 1;
     }
 

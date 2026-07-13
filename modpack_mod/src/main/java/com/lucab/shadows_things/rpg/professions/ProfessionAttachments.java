@@ -11,8 +11,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
-    protected final Map<Professions, Integer> professionLevels = new EnumMap<>(Professions.class);
     protected int points = 0;
+    protected int experience = 0;
+    protected final Map<Professions, Integer> professionLevels = new EnumMap<>(Professions.class);
 
     public ProfessionAttachments() {
         for (Professions profession : Professions.values()) {
@@ -24,6 +25,7 @@ public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag nbt = new CompoundTag();
         nbt.putInt("points", this.points);
+        nbt.putInt("experience", this.experience);
 
         CompoundTag levelsTag = new CompoundTag();
         this.professionLevels.forEach((profession, level) -> {
@@ -37,6 +39,7 @@ public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         this.points = nbt.getInt("points");
+        this.experience = nbt.getInt("experience");
 
         if (nbt.contains("ProfessionLevels")) {
             CompoundTag levelsTag = nbt.getCompound("ProfessionLevels");

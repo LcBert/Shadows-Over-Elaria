@@ -11,8 +11,7 @@ public class CropItem extends BlockItem {
     private String name;
 
     public CropItem(String name, String block) {
-        super(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(block)),
-                new Item.Properties());
+        super(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(block)), new Item.Properties());
         this.name = name;
     }
 

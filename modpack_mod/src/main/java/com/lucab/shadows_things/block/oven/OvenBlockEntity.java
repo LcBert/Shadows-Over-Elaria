@@ -103,6 +103,42 @@ public class OvenBlockEntity extends BlockEntity {
     public static void tick(Level level, BlockPos pos, BlockState state, OvenBlockEntity entity) {
         if (level.isClientSide) return;
 
+        if (entity.canProcessRow(0)) {
+            if (entity.isLit()) entity.cookTime0++;
+            else if (level.getGameTime() % 20 == 0 && entity.cookTime0 > 0) entity.cookTime0--;
+
+            if (entity.cookTime0 > entity.cookingTotalTime0) {
+                entity.processRecipe(0);
+                entity.cookTime0 = 0;
+            }
+        } else {
+            entity.cookTime0 = 0;
+        }
+
+        if (entity.canProcessRow(1)) {
+            if (entity.isLit()) entity.cookTime1++;
+            else if (level.getGameTime() % 20 == 0 && entity.cookTime1 > 0) entity.cookTime1--;
+
+            if (entity.cookTime1 > entity.cookingTotalTime1) {
+                entity.processRecipe(1);
+                entity.cookTime1 = 0;
+            }
+        } else {
+            entity.cookTime1 = 0;
+        }
+
+        if (entity.canProcessRow(2)) {
+            if (entity.isLit()) entity.cookTime2++;
+            else if (level.getGameTime() % 20 == 0 && entity.cookTime2 > 0) entity.cookTime2--;
+
+            if (entity.cookTime2 > entity.cookingTotalTime2) {
+                entity.processRecipe(2);
+                entity.cookTime2 = 0;
+            }
+        } else {
+            entity.cookTime2 = 0;
+        }
+
         // Process fuel
         if (!entity.isLit() && entity.hasItems()) {
             ItemStack fuelStack = entity.inventory.getStackInSlot(3);
@@ -117,43 +153,6 @@ public class OvenBlockEntity extends BlockEntity {
             }
         } else {
             entity.litTime--;
-        }
-
-
-        if (entity.canProcessRow(0)) {
-            if (entity.isLit()) entity.cookTime0++;
-            else if (level.getGameTime() % 20 == 0) entity.cookTime0--;
-
-            if (entity.cookTime0 > entity.cookingTotalTime0) {
-                entity.processRecipe(0);
-                entity.cookTime0 = 0;
-            }
-        } else {
-            entity.cookTime0 = 0;
-        }
-
-        if (entity.canProcessRow(1)) {
-            if (entity.isLit()) entity.cookTime1++;
-            else if (level.getGameTime() % 20 == 0) entity.cookTime1--;
-
-            if (entity.cookTime1 > entity.cookingTotalTime1) {
-                entity.processRecipe(1);
-                entity.cookTime1 = 0;
-            }
-        } else {
-            entity.cookTime1 = 0;
-        }
-
-        if (entity.canProcessRow(2)) {
-            if (entity.isLit()) entity.cookTime2++;
-            else if (level.getGameTime() % 20 == 0) entity.cookTime2--;
-
-            if (entity.cookTime2 > entity.cookingTotalTime2) {
-                entity.processRecipe(2);
-                entity.cookTime2 = 0;
-            }
-        } else {
-            entity.cookTime2 = 0;
         }
     }
 

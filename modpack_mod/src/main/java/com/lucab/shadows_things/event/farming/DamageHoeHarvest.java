@@ -3,7 +3,6 @@ package com.lucab.shadows_things.event.farming;
 import com.lucab.shadows_things.ShadowsThings;
 
 import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
-import com.lucab.shadows_things.rpg.professions.Professions;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -24,9 +23,9 @@ public class DamageHoeHarvest {
 
         if (event.getState().getBlock() instanceof CropBlock crop) {
             if (mainHand.is(ItemTags.HOES) && crop.isMaxAge(event.getState())) {
-                int farmerLevel = ProfessionHelper.getLevel(player, Professions.FARMER);
+                int farmerLevel = ProfessionHelper.getLevel(player, ProfessionHelper.Professions.FARMER);
 
-                double saveToolChance = farmerLevel * 0.15;
+                double saveToolChance = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.save_tool, farmerLevel);
 
                 if (player.level().random.nextDouble() >= saveToolChance)
                     mainHand.hurtAndBreak(event.getPlayer().isCreative() ? 0 : 1, event.getPlayer(), EquipmentSlot.MAINHAND);

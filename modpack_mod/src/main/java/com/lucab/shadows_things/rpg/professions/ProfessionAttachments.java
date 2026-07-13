@@ -13,10 +13,10 @@ import java.util.function.Supplier;
 public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
     protected int points = 0;
     protected int experience = 0;
-    protected final Map<Professions, Integer> professionLevels = new EnumMap<>(Professions.class);
+    protected final Map<ProfessionHelper.Professions, Integer> professionLevels = new EnumMap<>(ProfessionHelper.Professions.class);
 
     public ProfessionAttachments() {
-        for (Professions profession : Professions.values()) {
+        for (ProfessionHelper.Professions profession : ProfessionHelper.Professions.values()) {
             this.professionLevels.put(profession, 0);
         }
     }
@@ -44,7 +44,7 @@ public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
         if (nbt.contains("ProfessionLevels")) {
             CompoundTag levelsTag = nbt.getCompound("ProfessionLevels");
 
-            for (Professions profession : Professions.values()) {
+            for (ProfessionHelper.Professions profession : ProfessionHelper.Professions.values()) {
                 if (levelsTag.contains(profession.name())) {
                     this.professionLevels.put(profession, levelsTag.getInt(profession.name()));
                 } else {

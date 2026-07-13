@@ -36,7 +36,7 @@ public class ProfessionCommand {
                                         .then(Commands.literal("set")
                                                 .then(Commands.argument("profession", StringArgumentType.word())
                                                         .suggests(ProfessionCommand::suggestProfessions)
-                                                        .then(Commands.argument("value", IntegerArgumentType.integer(0, 5))
+                                                        .then(Commands.argument("value", IntegerArgumentType.integer(0, ProfessionHelper.MAX_PROFESSION_LEVEL))
                                                                 .executes(ProfessionCommand::setProfessionLevel))))
 
                                         // 3. RESET Branch: Without arguments resets all professions, with an argument resets only that specific profession
@@ -90,7 +90,7 @@ public class ProfessionCommand {
 
     // Autocomplete suggestions mapping directly from the Professions Enum constants
     private static CompletableFuture<Suggestions> suggestProfessions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
-        for (Professions profession : Professions.values()) {
+        for (ProfessionHelper.Professions profession : ProfessionHelper.Professions.values()) {
             builder.suggest(profession.name().toLowerCase(Locale.ROOT));
         }
         return builder.buildFuture();
@@ -104,7 +104,7 @@ public class ProfessionCommand {
         text.append(String.format("§e=== %s's Professions ===§r\n", player.getName().getString()));
         text.append(String.format("§7Available Points: §6%d§r\n", ProfessionHelper.getPoints(player)));
 
-        for (Professions profession : Professions.values()) {
+        for (ProfessionHelper.Professions profession : ProfessionHelper.Professions.values()) {
             int level = ProfessionHelper.getLevel(player, profession);
             text.append(String.format("§7- §b%s§7 - §f%d§r\n", profession.name().toLowerCase(Locale.ROOT), level));
         }
@@ -119,7 +119,7 @@ public class ProfessionCommand {
         String profInput = StringArgumentType.getString(context, "profession").toUpperCase(Locale.ROOT);
 
         try {
-            Professions profession = Professions.valueOf(profInput);
+            ProfessionHelper.Professions profession = ProfessionHelper.Professions.valueOf(profInput);
             int level = ProfessionHelper.getLevel(player, profession);
             context.getSource().sendSuccess(() -> Component.literal(String.format("§7%s's §b%s§7 level is: §f%d§r",
                     player.getName().getString(), profession.name().toLowerCase(Locale.ROOT), level)), false);
@@ -137,7 +137,7 @@ public class ProfessionCommand {
         int value = IntegerArgumentType.getInteger(context, "value");
 
         try {
-            Professions profession = Professions.valueOf(profInput);
+            ProfessionHelper.Professions profession = ProfessionHelper.Professions.valueOf(profInput);
             ProfessionHelper.setLevel(player, profession, value);
             context.getSource().sendSuccess(() -> Component.literal(String.format("§aSuccessfully set %s level to %d for %s§r",
                     profession.name().toLowerCase(Locale.ROOT), value, player.getName().getString())), false);
@@ -185,7 +185,7 @@ public class ProfessionCommand {
         String profInput = StringArgumentType.getString(context, "profession").toUpperCase(Locale.ROOT);
 
         try {
-            Professions profession = Professions.valueOf(profInput);
+            ProfessionHelper.Professions profession = ProfessionHelper.Professions.valueOf(profInput);
             ProfessionHelper.resetLevel(player, profession);
             context.getSource().sendSuccess(() -> Component.literal(String.format("§eSuccessfully reset §b%s§e level to 0 for %s§r",
                     profession.name().toLowerCase(Locale.ROOT), player.getName().getString())), false);

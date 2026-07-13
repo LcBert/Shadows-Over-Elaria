@@ -3,18 +3,34 @@ package com.lucab.shadows_things.rpg.professions;
 import net.minecraft.world.entity.player.Player;
 
 public class ProfessionHelper {
+    public enum Professions {
+        COOK, BLACKSMITH, FARMER;
+    }
+
+    public static class BLACKSMITH_CHANCE {
+        public static final float[] repair_efficiency = new float[]{0.05f, 0.20f};
+        public static final float[] save_kit = new float[]{0.10f, 0.65f};
+    }
+
+    public static class FARMER_CHANCE {
+        public static final float[] save_tool = new float[]{0.15f, 0.80f};
+        public static final float[] double_drop = new float[]{0.20f, 0.80f};
+    }
+
+    public static final int MAX_PROFESSION_LEVEL = 10;
+
     public static ProfessionAttachments getProfessionData(Player player) {
         return player.getData(ProfessionAttachments.PROFESSION.get());
     }
 
     public static void setLevel(Player player, Professions professions, int level) {
-        getProfessionData(player).professionLevels.put(professions, level);
+        getProfessionData(player).professionLevels.put(professions, Math.clamp(level, 0, MAX_PROFESSION_LEVEL));
     }
 
     public static boolean incrementLevel(Player player, Professions profession, int level) {
         ProfessionAttachments data = getProfessionData(player);
         int currentLevel = getLevel(player, profession);
-        if (currentLevel >= 5) return false;
+        if (currentLevel >= MAX_PROFESSION_LEVEL) return false;
         data.professionLevels.put(profession, currentLevel + level);
         return true;
     }
@@ -90,5 +106,10 @@ public class ProfessionHelper {
 
         total += ProfessionHelper.getPoints(player);
         return total;
+    }
+
+    public static float getPol(float[] range, int level) {
+        if (level == 0) return 0.0f;
+        return range[0] + (range[1] - range[0]) * ((float) (level - 1) / (MAX_PROFESSION_LEVEL - 1));
     }
 }

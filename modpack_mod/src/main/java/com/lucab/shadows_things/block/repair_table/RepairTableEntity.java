@@ -4,7 +4,6 @@ import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.block.BlocksRegister;
 
 import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
-import com.lucab.shadows_things.rpg.professions.Professions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
@@ -102,11 +101,11 @@ public class RepairTableEntity extends BlockEntity {
         float damageRatio = ((float) damage / (float) maxDamage);
 
         if (damageRatio >= 0.25) {
-            int blacksmithLevel = ProfessionHelper.getLevel(player, Professions.BLACKSMITH);
+            int blacksmithLevel = ProfessionHelper.getLevel(player, ProfessionHelper.Professions.BLACKSMITH);
 
-            float repairEfficiency = 0.25F + (blacksmithLevel * 0.05F);
+            float repairEfficiency = 0.25F + ProfessionHelper.getPol(ProfessionHelper.BLACKSMITH_CHANCE.repair_efficiency, blacksmithLevel);
 
-            double saveKitChance = blacksmithLevel * 0.10;
+            double saveKitChance = ProfessionHelper.getPol(ProfessionHelper.BLACKSMITH_CHANCE.save_kit, blacksmithLevel);
 
             item.setDamageValue((int) (damage - (maxDamage * repairEfficiency)));
             if (level.random.nextDouble() >= saveKitChance) this.consumeKit();

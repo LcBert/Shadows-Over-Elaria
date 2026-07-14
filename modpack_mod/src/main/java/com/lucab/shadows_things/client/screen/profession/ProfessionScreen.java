@@ -2,6 +2,7 @@ package com.lucab.shadows_things.client.screen.profession;
 
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.menus.ProfessionMenu;
+import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,8 +41,8 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
     protected void init() {
         super.init();
         professionCards.clear();
-        professionCards.add(new ProfessionCard(leftPos + 5, topPos + 50, "Blacksmith", menu.getBlacksmithLevel()));
-        professionCards.add(new ProfessionCard(leftPos + 100, topPos + 50, "Farmer", menu.getFarmerLevel()));
+        professionCards.add(new ProfessionCard(leftPos + 5, topPos + 50, "Blacksmith", ProfessionHelper.getLevel(getMinecraft().player, ProfessionHelper.Professions.BLACKSMITH)));
+        professionCards.add(new ProfessionCard(leftPos + 100, topPos + 50, "Farmer", ProfessionHelper.getLevel(getMinecraft().player, ProfessionHelper.Professions.FARMER)));
 
         for (ProfessionCard card : professionCards) {
             this.addRenderableWidget(card.getActionButton());
@@ -65,10 +67,12 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
     }
 
     private void renderXpBar(GuiGraphics guiGraphics, int x, int y) {
-        int experience = this.menu.getExperience();
-        int requiredExperience = this.menu.getExperienceRequired();
+        Player player = getMinecraft().player;
+        int experience = ProfessionHelper.getExperience(player);
+        int requiredExperience = ProfessionHelper.getExperienceRequired(player);
 
         float progress = (requiredExperience > 0) ? (float) experience / requiredExperience : 0;
+        progress = Math.min(progress, 1.0f);
         int progressWidth = (int) (progress * BAR_WIDTH);
 
         guiGraphics.blit(XP_BAR_BG, x + (imageWidth / 2) - (BAR_WIDTH / 2), y + BAR_OFFSET_Y, 0, 0, BAR_WIDTH, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);

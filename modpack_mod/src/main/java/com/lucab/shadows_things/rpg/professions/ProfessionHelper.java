@@ -1,6 +1,5 @@
 package com.lucab.shadows_things.rpg.professions;
 
-import com.lucab.shadows_things.menus.ProfessionMenu;
 import net.minecraft.world.entity.player.Player;
 
 public class ProfessionHelper {
@@ -20,21 +19,17 @@ public class ProfessionHelper {
 
     public static final int MAX_PROFESSION_LEVEL = 10;
 
+    private static void sync(Player player) {
+        player.setData(ProfessionAttachments.PROFESSION.get(), getProfessionData(player));
+    }
+
     private static ProfessionAttachments getProfessionData(Player player) {
         return player.getData(ProfessionAttachments.PROFESSION.get());
     }
 
-    public static void updateProfessionLevel(Player player, Professions profession, int newLevel) {
-        ProfessionAttachments att = player.getData(ProfessionAttachments.PROFESSION.get());
-        att.professionLevels.put(profession, newLevel);
-        if (player.containerMenu instanceof ProfessionMenu menu) {
-            menu.broadcastChanges();
-        }
-    }
-
     public static void setLevel(Player player, Professions professions, int level) {
         getProfessionData(player).professionLevels.put(professions, Math.clamp(level, 0, MAX_PROFESSION_LEVEL));
-        updateProfessionLevel(player, professions, level);
+        sync(player);
     }
 
     public static boolean incrementLevel(Player player, Professions profession, int level) {
@@ -73,6 +68,7 @@ public class ProfessionHelper {
 
     public static void setExperience(Player player, int xp) {
         getProfessionData(player).experience = Math.max(0, xp);
+        sync(player);
     }
 
     public static void addExperience(Player player, int xp) {
@@ -93,7 +89,8 @@ public class ProfessionHelper {
     }
 
     public static void setPoints(Player player, int points) {
-        getProfessionData(player).points = Math.clamp(points, 0, 5);
+        getProfessionData(player).points = Math.max(points, 0);
+        sync(player);
     }
 
     public static void addPoints(Player player, int points) {

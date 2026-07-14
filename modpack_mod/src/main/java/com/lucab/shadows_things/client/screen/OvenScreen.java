@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
     // Percorso della texture del background (assets/tuo_modid/textures/gui/container/oven_gui.png)
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/oven_gui.png");
+    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/oven_gui.png");
     private static final ResourceLocation PROGRESS_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/burn_progress.png");
     private static final ResourceLocation LIT_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/lit_progress.png");
 
@@ -51,8 +51,8 @@ public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
         int relY = (this.height - this.imageHeight) / 2;
 
         // 1. Sfondo principale
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        guiGraphics.blit(TEXTURE, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
+        RenderSystem.setShaderTexture(0, BACKGROUND);
+        guiGraphics.blit(BACKGROUND, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
 
         // 2. Fiamma del carburante (Sopra lo slot Fuel, Y sale mentre si consuma)
         if (this.menu.getBlockEntity().getContainerData().get(0) > 0) {

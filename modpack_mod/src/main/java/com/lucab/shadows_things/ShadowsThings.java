@@ -2,6 +2,7 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.item.*;
+import com.lucab.shadows_things.network.OpenProfessionGuiPacket;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg.classes.ClassDataReader;
 import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
@@ -9,6 +10,8 @@ import com.lucab.shadows_things.rpg.professions.ProfessionCommand;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
@@ -70,6 +73,8 @@ public class ShadowsThings {
         ATTACHMENT_TYPES.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
+        modEventBus.addListener(this::registerPayLoad);
+
         // Items register
         FlintTools.register();
         CopperTools.register();
@@ -98,6 +103,16 @@ public class ShadowsThings {
     public void onRegisterCommands(RegisterCommandsEvent event) {
         ClassCommand.register(event.getDispatcher());
         ProfessionCommand.register(event.getDispatcher());
+    }
+
+    public void registerPayLoad(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("5");
+
+        registrar.playToServer(
+                OpenProfessionGuiPacket.TYPE,
+                OpenProfessionGuiPacket.STREAM_CODEC,
+                OpenProfessionGuiPacket::handle
+        );
     }
 
     @SubscribeEvent

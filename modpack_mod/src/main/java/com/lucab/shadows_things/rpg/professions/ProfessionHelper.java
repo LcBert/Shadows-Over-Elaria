@@ -1,5 +1,6 @@
 package com.lucab.shadows_things.rpg.professions;
 
+import com.lucab.shadows_things.menus.ProfessionMenu;
 import net.minecraft.world.entity.player.Player;
 
 public class ProfessionHelper {
@@ -19,12 +20,21 @@ public class ProfessionHelper {
 
     public static final int MAX_PROFESSION_LEVEL = 10;
 
-    public static ProfessionAttachments getProfessionData(Player player) {
+    private static ProfessionAttachments getProfessionData(Player player) {
         return player.getData(ProfessionAttachments.PROFESSION.get());
+    }
+
+    public static void updateProfessionLevel(Player player, Professions profession, int newLevel) {
+        ProfessionAttachments att = player.getData(ProfessionAttachments.PROFESSION.get());
+        att.professionLevels.put(profession, newLevel);
+        if (player.containerMenu instanceof ProfessionMenu menu) {
+            menu.broadcastChanges();
+        }
     }
 
     public static void setLevel(Player player, Professions professions, int level) {
         getProfessionData(player).professionLevels.put(professions, Math.clamp(level, 0, MAX_PROFESSION_LEVEL));
+        updateProfessionLevel(player, professions, level);
     }
 
     public static boolean incrementLevel(Player player, Professions profession, int level) {

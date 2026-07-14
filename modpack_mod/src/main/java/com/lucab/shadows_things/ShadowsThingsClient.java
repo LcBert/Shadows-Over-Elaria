@@ -1,6 +1,7 @@
 package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.client.DeepCaveEffects;
+import com.lucab.shadows_things.client.screen.profession.ProfessionScreen;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.client.renderer.RepairTableRenderer;
@@ -39,5 +40,6 @@ public class ShadowsThingsClient {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(MenuRegistries.OVEN_MENU.get(), OvenScreen::new);
+        event.register(MenuRegistries.PROFESSION_MENU.get(), ProfessionScreen::new);
     }
 }

@@ -58,13 +58,13 @@ public class ProfessionCommand {
                                                         .executes(ProfessionCommand::getTotalPointsLevel))
                                                 .then(Commands.literal("set")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(0))
-                                                                .executes(ctx -> handlePoints(ctx, PointOperation.SET))))
+                                                                .executes(ctx -> handlePoints(ctx, ProfessionOperation.SET))))
                                                 .then(Commands.literal("add")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                                                                .executes(ctx -> handlePoints(ctx, PointOperation.ADD))))
+                                                                .executes(ctx -> handlePoints(ctx, ProfessionOperation.ADD))))
                                                 .then(Commands.literal("remove")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                                                                .executes(ctx -> handlePoints(ctx, PointOperation.REMOVE)))))
+                                                                .executes(ctx -> handlePoints(ctx, ProfessionOperation.REMOVE)))))
 
 
                                         // 5. EXPERIENCE Branch
@@ -75,13 +75,13 @@ public class ProfessionCommand {
                                                         .executes(ProfessionCommand::getTotalForLeveling))
                                                 .then(Commands.literal("set")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(0))
-                                                                .executes(ctx -> handleExperience(ctx, PointOperation.SET))))
+                                                                .executes(ctx -> handleExperience(ctx, ProfessionOperation.SET))))
                                                 .then(Commands.literal("add")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                                                                .executes(ctx -> handleExperience(ctx, PointOperation.ADD))))
+                                                                .executes(ctx -> handleExperience(ctx, ProfessionOperation.ADD))))
                                                 .then(Commands.literal("remove")
                                                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
-                                                                .executes(ctx -> handleExperience(ctx, PointOperation.REMOVE))))
+                                                                .executes(ctx -> handleExperience(ctx, ProfessionOperation.REMOVE))))
                                         )
                                 )
                         )
@@ -214,7 +214,7 @@ public class ProfessionCommand {
     }
 
     // Direct interface handler managing points adjustments using encapsulation math from the attachment file
-    private static int handlePoints(CommandContext<CommandSourceStack> context, PointOperation op) throws CommandSyntaxException {
+    private static int handlePoints(CommandContext<CommandSourceStack> context, ProfessionOperation op) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(context, "player");
         int amount = IntegerArgumentType.getInteger(context, "amount");
 
@@ -247,7 +247,7 @@ public class ProfessionCommand {
     }
 
     // Direct interface handler managing points adjustments using encapsulation math from the attachment file
-    private static int handleExperience(CommandContext<CommandSourceStack> context, PointOperation op) throws CommandSyntaxException {
+    private static int handleExperience(CommandContext<CommandSourceStack> context, ProfessionOperation op) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(context, "player");
         int amount = IntegerArgumentType.getInteger(context, "amount");
 
@@ -262,7 +262,7 @@ public class ProfessionCommand {
         return 1;
     }
 
-    private enum PointOperation {
+    private enum ProfessionOperation {
         SET, ADD, REMOVE
     }
 }

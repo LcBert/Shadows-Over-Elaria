@@ -1,11 +1,15 @@
 package com.lucab.shadows_things.client.screen.profession;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.network.UpgradeProfessionPacket;
+import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ProfessionCard {
     private final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/screen/profession/profession_card_background.png");
@@ -23,6 +27,7 @@ public class ProfessionCard {
         this.name = name;
         this.level = level;
         this.actionButton = Button.builder(Component.literal("Upgrade"), (btn) -> {
+            PacketDistributor.sendToServer(new UpgradeProfessionPacket(name));
         }).bounds(x + 5, y + 38, 75, 20).build();
     }
 
@@ -33,6 +38,7 @@ public class ProfessionCard {
         guiGraphics.drawString(font, name, nameX, y + 3, 0xFFFFFF, false);
         guiGraphics.drawString(font, "Level: " + level, x + 35, y + 20, 0xAAAAAA, false);
         actionButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        actionButton.active = ProfessionHelper.canUpgradeProfession(Minecraft.getInstance().player, ProfessionHelper.Professions.valueOf(name.toUpperCase()));
     }
 
     public Button getActionButton() {

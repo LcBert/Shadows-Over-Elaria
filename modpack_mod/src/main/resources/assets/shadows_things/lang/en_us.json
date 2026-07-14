@@ -28,5 +28,9 @@
   "item.shadows_things.netherite_repair_kit": "Netherite Repair Kit",
   "item.shadows_things.stone_pebble": "Stone Pebble",
   "block.shadows_things.repair_table": "Repair Table",
-  "block.shadows_things.oven": "Oven"
+  "block.shadows_things.oven": "Oven",
+  "gui.shadows_things.profession.available_points": "Available Points",
+  "gui.shadows_things.profession.name.farmer": "Farmer",
+  "gui.shadows_things.profession.name.blacksmith": "Blacksmith",
+  "gui.shadows_things.profession.name.cook": "Cook"
 }

@@ -18,19 +18,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
-    public static final Codec<ProfessionAttachments> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            Codec.INT.fieldOf("points").orElse(0).forGetter(d -> d.points),
-            Codec.INT.fieldOf("experience").orElse(0).forGetter(d -> d.experience),
-            Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("professionLevels").forGetter(d ->
-                    d.professionLevels.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue)))
-    ).apply(inst, (p, e, levels) -> {
-        ProfessionAttachments data = new ProfessionAttachments();
-        data.points = p;
-        data.experience = e;
-        levels.forEach((k, v) -> data.professionLevels.put(ProfessionHelper.Professions.valueOf(k), v));
-        return data;
-    }));
-
     // StreamCodec per la sincronizzazione di rete (Client-Server)
     public static final StreamCodec<RegistryFriendlyByteBuf, ProfessionAttachments> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, d -> d.points,
@@ -91,7 +78,6 @@ public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
     public static final Supplier<AttachmentType<ProfessionAttachments>> PROFESSION = ShadowsThings.ATTACHMENT_TYPES
             .register("profession", () -> AttachmentType.serializable(ProfessionAttachments::new)
                     .copyOnDeath()
-//                    .serialize(CODEC)
                     .sync(STREAM_CODEC)
                     .build()
             );

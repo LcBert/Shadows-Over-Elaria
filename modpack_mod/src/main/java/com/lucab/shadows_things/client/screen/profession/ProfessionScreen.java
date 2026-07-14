@@ -21,10 +21,18 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
     private static final ResourceLocation XP_BAR_BG = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/screen/profession/xp_progress_background.png");
     private static final ResourceLocation XP_BAR_FILL = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/screen/profession/xp_progress_filled.png");
 
+    public static final String TRANSLATABLE_NAME = "gui.shadows_things.profession.name.";
+
     private static final int BAR_WIDTH = 163;
     private static final int BAR_HEIGHT = 5;
     private static final int BAR_OFFSET_Y = 35;
-    private static final int TEXT_OFFSET_Y = 25;
+    private static final int XP_TEXT_OFFSET_Y = 25;
+    private static final int POINTS_TEXT_OFFSET_Y = 45;
+
+    private static final int CARD_X1 = 5;
+    private static final int CARD_X2 = 100;
+    private static final int CARD_START_Y = 60;
+    private static final int CARD_Y_SPACING = 70;
 
     private final List<ProfessionCard> professionCards = new ArrayList<>();
 
@@ -40,13 +48,6 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
     @Override
     protected void init() {
         super.init();
-        professionCards.clear();
-        professionCards.add(new ProfessionCard(leftPos + 5, topPos + 50, "Blacksmith", ProfessionHelper.getLevel(getMinecraft().player, ProfessionHelper.Professions.BLACKSMITH)));
-        professionCards.add(new ProfessionCard(leftPos + 100, topPos + 50, "Farmer", ProfessionHelper.getLevel(getMinecraft().player, ProfessionHelper.Professions.FARMER)));
-
-        for (ProfessionCard card : professionCards) {
-            this.addRenderableWidget(card.getActionButton());
-        }
     }
 
     @Override
@@ -59,11 +60,22 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
 
         guiGraphics.blit(BACKGROUND, x, y, 0, 0, imageWidth, imageHeight);
 
+        renderPoints(guiGraphics, x, y);
+
         renderXpBar(guiGraphics, x, y);
+
+        renderCards();
 
         for (ProfessionCard card : professionCards) {
             card.render(guiGraphics, this.font, mouseX, mouseY, partialTick);
         }
+    }
+
+    private void renderPoints(GuiGraphics guiGraphics, int x, int y) {
+        int points = ProfessionHelper.getPoints(getMinecraft().player);
+        String pointsText = Component.translatable("gui.shadows_things.profession.available_points").getString() + ": " + points;
+        int textWidth = this.font.width(pointsText);
+        guiGraphics.drawString(this.font, pointsText, x + 15 + (BAR_WIDTH / 2) - (textWidth / 2), y + POINTS_TEXT_OFFSET_Y, 0X000000, false);
     }
 
     private void renderXpBar(GuiGraphics guiGraphics, int x, int y) {
@@ -83,7 +95,24 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
 
         String progressText = experience + " / " + requiredExperience;
         int textWidth = this.font.width(progressText);
-        guiGraphics.drawString(this.font, progressText, x + 15 + (BAR_WIDTH / 2) - (textWidth / 2), y + TEXT_OFFSET_Y, 0x000000, false);
+        guiGraphics.drawString(this.font, progressText, x + 15 + (BAR_WIDTH / 2) - (textWidth / 2), y + XP_TEXT_OFFSET_Y, 0x000000, false);
+    }
+
+    protected void renderCards() {
+        professionCards.clear();
+
+        for (int i = 0; i < ProfessionHelper.Professions.values().length; i++) {
+            ProfessionHelper.Professions profession = ProfessionHelper.Professions.values()[i];
+            int level = ProfessionHelper.getLevel(getMinecraft().player, profession);
+            int posX = leftPos + ((i % 2 == 0) ? CARD_X1 : CARD_X2);
+            int posY = topPos + CARD_START_Y + (i / 2) * CARD_Y_SPACING;
+
+            professionCards.add(new ProfessionCard(posX, posY, Component.translatable(TRANSLATABLE_NAME + profession.name().toLowerCase()).getString(), level));
+        }
+
+        for (ProfessionCard card : professionCards) {
+            this.addRenderableWidget(card.getActionButton());
+        }
     }
 
     @Override

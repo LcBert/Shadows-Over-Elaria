@@ -32,11 +32,12 @@ public class ProfessionHelper {
         sync(player);
     }
 
-    public static boolean incrementLevel(Player player, Professions profession, int level) {
+    public static boolean incrementLevel(Player player, Professions profession) {
         ProfessionAttachments data = getProfessionData(player);
         int currentLevel = getLevel(player, profession);
         if (currentLevel >= MAX_PROFESSION_LEVEL) return false;
-        data.professionLevels.put(profession, currentLevel + level);
+        setLevel(player, profession, currentLevel + 1);
+        removePoints(player, 1);
         return true;
     }
 
@@ -54,7 +55,8 @@ public class ProfessionHelper {
         return getProfessionData(player).professionLevels.getOrDefault(profession, 0);
     }
 
-    public static boolean tryLevelUp(Player player) {
+    // Consume experience to add 1 point
+    public static boolean levelUp(Player player) {
         int currentXp = getExperience(player);
         int requiredXp = getExperienceRequired(player);
 
@@ -64,6 +66,11 @@ public class ProfessionHelper {
             return true;
         }
         return false;
+    }
+
+    public static boolean canUpgradeProfession(Player player, Professions profession) {
+        int currentLevel = getLevel(player, profession);
+        return currentLevel < MAX_PROFESSION_LEVEL && getPoints(player) > 0;
     }
 
     public static void setExperience(Player player, int xp) {

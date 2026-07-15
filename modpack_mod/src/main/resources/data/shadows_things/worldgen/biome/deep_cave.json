@@ -8,14 +8,7 @@
     "water_color": 4159204,
     "water_fog_color": 329011,
     "grass_color": 9284992,
-    "foliage_color": 9284992,
-    "ambient_sound": "minecraft:ambient.cave",
-    "mood_sound": {
-      "sound": "minecraft:ambient.cave",
-      "tick_delay": 6000,
-      "block_search_extent": 8,
-      "offset": 2
-    }
+    "foliage_color": 9284992
   },
   "spawners": {},
   "spawn_costs": {},
@@ -30,14 +23,26 @@
     [],
     [],
     [],
-    [],
+    [
+      "shadows_things:deep_cave/vegetation/glow_berries"
+    ],
     [],
     [
-      "shadows_things:ore_iron"
+      "shadows_things:deep_cave/stone_decoration/andesite",
+      "shadows_things:deep_cave/stone_decoration/diorite",
+      "shadows_things:deep_cave/stone_decoration/granite",
+      "shadows_things:deep_cave/vegetation/moss_block",
+      "shadows_things:deep_cave/ore/copper",
+      "shadows_things:deep_cave/ore/iron",
+      "shadows_things:deep_cave/ore/gold",
+      "shadows_things:deep_cave/ore/silver",
+      "shadows_things:deep_cave/ore/netherite"
     ],
     [],
     [],
-    [],
+    [
+      "shadows_things:deep_cave/vegetation/glow_lichen"
+    ],
     []
   ]
 }

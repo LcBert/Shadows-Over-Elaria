@@ -12,9 +12,9 @@
   "bed_works": false,
   "respawn_anchor_works": true,
   "has_raids": true,
-  "logical_height": 384,
-  "min_y": -64,
-  "height": 384,
+  "logical_height": 512,
+  "min_y": 0,
+  "height": 512,
   "infiniburn": "#minecraft:infiniburn_overworld",
   "effects": "shadows_things:deep_cave_effects"
 }

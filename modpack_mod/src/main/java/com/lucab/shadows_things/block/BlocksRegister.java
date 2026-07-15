@@ -3,6 +3,8 @@ package com.lucab.shadows_things.block;
 import java.util.List;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.block.deep_cave_portal_block.DeepCavePortalBlock;
+import com.lucab.shadows_things.block.deep_cave_portal_block.DeepCavePortalEntity;
 import com.lucab.shadows_things.block.oven.OvenBlock;
 import com.lucab.shadows_things.block.oven.OvenBlockEntity;
 import com.lucab.shadows_things.block.repair_table.RepairTable;
@@ -50,6 +52,17 @@ public class BlocksRegister {
             () -> new BlockItem(OVEN_BlOCK.get(), new Item.Properties())
     );
 
+    // Deep Cave Portal Block
+    public static final DeferredBlock<DeepCavePortalBlock> DEEP_CAVE_PORTAL = ShadowsThings.BLOCKS.register(
+            "deep_cave_portal", () -> new DeepCavePortalBlock());
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeepCavePortalEntity>> DEEP_CAVE_PORTAL_ENTITY = ShadowsThings.BLOCK_ENTITIES.register(
+            "deep_cave_portal", () -> BlockEntityType.Builder.of(DeepCavePortalEntity::new,
+                    DEEP_CAVE_PORTAL.get()).build(null));
+
+    public static final DeferredItem<BlockItem> DEEP_CAVE_PORTAL_ITEM = ShadowsThings.ITEMS.register(
+            "deep_cave_portal", () -> new BlockItem(DEEP_CAVE_PORTAL.get(), new Item.Properties()));
+
     // Stone Pebble
     public static final DeferredBlock<Block> FLINT_PEBBLE = ShadowsThings.BLOCKS.register("flint_pebble",
             () -> new Block(Block.Properties.of()
@@ -74,13 +87,33 @@ public class BlocksRegister {
                 }
             });
 
+    // Silver Ore
+    public static final DeferredBlock<Block> SILVER_ORE = ShadowsThings.BLOCKS.register("silver_ore",
+            () -> new Block(Block.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .sound(SoundType.STONE)
+                    .strength(2.0f)));
+
+    public static final DeferredItem<BlockItem> SILVER_ORE_ITEM = ShadowsThings.ITEMS.register("silver_ore",
+            () -> new BlockItem(SILVER_ORE.get(), new Item.Properties()));
+
+    public static final DeferredItem<Item> RAW_SILVER = ShadowsThings.ITEMS.register("raw_silver",
+            () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> SILVER_INGOT = ShadowsThings.ITEMS.register("silver_ingot",
+            () -> new Item(new Item.Properties()));
+
     public static void register() {
     }
 
     public static List<ItemStack> getItems() {
         return List.of(
                 new ItemStack(REPAIR_TABLE_ITEM.get()),
-                new ItemStack(OVEN_BLOCK_ITEM.get())
+                new ItemStack(OVEN_BLOCK_ITEM.get()),
+                new ItemStack(DEEP_CAVE_PORTAL_ITEM.get()),
+                new ItemStack(SILVER_ORE_ITEM.get()),
+                new ItemStack(RAW_SILVER.get()),
+                new ItemStack(SILVER_INGOT.get())
         );
     }
 }

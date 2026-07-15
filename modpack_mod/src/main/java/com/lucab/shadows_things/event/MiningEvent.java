@@ -1,12 +1,17 @@
 package com.lucab.shadows_things.event;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.item.FlintTools;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -15,6 +20,18 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickB
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class MiningEvent {
+    private static final TagKey<Block> ORE_1 = BlockTags.create(ResourceLocation.parse("shadows_things:ore_tier/1"));
+    private static final TagKey<Block> ORE_2 = BlockTags.create(ResourceLocation.parse("shadows_things:ore_tier/2"));
+    private static final TagKey<Block> ORE_3 = BlockTags.create(ResourceLocation.parse("shadows_things:ore_tier/3"));
+    private static final TagKey<Block> ORE_4 = BlockTags.create(ResourceLocation.parse("shadows_things:ore_tier/4"));
+    private static final TagKey<Block> ORE_5 = BlockTags.create(ResourceLocation.parse("shadows_things:ore_tier/5"));
+
+    private static final TagKey<Item> TOOL_1 = ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/1"));
+    private static final TagKey<Item> TOOL_2 = ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/2"));
+    private static final TagKey<Item> TOOL_3 = ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/3"));
+    private static final TagKey<Item> TOOL_4 = ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/4"));
+    private static final TagKey<Item> TOOL_5 = ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/5"));
+
     @SubscribeEvent
     public static void logsMineableWithAxes(LeftClickBlock event) {
         if (event.getEntity().isCreative())
@@ -34,14 +51,8 @@ public class MiningEvent {
             return;
 
         BlockState state = event.getLevel().getBlockState(event.getPos());
-        boolean isStone = state.is(BlockTags.create(ResourceLocation.parse("c:stones")));
-        boolean isCobblestone = state.is(BlockTags.create(ResourceLocation.parse("c:cobblestones")));
-        boolean isMineablePickaxe = state.is(BlockTags.create(ResourceLocation.parse("minecraft:mineable/pickaxe")));
+        boolean isMineablePickaxe = state.is(BlockTags.create(ResourceLocation.parse("minecraft:mineable/pickaxe.json")));
         boolean isPickaxe = event.getItemStack().is(ItemTags.create(ResourceLocation.parse("minecraft:pickaxes")));
-        boolean isFlintPickaxe = event.getItemStack().getItem() == FlintTools.FLINT_PICKAXE.get();
-
-//        if ((isStone || isCobblestone) && isFlintPickaxe)
-//            event.setCanceled(true);
 
         if (isMineablePickaxe && !isPickaxe)
             event.setCanceled(true);
@@ -53,35 +64,32 @@ public class MiningEvent {
             return;
 
         BlockState state = event.getLevel().getBlockState(event.getPos());
-        ItemStack item = event.getItemStack();
+        ItemStack stack = event.getEntity().getMainHandItem();
 
-        System.out.println(item);
+        int requiredTier = getRequiredTier(state);
 
-        boolean isCopperOre = state.is(Blocks.COPPER_ORE) || state.is(Blocks.DEEPSLATE_COPPER_ORE);
-        boolean isIronOre = state.is(Blocks.IRON_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE);
-        boolean isGoldOre = state.is(Blocks.GOLD_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE);
-        boolean isDiamondOre = state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.DEEPSLATE_DIAMOND_ORE);
-        boolean isNetheriteOre = state.is(Blocks.ANCIENT_DEBRIS);
+        if (requiredTier == 0) return;
 
-        boolean isTier1 = item.is(ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/1")));
-        boolean isTier2 = item.is(ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/2")));
-        boolean isTier3 = item.is(ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/3")));
-        boolean isTier4 = item.is(ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/4")));
-        boolean isTier5 = item.is(ItemTags.create(ResourceLocation.parse("shadows_things:pickaxe_tier/5")));
+        int toolTier = getToolTier(stack);
 
-        if (isCopperOre && !isTier1)
-            event.setCanceled(true);
+        if (toolTier < requiredTier) event.setCanceled(true);
+    }
 
-        if (isIronOre && !isTier2)
-            event.setCanceled(true);
+    private static int getRequiredTier(BlockState state) {
+        if (state.is(ORE_5)) return 5;
+        if (state.is(ORE_4)) return 4;
+        if (state.is(ORE_3)) return 3;
+        if (state.is(ORE_2)) return 2;
+        if (state.is(ORE_1)) return 1;
+        return 0;
+    }
 
-        if (isGoldOre && !isTier3)
-            event.setCanceled(true);
-
-        if (isDiamondOre && !isTier4)
-            event.setCanceled(true);
-
-        if (isNetheriteOre && !isTier5)
-            event.setCanceled(true);
+    private static int getToolTier(ItemStack stack) {
+        if (stack.is(TOOL_5)) return 5;
+        if (stack.is(TOOL_4)) return 4;
+        if (stack.is(TOOL_3)) return 3;
+        if (stack.is(TOOL_2)) return 2;
+        if (stack.is(TOOL_1)) return 1;
+        return 0;
     }
 }

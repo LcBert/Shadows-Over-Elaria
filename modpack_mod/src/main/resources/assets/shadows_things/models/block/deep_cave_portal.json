@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_top",
+  "textures": {
+    "side": "shadows_things:block/deep_cave_portal/deep_cave_portal_side",
+    "top": "shadows_things:block/deep_cave_portal/deep_cave_portal_top"
+  }
+}

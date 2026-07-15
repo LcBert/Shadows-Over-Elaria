@@ -1,9 +1,9 @@
 {
-  "feature": "shadows_things:ore_iron",
+  "feature": "shadows_things:deep_cave/stone_decoration/granite",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 50
+      "count": 2
     },
     {
       "type": "minecraft:in_square"
@@ -11,12 +11,12 @@
     {
       "type": "minecraft:height_range",
       "height": {
-        "type": "minecraft:trapezoid",
+        "type": "minecraft:uniform",
         "max_inclusive": {
-          "absolute": 328
+          "absolute": 512
         },
         "min_inclusive": {
-          "absolute": -64
+          "absolute": 0
         }
       }
     },

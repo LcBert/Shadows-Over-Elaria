@@ -1,7 +1,5 @@
 {
-    "values": [
-        "minecraft:golden_pickaxe",
-        "minecraft:diamond_pickaxe",
-        "minecraft:netherite_pickaxe"
-    ]
+  "values": [
+    "minecraft:golden_pickaxe"
+  ]
 }

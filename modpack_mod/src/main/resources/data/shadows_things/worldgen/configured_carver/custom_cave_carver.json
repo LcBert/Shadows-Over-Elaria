@@ -5,10 +5,10 @@
     "y": {
       "type": "uniform",
       "min_inclusive": {
-        "absolute": -64
+        "absolute": 0
       },
       "max_inclusive": {
-        "absolute": 320
+        "absolute": 496
       }
     },
     "yScale": {

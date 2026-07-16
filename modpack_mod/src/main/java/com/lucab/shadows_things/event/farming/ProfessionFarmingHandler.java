@@ -4,7 +4,6 @@ import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +21,7 @@ public class ProfessionFarmingHandler {
     @SubscribeEvent
     public static void onCropHarvest(BlockEvent.BreakEvent event) {
         if (event.getLevel().isClientSide()) return;
+        if (event.getPlayer().isCreative()) return;
 
         Player player = event.getPlayer();
         Level level = player.level();
@@ -41,23 +41,24 @@ public class ProfessionFarmingHandler {
 
         if (productDrop.isEmpty()) return;
 
-        if (block instanceof CropBlock cropBlock
-                && cropBlock.isMaxAge(state)
-                && player.getMainHandItem().is(ItemTags.create(ResourceLocation.parse("minecraft:hoes")))) {
+        if (block instanceof CropBlock cropBlock && cropBlock.isMaxAge(state) && player.getMainHandItem().is(ItemTags.HOES)) {
             int farmerLevel = ProfessionHelper.getLevel(player, ProfessionHelper.Professions.FARMER);
 
-            if (farmerLevel > 0) {
-                double doubleCropChance = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.double_drop, farmerLevel);
-
-                if (level.random.nextDouble() < doubleCropChance) {
-                    int extraAmount = level.random.nextInt(farmerLevel) + 1;
-                    ItemEntity bonusDrop = new ItemEntity(level,
-                            pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5,
-                            new ItemStack(productDrop.getItem(), extraAmount)
-                    );
-                    level.addFreshEntity(bonusDrop);
-                }
+            // Handle extra drop chance
+            double extraDropChance = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.extra_drop, farmerLevel);
+            if (level.random.nextDouble() < extraDropChance) {
+                int extraAmount = level.random.nextInt(farmerLevel) + 1;
+                ItemEntity bonusDrop = new ItemEntity(level,
+                        pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5,
+                        new ItemStack(productDrop.getItem(), extraAmount)
+                );
+                level.addFreshEntity(bonusDrop);
             }
+
+            // Handle Experience
+            float gainedXp = ProfessionHelper.getPol(ProfessionHelper.EXPERIENCE_PER_LEVEL, farmerLevel);
+            ProfessionHelper.addExperience(player, (int) gainedXp);
+            ProfessionHelper.tryLevelUp(player, true, true);
         }
     }
 }

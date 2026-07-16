@@ -160,7 +160,7 @@ public class ProfessionCommand {
 
     private static int levelUp(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(context, "player");
-        boolean result = ProfessionHelper.levelUp(player);
+        boolean result = ProfessionHelper.tryLevelUp(player, false, false);
 
         if (result) {
             context.getSource().sendSuccess(() -> Component.literal(String.format(

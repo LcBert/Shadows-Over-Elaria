@@ -1,5 +1,9 @@
 package com.lucab.shadows_things.rpg.professions;
 
+import com.lucab.shadows_things.ShadowsThings;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 
 public class ProfessionHelper {
@@ -7,17 +11,19 @@ public class ProfessionHelper {
         COOK, BLACKSMITH, FARMER;
     }
 
+    public static final int MAX_PROFESSION_LEVEL = 10;
+    public static final int MAX_POINTS = 30;
+    public static final float[] EXPERIENCE_PER_LEVEL = new float[]{10.0f, 100.0f};
+
     public static class BLACKSMITH_CHANCE {
-        public static final float[] repair_efficiency = new float[]{0.05f, 0.20f};
-        public static final float[] save_kit = new float[]{0.10f, 0.65f};
+        public static final float[] repair_efficiency = new float[]{0.0f, 0.25f};
+        public static final float[] save_kit = new float[]{0.0f, 0.65f};
     }
 
     public static class FARMER_CHANCE {
-        public static final float[] save_tool = new float[]{0.15f, 0.80f};
-        public static final float[] double_drop = new float[]{0.20f, 0.80f};
+        public static final float[] save_tool = new float[]{0.0f, 0.80f};
+        public static final float[] extra_drop = new float[]{0.0f, 0.80f};
     }
-
-    public static final int MAX_PROFESSION_LEVEL = 10;
 
     private static void sync(Player player) {
         player.setData(ProfessionAttachments.PROFESSION.get(), getProfessionData(player));
@@ -33,7 +39,6 @@ public class ProfessionHelper {
     }
 
     public static boolean incrementLevel(Player player, Professions profession) {
-        ProfessionAttachments data = getProfessionData(player);
         int currentLevel = getLevel(player, profession);
         if (currentLevel >= MAX_PROFESSION_LEVEL) return false;
         setLevel(player, profession, currentLevel + 1);
@@ -56,13 +61,15 @@ public class ProfessionHelper {
     }
 
     // Consume experience to add 1 point
-    public static boolean levelUp(Player player) {
+    public static boolean tryLevelUp(Player player, boolean play_sound, boolean chat_notify) {
         int currentXp = getExperience(player);
         int requiredXp = getExperienceRequired(player);
 
         if (currentXp >= requiredXp) {
             removeExperience(player, requiredXp);
             addPoints(player, 1);
+            if (play_sound) playLevelUpSound(player);
+            if (chat_notify) notifyLevelUp(player);
             return true;
         }
         return false;
@@ -96,7 +103,8 @@ public class ProfessionHelper {
     }
 
     public static void setPoints(Player player, int points) {
-        getProfessionData(player).points = Math.max(points, 0);
+        int maxLibero = MAX_POINTS - getUsedPoints(player);
+        getProfessionData(player).points = Math.clamp(maxLibero, 0, points);
         sync(player);
     }
 
@@ -112,18 +120,29 @@ public class ProfessionHelper {
         return getProfessionData(player).points;
     }
 
-    public static int getTotalPoints(Player player) {
-        int total = 0;
-        for (Professions profession : Professions.values()) {
-            total += ProfessionHelper.getLevel(player, profession);
-        }
+    public static int getUsedPoints(Player player) {
+        int used = 0;
+        for (Professions profession : Professions.values()) used += getLevel(player, profession);
+        return used;
+    }
 
-        total += ProfessionHelper.getPoints(player);
-        return total;
+    public static int getTotalPoints(Player player) {
+        return getPoints(player) + getUsedPoints(player);
     }
 
     public static float getPol(float[] range, int level) {
-        if (level == 0) return 0.0f;
-        return range[0] + (range[1] - range[0]) * ((float) (level - 1) / (MAX_PROFESSION_LEVEL - 1));
+        if (level <= 0) return range[0];
+        if (level >= MAX_PROFESSION_LEVEL) return range[1];
+        float value = range[0] + (range[1] - range[0]) * ((float) (level) / (MAX_PROFESSION_LEVEL));
+        ShadowsThings.LOGGER.info("Pol: {}", value);
+        return value;
+    }
+
+    public static void playLevelUpSound(Player player) {
+        player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
+    }
+
+    public static void notifyLevelUp(Player player) {
+        player.displayClientMessage(Component.literal("§2A new profession point is available§r"), true);
     }
 }

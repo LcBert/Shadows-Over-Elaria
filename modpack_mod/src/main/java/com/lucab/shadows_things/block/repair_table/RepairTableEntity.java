@@ -103,6 +103,7 @@ public class RepairTableEntity extends BlockEntity {
         if (damageRatio >= 0.25) {
             int blacksmithLevel = ProfessionHelper.getLevel(player, ProfessionHelper.Professions.BLACKSMITH);
 
+            // Handle Repair
             float repairEfficiency = 0.25F + ProfessionHelper.getPol(ProfessionHelper.BLACKSMITH_CHANCE.repair_efficiency, blacksmithLevel);
 
             double saveKitChance = ProfessionHelper.getPol(ProfessionHelper.BLACKSMITH_CHANCE.save_kit, blacksmithLevel);
@@ -121,6 +122,11 @@ public class RepairTableEntity extends BlockEntity {
                         0.05
                 );
             }
+
+            // Handle Experience
+            float gainedXp = ProfessionHelper.getPol(ProfessionHelper.EXPERIENCE_PER_LEVEL, blacksmithLevel);
+            ProfessionHelper.addExperience(player, (int) gainedXp);
+            ProfessionHelper.tryLevelUp(player, true, true);
 
             return true;
         }

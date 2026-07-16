@@ -18,11 +18,18 @@ import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 public class ModifyFoodValue {
     public static Map<String, Integer> foodValues = new HashMap<>() {
         {
+            // Tier 1
             put("minecraft:cooked_beef", 2);
             put("minecraft:cooked_porkchop", 2);
             put("minecraft:cooked_mutton", 2);
             put("minecraft:cooked_chicken", 2);
             put("minecraft:cooked_rabbit", 2);
+
+            // Tier 2
+            put("farmersdelight:beef_patty", 4);
+            put("farmersdelight:cooked_bacon", 4);
+            put("farmersdelight:cooked_mutton_chops", 4);
+            put("farmersdelight:cooked_chicken_cuts", 4);
         }
     };
 

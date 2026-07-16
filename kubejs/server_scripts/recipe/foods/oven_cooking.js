@@ -1,5 +1,8 @@
 ServerEvents.recipes(event => {
-    ovenRecipe(event, "minecraft:beef", "minecraft:cooked_beef")
+    ovenRecipe(event, "farmersdelight:minced_beef", "farmersdelight:beef_patty")
+    ovenRecipe(event, "farmersdelight:bacon", "farmersdelight:cooked_bacon")
+    ovenRecipe(event, "farmersdelight:mutton_chops", "farmersdelight:cooked_mutton_chops")
+    ovenRecipe(event, "farmersdelight:chicken_cuts", "farmersdelight:cooked_chicken_cuts")
 })
 
 function ovenRecipe(event, input, output, time) {
@@ -17,15 +20,10 @@ function ovenRecipe(event, input, output, time) {
     let outItem = outMatch[2]
 
     event.custom({
-        "type": "shadows_things:oven_cooking",
-        "ingredient": {
-            "item": inItem,
-            "count": inCount
-        },
-        "result": {
-            "id": outItem,
-            "count": outCount
-        },
-        "cooking_time": time
+        "type": "shadows_things:oven_cooking", "ingredient": {
+            "item": inItem, "count": inCount
+        }, "result": {
+            "id": outItem, "count": outCount
+        }, "cooking_time": time
     })
 }

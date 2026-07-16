@@ -1,5 +1,7 @@
 {
   "values": [
+    "shadows_things:repair_table",
+    "shadows_things:oven",
     "shadows_things:silver_ore"
   ]
 }

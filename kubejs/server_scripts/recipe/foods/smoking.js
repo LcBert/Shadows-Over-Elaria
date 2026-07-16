@@ -1,5 +1,6 @@
 ServerEvents.recipes(event => {
-    event.remove({ type: "minecraft:smoking" })
+    event.remove({type: "minecraft:smoking"})
+    event.remove({type: "minecraft:campfire_cooking"})
     event.remove("minecraft:smoker")
 
     event.shaped("minecraft:smoker", [
@@ -7,8 +8,8 @@ ServerEvents.recipes(event => {
         "B B",
         "ABA"
     ], {
-        A: { tag: "minecraft:logs" },
-        B: { item: "minecraft:stone" },
+        A: {tag: "minecraft:logs"},
+        B: {item: "minecraft:stone"},
     })
 
     event.smoking("minecraft:cooked_beef", "minecraft:beef")

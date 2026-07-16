@@ -2,6 +2,7 @@ package com.lucab.shadows_things.recipe;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
@@ -21,12 +22,7 @@ public class RecipesRegistries {
 
     // Registrazione Type
     public static final DeferredHolder<RecipeType<?>, RecipeType<OvenRecipe>> OVEN_TYPE =
-            TYPES.register("oven_cooking", () -> new RecipeType<>() {
-                @Override
-                public String toString() {
-                    return "oven_cooking";
-                }
-            });
+            TYPES.register("oven_cooking", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "oven_cooking")));
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);

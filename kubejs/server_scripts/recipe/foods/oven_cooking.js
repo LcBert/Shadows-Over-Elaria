@@ -1,5 +1,5 @@
 ServerEvents.recipes(event => {
-    ovenRecipe(event, "minecraft:beef", "minecraft:cooked_beef", 1)
+    ovenRecipe(event, "minecraft:beef", "minecraft:cooked_beef")
 })
 
 function ovenRecipe(event, input, output, time) {

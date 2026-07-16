@@ -1,12 +1,10 @@
-package com.lucab.shadows_things.block.deep_cave_portal_block;
+package com.lucab.shadows_things.content.block.deep_cave_portal_block;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.block.BlocksRegister;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundSetCameraPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -39,7 +37,7 @@ public class DeepCavePortalEntity extends BlockEntity {
     private int tickCount = 0;
 
     public DeepCavePortalEntity(BlockPos pos, BlockState state) {
-        super(BlocksRegister.DEEP_CAVE_PORTAL_ENTITY.get(), pos, state);
+        super(DeepCavePortalRegister.DEEP_CAVE_PORTAL_ENTITY.get(), pos, state);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, DeepCavePortalEntity be) {

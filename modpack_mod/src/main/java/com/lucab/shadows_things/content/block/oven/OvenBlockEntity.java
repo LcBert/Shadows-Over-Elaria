@@ -1,6 +1,5 @@
-package com.lucab.shadows_things.block.oven;
+package com.lucab.shadows_things.content.block.oven;
 
-import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.recipe.OvenRecipe;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.recipe.SingleItemRecipeInput;
@@ -21,7 +20,7 @@ import java.util.Optional;
 
 public class OvenBlockEntity extends BlockEntity {
     public OvenBlockEntity(BlockPos pos, BlockState state) {
-        super(BlocksRegister.OVEN_BLOCK_ENTITY.get(), pos, state);
+        super(OvenRegister.OVEN_BLOCK_ENTITY.get(), pos, state);
     }
 
     private int litTime;

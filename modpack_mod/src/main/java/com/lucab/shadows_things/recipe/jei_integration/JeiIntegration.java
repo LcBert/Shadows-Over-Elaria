@@ -1,8 +1,8 @@
 package com.lucab.shadows_things.recipe.jei_integration;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.client.screen.OvenScreen;
+import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.menus.OvenMenu;
 import com.lucab.shadows_things.recipe.OvenRecipe;
@@ -13,7 +13,6 @@ import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -53,8 +52,8 @@ public class JeiIntegration implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(BlocksRegister.OVEN_BlOCK.get()), OvenRecipeCategory.TYPE);
-        registration.addRecipeCatalyst(new ItemStack(BlocksRegister.OVEN_BlOCK.get()), RecipeTypes.FUELING);
+        registration.addRecipeCatalyst(new ItemStack(OvenRegister.OVEN_BlOCK.get()), OvenRecipeCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(OvenRegister.OVEN_BlOCK.get()), RecipeTypes.FUELING);
     }
 
     @Override

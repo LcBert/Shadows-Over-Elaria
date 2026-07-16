@@ -1,7 +1,6 @@
-package com.lucab.shadows_things.block.oven;
+package com.lucab.shadows_things.content.block.oven;
 
 import com.lucab.shadows_things.menus.OvenMenu;
-import com.lucab.shadows_things.block.BlocksRegister;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -99,7 +98,7 @@ public class OvenBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return createTickerHelper(blockEntityType, BlocksRegister.OVEN_BLOCK_ENTITY.get(), OvenBlockEntity::tick);
+        return createTickerHelper(blockEntityType, OvenRegister.OVEN_BLOCK_ENTITY.get(), OvenBlockEntity::tick);
     }
 
     @Override

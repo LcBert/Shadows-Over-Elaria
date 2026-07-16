@@ -1,6 +1,6 @@
-package com.lucab.shadows_things.block.repair_table;
+package com.lucab.shadows_things.content.block.repair_table;
 
-import com.lucab.shadows_things.item.RepairKits;
+import com.lucab.shadows_things.content.item.RepairKits;
 
 import net.minecraft.world.item.Item;
 

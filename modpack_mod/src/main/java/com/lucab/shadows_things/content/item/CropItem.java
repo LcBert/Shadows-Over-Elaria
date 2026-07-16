@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.item;
+package com.lucab.shadows_things.content.item;
 
 import com.lucab.shadows_things.ShadowsThings;
 

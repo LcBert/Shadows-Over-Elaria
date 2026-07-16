@@ -1,7 +1,7 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.menus.MenuRegistries;
-import com.lucab.shadows_things.item.*;
 import com.lucab.shadows_things.network.OpenProfessionGuiPacket;
 import com.lucab.shadows_things.network.UpgradeProfessionPacket;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
@@ -16,7 +16,6 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
-import com.lucab.shadows_things.block.BlocksRegister;
 import com.lucab.shadows_things.loot.AddTreeBarkModifier;
 import com.lucab.shadows_things.rpg.classes.ClassCommand;
 import com.mojang.logging.LogUtils;
@@ -76,18 +75,8 @@ public class ShadowsThings {
 
         modEventBus.addListener(this::registerPayLoad);
 
-        // Items register
-        FlintTools.register();
-        CopperTools.register();
-        Crops.register();
-        Plates.register();
-        Rods.register();
-        Hilts.register();
-        RepairKits.register();
-        Various.register();
-
-        // Blocks register
-        BlocksRegister.register();
+        // Conten Register
+        ContentRegister.register();
 
         // Menus register
         MenuRegistries.register();

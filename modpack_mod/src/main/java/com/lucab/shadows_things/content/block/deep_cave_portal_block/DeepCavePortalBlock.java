@@ -1,10 +1,8 @@
-package com.lucab.shadows_things.block.deep_cave_portal_block;
+package com.lucab.shadows_things.content.block.deep_cave_portal_block;
 
-import com.lucab.shadows_things.block.BlocksRegister;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -15,7 +13,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -52,7 +49,7 @@ public class DeepCavePortalBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return createTickerHelper(blockEntityType, BlocksRegister.DEEP_CAVE_PORTAL_ENTITY.get(), DeepCavePortalEntity::tick);
+        return createTickerHelper(blockEntityType, DeepCavePortalRegister.DEEP_CAVE_PORTAL_ENTITY.get(), DeepCavePortalEntity::tick);
     }
 
     @Override

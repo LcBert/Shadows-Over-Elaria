@@ -1,6 +1,6 @@
 package com.lucab.shadows_things.client.renderer;
 
-import com.lucab.shadows_things.block.repair_table.RepairTableEntity;
+import com.lucab.shadows_things.content.block.repair_table.RepairTableEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 

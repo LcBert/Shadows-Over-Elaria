@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.recipe.jei_integration;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.block.BlocksRegister;
+import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.recipe.OvenRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -32,7 +32,7 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
     private final IDrawableAnimated filledArrow;
 
     public OvenRecipeCategory(IGuiHelper helper) {
-        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BlocksRegister.OVEN_BlOCK.get()));
+        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(OvenRegister.OVEN_BlOCK.get()));
         this.slot = helper.getSlotDrawable();
         this.arrow = helper.getRecipeArrow();
         this.filledArrow = helper.createAnimatedDrawable(helper.getRecipeArrowFilled(), 200, IDrawableAnimated.StartDirection.LEFT, false);

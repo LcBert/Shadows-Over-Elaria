@@ -1,6 +1,6 @@
 package com.lucab.shadows_things.menus;
 
-import com.lucab.shadows_things.block.oven.OvenBlockEntity;
+import com.lucab.shadows_things.content.block.oven.OvenBlockEntity;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

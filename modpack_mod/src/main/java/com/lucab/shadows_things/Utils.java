@@ -1,6 +1,6 @@
 package com.lucab.shadows_things;
 
-import com.lucab.shadows_things.block.repair_table.RepairType;
+import com.lucab.shadows_things.content.block.repair_table.RepairType;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

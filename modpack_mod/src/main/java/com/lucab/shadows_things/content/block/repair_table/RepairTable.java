@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.block.repair_table;
+package com.lucab.shadows_things.content.block.repair_table;
 
 import com.lucab.shadows_things.Utils;
 import com.mojang.serialization.MapCodec;

@@ -1,8 +1,6 @@
-package com.lucab.shadows_things.block.repair_table;
+package com.lucab.shadows_things.content.block.repair_table;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.block.BlocksRegister;
-
 import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -28,7 +26,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 
 public class RepairTableEntity extends BlockEntity {
     public RepairTableEntity(BlockPos pos, BlockState state) {
-        super(BlocksRegister.REPAIR_TABLE_ENTITY.get(), pos, state);
+        super(RepairTableRegister.REPAIR_TABLE_ENTITY.get(), pos, state);
     }
 
     public final ItemStackHandler inventory = new ItemStackHandler(2) {

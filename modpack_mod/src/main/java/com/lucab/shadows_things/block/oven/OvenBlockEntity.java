@@ -100,64 +100,51 @@ public class OvenBlockEntity extends BlockEntity {
         return this.containerData;
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, OvenBlockEntity entity) {
+    public static void tick(Level level, BlockPos pos, BlockState state, OvenBlockEntity oven) {
         if (level.isClientSide) return;
 
         // Handle Lit State
-        entity.handleLitState();
+        oven.handleLitState();
 
         // Handle Process
-        if (entity.canProcessRow(0)) {
-            if (entity.isLit()) entity.cookTime0++;
-            else if (level.getGameTime() % 20 == 0 && entity.cookTime0 > 0) entity.cookTime0--;
+        if (oven.canProcessRow(0)) {
+            if (oven.isLit()) oven.cookTime0++;
+            else if (level.getGameTime() % 20 == 0 && oven.cookTime0 > 0) oven.cookTime0--;
 
-            if (entity.cookTime0 >= entity.cookingTotalTime0) {
-                entity.processRecipe(0);
-                entity.cookTime0 = 0;
+            if (oven.cookTime0 >= oven.cookingTotalTime0) {
+                oven.processRecipe(0);
+                oven.cookTime0 = 0;
             }
         } else {
-            entity.cookTime0 = 0;
+            oven.cookTime0 = 0;
         }
 
-        if (entity.canProcessRow(1)) {
-            if (entity.isLit()) entity.cookTime1++;
-            else if (level.getGameTime() % 20 == 0 && entity.cookTime1 > 0) entity.cookTime1--;
+        if (oven.canProcessRow(1)) {
+            if (oven.isLit()) oven.cookTime1++;
+            else if (level.getGameTime() % 20 == 0 && oven.cookTime1 > 0) oven.cookTime1--;
 
-            if (entity.cookTime1 >= entity.cookingTotalTime1) {
-                entity.processRecipe(1);
-                entity.cookTime1 = 0;
+            if (oven.cookTime1 >= oven.cookingTotalTime1) {
+                oven.processRecipe(1);
+                oven.cookTime1 = 0;
             }
         } else {
-            entity.cookTime1 = 0;
+            oven.cookTime1 = 0;
         }
 
-        if (entity.canProcessRow(2)) {
-            if (entity.isLit()) entity.cookTime2++;
-            else if (level.getGameTime() % 20 == 0 && entity.cookTime2 > 0) entity.cookTime2--;
+        if (oven.canProcessRow(2)) {
+            if (oven.isLit()) oven.cookTime2++;
+            else if (level.getGameTime() % 20 == 0 && oven.cookTime2 > 0) oven.cookTime2--;
 
-            if (entity.cookTime2 >= entity.cookingTotalTime2) {
-                entity.processRecipe(2);
-                entity.cookTime2 = 0;
+            if (oven.cookTime2 >= oven.cookingTotalTime2) {
+                oven.processRecipe(2);
+                oven.cookTime2 = 0;
             }
         } else {
-            entity.cookTime2 = 0;
+            oven.cookTime2 = 0;
         }
 
         // Process fuel
-        if (!entity.isLit() && entity.hasItems()) {
-            ItemStack fuelStack = entity.inventory.getStackInSlot(3);
-            if (!fuelStack.isEmpty()) {
-                int burnTime = fuelStack.getBurnTime(null);
-                System.out.println(burnTime);
-                if (burnTime > 0) {
-                    fuelStack.shrink(1);
-                    entity.litDuration = burnTime;
-                    entity.litTime = burnTime;
-                }
-            }
-        } else {
-            entity.litTime--;
-        }
+        oven.processFuel();
     }
 
     private boolean isLit() {
@@ -170,6 +157,22 @@ public class OvenBlockEntity extends BlockEntity {
         if (currentState.getValue(OvenBlock.LIT) != isLit()) {
             level.setBlock(getBlockPos(), currentState.setValue(OvenBlock.LIT, isLit()), Block.UPDATE_ALL);
             setChanged();
+        }
+    }
+
+    private void processFuel() {
+        if (!isLit() && (canProcessRow(0) || canProcessRow(1) || canProcessRow(2))) {
+            ItemStack fuelStack = inventory.getStackInSlot(3);
+            if (!fuelStack.isEmpty()) {
+                int burnTime = fuelStack.getBurnTime(null);
+                if (burnTime > 0) {
+                    fuelStack.shrink(1);
+                    litDuration = burnTime;
+                    litTime = burnTime;
+                }
+            }
+        } else {
+            litTime--;
         }
     }
 

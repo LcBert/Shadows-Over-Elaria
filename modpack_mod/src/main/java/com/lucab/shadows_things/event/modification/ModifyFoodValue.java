@@ -22,8 +22,7 @@ public class ModifyFoodValue {
             put("minecraft:cooked_porkchop", 2);
             put("minecraft:cooked_mutton", 2);
             put("minecraft:cooked_chicken", 2);
-            put("minecraft:cooked_cod", 2);
-            put("minecraft:cooked_salmon", 2);
+            put("minecraft:cooked_rabbit", 2);
         }
     };
 

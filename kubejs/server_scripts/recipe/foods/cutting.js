@@ -5,8 +5,6 @@ ServerEvents.recipes(event => {
     cuttingRecipe(event, "minecraft:porkchop", ["farmersdelight:bacon"])
     cuttingRecipe(event, "minecraft:mutton", ["farmersdelight:mutton_chops"])
     cuttingRecipe(event, "minecraft:chicken", ["farmersdelight:chicken_cuts"])
-    cuttingRecipe(event, "minecraft:cod", ["farmersdelight:cod_slice"])
-    cuttingRecipe(event, "minecraft:salmon", ["farmersdelight:salmon_slice"])
     cuttingRecipe(event, "farmersdelight:cabbage", ["farmersdelight:cabbage_leaf"])
 })
 

@@ -16,6 +16,5 @@ ServerEvents.recipes(event => {
     event.smoking("minecraft:cooked_porkchop", "minecraft:porkchop")
     event.smoking("minecraft:cooked_mutton", "minecraft:mutton")
     event.smoking("minecraft:cooked_chicken", "minecraft:chicken")
-    event.smoking("minecraft:cooked_cod", "minecraft:cod")
-    event.smoking("minecraft:cooked_salmon", "minecraft:salmon")
+    event.smoking("minecraft:cooked_rabbit", "minecraft:rabbit")
 })

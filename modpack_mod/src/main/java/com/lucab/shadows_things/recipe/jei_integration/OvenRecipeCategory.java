@@ -13,10 +13,13 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
@@ -57,21 +60,34 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
 
     @Override
     public int getHeight() {
-        return 18;
+        return 25;
     }
 
     @Override
     public void draw(OvenRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        arrow.draw(guiGraphics, 22, 2);
-        filledArrow.draw(guiGraphics, 22, 2);
         slot.draw(guiGraphics, 0, 0);
         slot.draw(guiGraphics, 47, 0);
+        arrow.draw(guiGraphics, 22, 2);
+        filledArrow.draw(guiGraphics, 22, 2);
+
+        // Draw Cooking Time String
+        float seconds = recipe.getCookingTime() / 20.0f;
+        String timeString = seconds + "s";
+        if (seconds % 1 == 0) timeString = (int) seconds + "s";
+
+        Font font = Minecraft.getInstance().font;
+        int textWidth = font.width(timeString);
+
+        int textX = (getWidth() / 2) - (textWidth / 2);
+        int textY = 19;
+
+        guiGraphics.drawString(font, timeString, textX, textY, 0xFF555555, false);
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, OvenRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, OvenRecipe recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                .addIngredients(recipe.getIngredient().ingredient());
+                .addItemStack(new ItemStack(recipe.getIngredient().ingredient().getItems()[0].getItem(), recipe.getIngredientCount()));
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 48, 1)
                 .addItemStack(recipe.getResult());

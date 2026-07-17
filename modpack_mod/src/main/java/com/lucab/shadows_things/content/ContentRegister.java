@@ -17,6 +17,7 @@ public class ContentRegister {
         // Items
         CopperTools.register();
         FlintTools.register();
+        SeedsBagItem.register();
         Crops.register();
         Hilts.register();
         Plates.register();

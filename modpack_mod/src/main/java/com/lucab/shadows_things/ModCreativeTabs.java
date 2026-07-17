@@ -32,6 +32,7 @@ public class ModCreativeTabs {
                         // Items
                         output.acceptAll(FlintTools.getItems());
                         output.acceptAll(CopperTools.getItems());
+                        output.acceptAll(SeedsBagItem.getItems());
                         output.acceptAll(Crops.getItems());
                         output.acceptAll(ItemVarious.getItems());
                         output.acceptAll(Plates.getItems());

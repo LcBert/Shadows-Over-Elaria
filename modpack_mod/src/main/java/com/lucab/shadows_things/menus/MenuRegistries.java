@@ -12,7 +12,11 @@ public class MenuRegistries {
 
     // Profession Menu
     public static final DeferredHolder<MenuType<?>, MenuType<ProfessionMenu>> PROFESSION_MENU = ShadowsThings.MENUS.register("profession_menu",
-            ()->IMenuTypeExtension.create(ProfessionMenu::new));
+            () -> IMenuTypeExtension.create(ProfessionMenu::new));
+
+    // Seeds bag Menu
+    public static final DeferredHolder<MenuType<?>, MenuType<SeedsBagMenu>> SEEDS_BAG_MENU = ShadowsThings.MENUS.register("seeds_bag_menu",
+            () -> IMenuTypeExtension.create(SeedsBagMenu::new));
 
     public static void register() {
     }

@@ -1,16 +1,15 @@
 package com.lucab.shadows_things.menus;
 
-import com.lucab.shadows_things.content.item.Crops;
+import com.lucab.shadows_things.content.item.SeedsBagItem;
+import com.lucab.shadows_things.content.item.SeedsSlot;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SeedsBagMenu extends AbstractContainerMenu {
-    private static final int SLOT_COUNT = 6;
+    public static final int SLOT_COUNT = 6;
     private static final int SLOT_COL = 3;
 
     private static final int INVENTORY_X = 8;
@@ -32,11 +31,21 @@ public class SeedsBagMenu extends AbstractContainerMenu {
     private final ItemStackHandler bagInventory;
 
     public SeedsBagMenu(int containerId, Inventory playerInventory) {
-        this(containerId, playerInventory, playerInventory.player.getMainHandItem());
+        this(containerId, playerInventory, findBagInHand(playerInventory.player));
     }
 
-    public SeedsBagMenu(int containerId, Inventory playerInventory, net.minecraft.network.RegistryFriendlyByteBuf buf) {
-        this(containerId, playerInventory, playerInventory.player.getMainHandItem());
+    public SeedsBagMenu(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+        this(containerId, playerInventory, findBagInHand(playerInventory.player));
+    }
+
+    private static ItemStack findBagInHand(Player player) {
+        if (player.getMainHandItem().getItem() instanceof SeedsBagItem) {
+            return player.getMainHandItem();
+        } else if (player.getOffhandItem().getItem() instanceof SeedsBagItem) {
+            return player.getOffhandItem();
+        }
+        // Fallback di sicurezza
+        return player.getMainHandItem();
     }
 
     public SeedsBagMenu(int containerId, Inventory playerInventory, ItemStack bagStack) {
@@ -50,6 +59,13 @@ public class SeedsBagMenu extends AbstractContainerMenu {
                     stacks.add(getStackInSlot(i));
                 }
                 SeedsBagMenu.this.bagStack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(stacks));
+            }
+
+            @Override
+            public boolean isItemValid(int slot, ItemStack stack) {
+                if (stack.isEmpty()) return false;
+                Item filterItem = SeedsSlot.getFilterItemForSlot(slot);
+                return stack.is(filterItem);
             }
         };
 
@@ -77,15 +93,7 @@ public class SeedsBagMenu extends AbstractContainerMenu {
                 int bagSlotIndex = col + (row * SLOT_COL);
                 int xPos = rowStartX + (col * 18);
                 int yPos = baseStartY + (row * 18);
-
-                Item filterItem = getFilterItemForSlot(bagSlotIndex);
-
-                this.addSlot(new SlotItemHandler(bagInventory, bagSlotIndex, xPos, yPos) {
-                    @Override
-                    public boolean mayPlace(ItemStack stack) {
-                        return !stack.isEmpty() && stack.is(filterItem);
-                    }
-                });
+                this.addSlot(new SlotItemHandler(bagInventory, bagSlotIndex, xPos, yPos));
             }
         }
 
@@ -160,20 +168,4 @@ public class SeedsBagMenu extends AbstractContainerMenu {
     public ItemStackHandler getBagInventory() {
         return this.bagInventory;
     }
-
-    public Item getFilterItemForSlot(int bagSlotIndex) {
-        List<Item> allowedSeedsPerSlot = List.of(
-                Items.WHEAT_SEEDS,
-                Crops.CARROT_SEEDS.get(),
-                Crops.POTATO_SEEDS.get(),
-                Items.BEETROOT_SEEDS,
-                Crops.ONION_SEEDS.get(),
-                BuiltInRegistries.ITEM.get(ResourceLocation.parse("farmersdelight:cabbage_seeds"))
-        );
-        if (bagSlotIndex >= 0 && bagSlotIndex < allowedSeedsPerSlot.size()) {
-            return allowedSeedsPerSlot.get(bagSlotIndex);
-        }
-        return Items.AIR;
-    }
-
 }

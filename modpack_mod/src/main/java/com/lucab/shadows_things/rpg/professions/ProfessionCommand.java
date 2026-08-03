@@ -41,7 +41,7 @@ public class ProfessionCommand {
 
                                         // 3. RESET Branch: Without arguments resets all professions, with an argument resets only that specific profession
                                         .then(Commands.literal("reset")
-                                                .executes(ProfessionCommand::resetAllProfessions)
+                                                .executes(ProfessionCommand::resetAll)
                                                 .then(Commands.argument("profession", StringArgumentType.word())
                                                         .suggests(ProfessionCommand::suggestProfessions)
                                                         .executes(ProfessionCommand::resetSpecificProfession)))
@@ -124,7 +124,7 @@ public class ProfessionCommand {
             context.getSource().sendSuccess(() -> Component.literal(String.format("§7%s's §b%s§7 level is: §f%d§r",
                     player.getName().getString(), profession.name().toLowerCase(Locale.ROOT), level)), false);
         } catch (IllegalArgumentException e) {
-            context.getSource().sendFailure(Component.literal("§cInvalid profession name!"));
+            context.getSource().sendFailure(Component.literal("§cInvalid profession text!"));
         }
 
         return 1;
@@ -142,25 +142,25 @@ public class ProfessionCommand {
             context.getSource().sendSuccess(() -> Component.literal(String.format("§aSuccessfully set %s level to %d for %s§r",
                     profession.name().toLowerCase(Locale.ROOT), value, player.getName().getString())), false);
         } catch (IllegalArgumentException e) {
-            context.getSource().sendFailure(Component.literal("§cInvalid profession name!"));
+            context.getSource().sendFailure(Component.literal("§cInvalid profession text!"));
         }
 
         return 1;
     }
 
     // Resets all player professions to level 0 via ProfessionHelper
-    private static int resetAllProfessions(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int resetAll(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(context, "player");
-        ProfessionHelper.resetLevel(player);
+        ProfessionHelper.resetAll(player);
 
-        context.getSource().sendSuccess(() -> Component.literal(String.format("§eAll professions have been reset to level 0 for %s§r",
+        context.getSource().sendSuccess(() -> Component.literal(String.format("§eReset all professions data for %s§r",
                 player.getName().getString())), false);
         return 1;
     }
 
     private static int levelUp(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(context, "player");
-        boolean result = ProfessionHelper.tryLevelUp(player, false, false);
+        boolean result = ProfessionHelper.tryLevelUp(player, false);
 
         if (result) {
             context.getSource().sendSuccess(() -> Component.literal(String.format(
@@ -190,7 +190,7 @@ public class ProfessionCommand {
             context.getSource().sendSuccess(() -> Component.literal(String.format("§eSuccessfully reset §b%s§e level to 0 for %s§r",
                     profession.name().toLowerCase(Locale.ROOT), player.getName().getString())), false);
         } catch (IllegalArgumentException e) {
-            context.getSource().sendFailure(Component.literal("§cInvalid profession name!"));
+            context.getSource().sendFailure(Component.literal("§cInvalid profession text!"));
         }
 
         return 1;

@@ -122,9 +122,9 @@ public class RepairTableEntity extends BlockEntity {
             }
 
             // Handle Experience
-            float gainedXp = ProfessionHelper.getPol(ProfessionHelper.EXPERIENCE_PER_LEVEL, blacksmithLevel);
+            float gainedXp = ProfessionHelper.getPol(ProfessionHelper.BLACKSMITH_CHANCE.repair_xp, blacksmithLevel);
             ProfessionHelper.addExperience(player, (int) gainedXp);
-            ProfessionHelper.tryLevelUp(player, true, true);
+            ProfessionHelper.tryLevelUp(player, true);
 
             return true;
         }

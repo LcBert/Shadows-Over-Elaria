@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "shadows_things:underground_roots"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "shadows_things:blocks/underground_roots"
+}

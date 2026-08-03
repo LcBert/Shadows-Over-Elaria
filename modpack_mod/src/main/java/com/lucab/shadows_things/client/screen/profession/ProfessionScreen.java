@@ -21,7 +21,7 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
     private static final ResourceLocation XP_BAR_BG = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/screen/profession/xp_progress_background.png");
     private static final ResourceLocation XP_BAR_FILL = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/screen/profession/xp_progress_filled.png");
 
-    public static final String TRANSLATABLE_NAME = "gui.shadows_things.profession.name.";
+    public static final String TRANSLATABLE_NAME = "gui.shadows_things.profession.text.";
 
     private static final int BAR_WIDTH = 163;
     private static final int BAR_HEIGHT = 5;
@@ -32,7 +32,7 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
     private static final int CARD_X1 = 5;
     private static final int CARD_X2 = 100;
     private static final int CARD_START_Y = 60;
-    private static final int CARD_Y_SPACING = 70;
+    private static final int CARD_Y_SPACING = 65;
 
     private final List<ProfessionCard> professionCards = new ArrayList<>();
 
@@ -107,7 +107,7 @@ public class ProfessionScreen extends AbstractContainerScreen<ProfessionMenu> {
             int posX = leftPos + ((i % 2 == 0) ? CARD_X1 : CARD_X2);
             int posY = topPos + CARD_START_Y + (i / 2) * CARD_Y_SPACING;
 
-            professionCards.add(new ProfessionCard(posX, posY, Component.translatable(TRANSLATABLE_NAME + profession.name().toLowerCase()).getString(), level));
+            professionCards.add(new ProfessionCard(posX, posY, profession));
         }
 
         for (ProfessionCard card : professionCards) {

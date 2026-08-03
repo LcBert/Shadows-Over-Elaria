@@ -66,7 +66,7 @@ public class ClassCommand {
                     player.getName().getString(), ClassManager.getClassName(player).toUpperCase(), tier)), false);
         } catch (IllegalArgumentException e) {
             // FAILURE: Standard red error notification
-            source.sendSuccess(() -> Component.literal(String.format("§cInvalid class name or tier: %s§r", className)), false);
+            source.sendSuccess(() -> Component.literal(String.format("§cInvalid class text or tier: %s§r", className)), false);
         }
 
         return 1;

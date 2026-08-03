@@ -4,6 +4,7 @@ import com.lucab.shadows_things.content.block.BlockVarious;
 import com.lucab.shadows_things.content.block.deep_cave_portal_block.DeepCavePortalRegister;
 import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
+import com.lucab.shadows_things.content.block.sieve.SieveRegister;
 import com.lucab.shadows_things.content.item.*;
 
 public class ContentRegister {
@@ -12,6 +13,7 @@ public class ContentRegister {
         RepairTableRegister.register();
         OvenRegister.register();
         DeepCavePortalRegister.register();
+        SieveRegister.register();
         BlockVarious.register();
 
         // Items

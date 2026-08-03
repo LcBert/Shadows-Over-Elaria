@@ -7,7 +7,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.List;
 
-public class SeedsSlot {
+public class SeedsBagHelper {
     public static final List<Item> allowedSeedsPerSlot = List.of(
             Items.WHEAT_SEEDS,
             Crops.CARROT_SEEDS.get(),
@@ -18,8 +18,8 @@ public class SeedsSlot {
     );
 
     public static Item getFilterItemForSlot(int bagSlotIndex) {
-        if (bagSlotIndex >= 0 && bagSlotIndex < SeedsSlot.allowedSeedsPerSlot.size()) {
-            return SeedsSlot.allowedSeedsPerSlot.get(bagSlotIndex);
+        if (bagSlotIndex >= 0 && bagSlotIndex < SeedsBagHelper.allowedSeedsPerSlot.size()) {
+            return SeedsBagHelper.allowedSeedsPerSlot.get(bagSlotIndex);
         }
         return Items.AIR;
     }

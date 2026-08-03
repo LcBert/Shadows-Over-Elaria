@@ -45,7 +45,7 @@ public class ProfessionFarmingHandler {
             int farmerLevel = ProfessionHelper.getLevel(player, ProfessionHelper.Professions.FARMER);
 
             // Handle extra drop chance
-            double extraDropChance = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.extra_drop, farmerLevel);
+            double extraDropChance = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.extra_crop_drop, farmerLevel);
             if (level.random.nextDouble() < extraDropChance) {
                 int extraAmount = level.random.nextInt(farmerLevel) + 1;
                 ItemEntity bonusDrop = new ItemEntity(level,
@@ -56,9 +56,9 @@ public class ProfessionFarmingHandler {
             }
 
             // Handle Experience
-            float gainedXp = ProfessionHelper.getPol(ProfessionHelper.EXPERIENCE_PER_LEVEL, farmerLevel);
+            float gainedXp = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.crop_xp, farmerLevel);
             ProfessionHelper.addExperience(player, (int) gainedXp);
-            ProfessionHelper.tryLevelUp(player, true, true);
+            ProfessionHelper.tryLevelUp(player, true);
         }
     }
 }

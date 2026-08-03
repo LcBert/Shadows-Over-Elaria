@@ -54,7 +54,7 @@ public class SeedsBagItem extends Item {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 if (stack.isEmpty()) return false;
-                Item filterItem = SeedsSlot.getFilterItemForSlot(slot);
+                Item filterItem = SeedsBagHelper.getFilterItemForSlot(slot);
                 return stack.is(filterItem);
             }
         };
@@ -79,7 +79,7 @@ public class SeedsBagItem extends Item {
             }
 
             for (int bagSlot = 0; bagSlot < SeedsBagMenu.SLOT_COUNT; bagSlot++) {
-                Item filterItem = SeedsSlot.getFilterItemForSlot(bagSlot);
+                Item filterItem = SeedsBagHelper.getFilterItemForSlot(bagSlot);
 
                 if (invStack.is(filterItem)) {
                     ItemStack remainder = tempHandler.insertItem(bagSlot, invStack, false);

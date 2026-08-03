@@ -31,7 +31,7 @@ public class AddTreeBarkModifier extends LootModifier {
         if (state != null && state.is(BlockTags.LOGS)) {
             boolean isLog = state.is(BlockTags.LOGS);
 
-            // 2. Check if it's NOT a stripped log or wood (Check by name or tag)
+            // 2. Check if it's NOT a stripped log or wood (Check by text or tag)
             if (isLog) {
                 generatedLoot.clear();
                 generatedLoot.add(new ItemStack(BuiltInRegistries.ITEM.get(

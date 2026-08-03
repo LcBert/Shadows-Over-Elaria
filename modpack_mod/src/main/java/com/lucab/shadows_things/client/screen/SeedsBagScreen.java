@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.client.screen;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.content.item.SeedsSlot;
+import com.lucab.shadows_things.content.item.SeedsBagHelper;
 import com.lucab.shadows_things.menus.SeedsBagMenu;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -54,7 +54,7 @@ public class SeedsBagScreen extends AbstractContainerScreen<SeedsBagMenu> {
                 if (itemHandlerSlot.getItemHandler() == this.menu.getBagInventory()) {
                     if (!slot.hasItem()) {
                         int actualBagIndex = slot.getContainerSlot();
-                        Item filterItem = SeedsSlot.getFilterItemForSlot(actualBagIndex);
+                        Item filterItem = SeedsBagHelper.getFilterItemForSlot(actualBagIndex);
 
                         if (filterItem != Items.AIR) {
                             BakedModel bakedModel = Minecraft.getInstance().getItemRenderer().getModel(new ItemStack(filterItem), null, null, 0);

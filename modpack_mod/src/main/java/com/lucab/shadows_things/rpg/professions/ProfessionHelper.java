@@ -1,6 +1,8 @@
 package com.lucab.shadows_things.rpg.professions;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.toast.ToastHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,16 +15,18 @@ public class ProfessionHelper {
 
     public static final int MAX_PROFESSION_LEVEL = 10;
     public static final int MAX_POINTS = 30;
-    public static final float[] EXPERIENCE_PER_LEVEL = new float[]{10.0f, 100.0f};
 
     public static class BLACKSMITH_CHANCE {
         public static final float[] repair_efficiency = new float[]{0.0f, 0.25f};
         public static final float[] save_kit = new float[]{0.0f, 0.65f};
+        public static final float[] repair_xp = new float[]{10.0f, 100.0f};
     }
 
     public static class FARMER_CHANCE {
         public static final float[] save_tool = new float[]{0.0f, 0.80f};
-        public static final float[] extra_drop = new float[]{0.0f, 0.80f};
+        public static final float[] extra_crop_drop = new float[]{0.0f, 0.80f};
+        public static final float[] crop_xp = new float[]{10.0f, 100.0f};
+        public static final float[] roots_xp = new float[]{5.0f, 60.0f};
     }
 
     private static void sync(Player player) {
@@ -46,6 +50,12 @@ public class ProfessionHelper {
         return true;
     }
 
+    public static void resetAll(Player player) {
+        resetLevel(player);
+        setPoints(player, 0);
+        setExperience(player, 0);
+    }
+
     public static void resetLevel(Player player) {
         for (Professions professions : Professions.values()) {
             setLevel(player, professions, 0);
@@ -61,15 +71,17 @@ public class ProfessionHelper {
     }
 
     // Consume experience to add 1 point
-    public static boolean tryLevelUp(Player player, boolean play_sound, boolean chat_notify) {
+    public static boolean tryLevelUp(Player player, boolean notify) {
         int currentXp = getExperience(player);
         int requiredXp = getExperienceRequired(player);
 
         if (currentXp >= requiredXp) {
             removeExperience(player, requiredXp);
             addPoints(player, 1);
-            if (play_sound) playLevelUpSound(player);
-            if (chat_notify) notifyLevelUp(player);
+            if (notify) {
+                player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
+                ToastHelper.addToast(player, "New point available", ChatFormatting.YELLOW.getName(), 100);
+            }
             return true;
         }
         return false;
@@ -136,13 +148,5 @@ public class ProfessionHelper {
         float value = range[0] + (range[1] - range[0]) * ((float) (level) / (MAX_PROFESSION_LEVEL));
         ShadowsThings.LOGGER.info("Pol: {}", value);
         return value;
-    }
-
-    public static void playLevelUpSound(Player player) {
-        player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
-    }
-
-    public static void notifyLevelUp(Player player) {
-        player.displayClientMessage(Component.literal("§2A new profession point is available§r"), true);
     }
 }

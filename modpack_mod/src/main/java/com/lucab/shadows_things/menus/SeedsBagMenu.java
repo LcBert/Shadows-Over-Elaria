@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.menus;
 
 import com.lucab.shadows_things.content.item.SeedsBagItem;
-import com.lucab.shadows_things.content.item.SeedsSlot;
+import com.lucab.shadows_things.content.item.SeedsBagHelper;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -64,7 +64,7 @@ public class SeedsBagMenu extends AbstractContainerMenu {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 if (stack.isEmpty()) return false;
-                Item filterItem = SeedsSlot.getFilterItemForSlot(slot);
+                Item filterItem = SeedsBagHelper.getFilterItemForSlot(slot);
                 return stack.is(filterItem);
             }
         };

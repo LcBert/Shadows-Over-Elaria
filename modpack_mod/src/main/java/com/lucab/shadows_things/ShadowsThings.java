@@ -8,6 +8,8 @@ import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg.classes.ClassDataReader;
 import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
 import com.lucab.shadows_things.rpg.professions.ProfessionCommand;
+import com.lucab.shadows_things.toast.ToastCommand;
+import com.lucab.shadows_things.toast.ToastPacket;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
@@ -55,7 +57,7 @@ public class ShadowsThings {
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS = DeferredRegister
             .create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, "shadows_things");
 
-    // This name "add_tree_bark" MUST match the "type" in your JSON
+    // This text "add_tree_bark" MUST match the "type" in your JSON
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<AddTreeBarkModifier>> ADD_BARK_CODEC = LOOT_MODIFIER_SERIALIZERS
             .register("add_tree_bark", () -> AddTreeBarkModifier.CODEC);
 
@@ -91,6 +93,7 @@ public class ShadowsThings {
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
+        ToastCommand.register(event.getDispatcher());
         ClassCommand.register(event.getDispatcher());
         ProfessionCommand.register(event.getDispatcher());
     }
@@ -98,6 +101,7 @@ public class ShadowsThings {
     public void registerPayLoad(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("5");
 
+        // Profession
         registrar.playToServer(
                 OpenProfessionGuiPacket.TYPE,
                 OpenProfessionGuiPacket.STREAM_CODEC,
@@ -108,6 +112,13 @@ public class ShadowsThings {
                 UpgradeProfessionPacket.TYPE,
                 UpgradeProfessionPacket.STREAM_CODEC,
                 UpgradeProfessionPacket::handle
+        );
+
+        // Toast
+        registrar.playToClient(
+                ToastPacket.TYPE,
+                ToastPacket.STREAM_CODEC,
+                ToastPacket::handle
         );
     }
 

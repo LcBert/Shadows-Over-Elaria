@@ -25,6 +25,7 @@ public class ContentRegister {
         Plates.register();
         RepairKits.register();
         Rods.register();
+        GemItem.register();
         ItemVarious.register();
 
         SilverSet.register();

@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
@@ -30,8 +31,22 @@ public class ClassHandler {
 
         Item heldItem = player.getMainHandItem().getItem();
 
-        if (!ItemsManager.isCorrectItem(player, heldItem)) {
+        if (!ClassItemsManager.isCorrectItem(player, heldItem)) {
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onItemUse(LivingEntityUseItemEvent.Start event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (player.isCreative()) return;
+        if (!ClassManager.hasClass(player)) return;
+
+        Item usedItem = event.getItem().getItem();
+
+        if (!ClassItemsManager.isCorrectItem(player, usedItem)) {
+            event.setCanceled(true);
+            event.setDuration(-1);
         }
     }
 }

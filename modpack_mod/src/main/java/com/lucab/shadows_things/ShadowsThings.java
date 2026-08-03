@@ -6,10 +6,13 @@ import com.lucab.shadows_things.network.OpenProfessionGuiPacket;
 import com.lucab.shadows_things.network.UpgradeProfessionPacket;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg.classes.ClassDataReader;
+import com.lucab.shadows_things.rpg.gems.GemDataReader;
+import com.lucab.shadows_things.rpg.gems.SocketRegistries;
 import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
 import com.lucab.shadows_things.rpg.professions.ProfessionCommand;
 import com.lucab.shadows_things.toast.ToastCommand;
 import com.lucab.shadows_things.toast.ToastPacket;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
@@ -42,13 +45,17 @@ public class ShadowsThings {
     public static final String MODID = "shadows_things";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final ClassDataReader RPG_READER = new ClassDataReader();
+    public static final ClassDataReader CLASS_READER = new ClassDataReader();
+    public static final GemDataReader GEM_READER = new GemDataReader();
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, MODID);
+
+    // Data Components
+    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MODID);
 
     // Menu
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
@@ -66,21 +73,24 @@ public class ShadowsThings {
 
     public ShadowsThings(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
-
-        ITEMS.register(modEventBus);
-        BLOCKS.register(modEventBus);
-        BLOCK_ENTITIES.register(modEventBus);
-        MENUS.register(modEventBus);
         LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
         ATTACHMENT_TYPES.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
         modEventBus.addListener(this::registerPayLoad);
 
-        // Conten Register
+        // Content Register
+        ITEMS.register(modEventBus);
+        BLOCKS.register(modEventBus);
+        BLOCK_ENTITIES.register(modEventBus);
         ContentRegister.register();
 
+        // Data Components Register
+        DATA_COMPONENTS.register(modEventBus);
+        SocketRegistries.register();
+
         // Menus register
+        MENUS.register(modEventBus);
         MenuRegistries.register();
 
         //Recipes register
@@ -124,6 +134,7 @@ public class ShadowsThings {
 
     @SubscribeEvent
     public void onAddReloadListener(AddReloadListenerEvent event) {
-        event.addListener(RPG_READER);
+        event.addListener(CLASS_READER);
+        event.addListener(GEM_READER);
     }
 }

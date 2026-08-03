@@ -23,7 +23,7 @@ public class ModCreativeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SHADOWS_TAB = CREATIVE_TABS
             .register("shadows_tab", () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup." + ShadowsThings.MODID))
+                    .title(Component.translatable("itemGroup." + ShadowsThings.MODID + ".main"))
                     .icon(() -> new ItemStack(Items.CARROT))
                     .displayItems((parameters, output) -> {
                         // Blocks
@@ -44,6 +44,15 @@ public class ModCreativeTabs {
                         output.acceptAll(RepairKits.getItems());
                         output.acceptAll(Rods.getItems());
                         output.acceptAll(Hilts.getItems());
+                    })
+                    .build());
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SHADOWS_GEM_TAB = CREATIVE_TABS
+            .register("shadows_gem_tab", () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup." + ShadowsThings.MODID + ".gems"))
+                    .icon(() -> GemItem.getGems().getFirst())
+                    .displayItems((parameters, output) -> {
+                        output.acceptAll(GemItem.getGems());
                     })
                     .build());
 

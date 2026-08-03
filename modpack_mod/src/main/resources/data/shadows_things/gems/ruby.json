@@ -1,0 +1,27 @@
+{
+  "name": "Ruby",
+  "color": "0xFF2222",
+  "attributes": {
+    "weapon": [
+      {
+        "attribute": "minecraft:generic.attack_damage",
+        "operation": "add_value",
+        "base_value": 1.5
+      }
+    ],
+    "armor": [
+      {
+        "attribute": "minecraft:generic.max_health",
+        "operation": "add_value",
+        "base_value": 2.0
+      }
+    ],
+    "tool": [
+      {
+        "attribute": "neoforge:mining_efficiency",
+        "operation": "add_value",
+        "base_value": 1.0
+      }
+    ]
+  }
+}

@@ -26,7 +26,7 @@ public class ClassModifierApplier {
             return;
         }
 
-        ShadowsThings.RPG_READER.getClassData(className).ifPresent(data -> {
+        ShadowsThings.CLASS_READER.getClassData(className).ifPresent(data -> {
             for (ClassDataReader.ClassAttribute parsedAttr : data.attributes()) {
                 Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(parsedAttr.attributeId());
                 if (attribute != null) {

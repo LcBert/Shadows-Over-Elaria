@@ -1,0 +1,137 @@
+package com.lucab.shadows_things.content.item;
+
+import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.rpg.gems.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.neoforge.registries.DeferredItem;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public class GemItem extends Item {
+    private static final DecimalFormat FORMAT = new DecimalFormat("0.##", DecimalFormatSymbols.getInstance(Locale.US));
+    public static final DeferredItem<Item> GEM_ITEM = ShadowsThings.ITEMS.register("gem", GemItem::new);
+
+    public GemItem() {
+        super(new Item.Properties());
+    }
+
+    public static ItemStack createGem(ResourceLocation gemId, int rarity) {
+        ItemStack stack = new ItemStack(GEM_ITEM.get());
+        stack.set(SocketRegistries.GEM_DATA_COMPONENT.get(), new GemData(gemId, rarity));
+        return stack;
+    }
+
+    public static List<ItemStack> getGems() {
+        List<ItemStack> stacks = new ArrayList<>();
+
+        for (ResourceLocation gemId : GemDataReader.GEMS.keySet()) {
+            for (int rarity = 1; rarity <= 5; rarity++) {
+                stacks.add(createGem(gemId, rarity));
+            }
+        }
+        return stacks;
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        if (stack.has(SocketRegistries.GEM_DATA_COMPONENT.get())) {
+            GemData data = stack.get(SocketRegistries.GEM_DATA_COMPONENT.get());
+            var def = GemDataReader.get(data.gemId());
+            if (def.isPresent()) {
+                return Component.literal(def.get().name() + " (Tier " + data.rarity() + ")");
+            }
+        }
+        return Component.translatable("item.shadows_things.gem");
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        if (!stack.has(SocketRegistries.GEM_DATA_COMPONENT.get())) {
+            tooltipComponents.add(Component.literal("Unattuned Gem Stone").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            return;
+        }
+
+        GemData data = stack.get(SocketRegistries.GEM_DATA_COMPONENT.get());
+        var gemDefOpt = GemDataReader.get(data.gemId());
+
+        if (gemDefOpt.isEmpty()) {
+            tooltipComponents.add(Component.literal("Unknown Gem Type").withStyle(ChatFormatting.RED));
+            return;
+        }
+
+        GemDefinition gemDef = gemDefOpt.get();
+        int tier = data.rarity();
+
+        // 1. Grado / Tier
+        tooltipComponents.add(Component.literal("Quality: ").withStyle(ChatFormatting.GRAY)
+                .append(Component.literal("Tier " + tier).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+
+        tooltipComponents.add(Component.empty());
+        tooltipComponents.add(Component.literal("Socket Effects:").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.UNDERLINE));
+
+        // 2. Rendering Sezione Armi
+        if (!gemDef.weaponAttributes().isEmpty()) {
+            tooltipComponents.add(Component.literal(" When Socketed on Weapons:").withStyle(ChatFormatting.RED));
+            for (GemAttribute attr : gemDef.weaponAttributes()) {
+                tooltipComponents.add(formatAttributeLine(attr, tier));
+            }
+        }
+
+        // 3. Rendering Sezione Armature
+        if (!gemDef.armorAttributes().isEmpty()) {
+            tooltipComponents.add(Component.literal(" When Socketed on Armor:").withStyle(ChatFormatting.BLUE));
+            for (GemAttribute attr : gemDef.armorAttributes()) {
+                tooltipComponents.add(formatAttributeLine(attr, tier));
+            }
+        }
+
+        // 4. Rendering Sezione Utensili
+        if (!gemDef.toolAttributes().isEmpty()) {
+            tooltipComponents.add(Component.literal(" When Socketed on Tools:").withStyle(ChatFormatting.YELLOW));
+            for (GemAttribute attr : gemDef.toolAttributes()) {
+                tooltipComponents.add(formatAttributeLine(attr, tier));
+            }
+        }
+    }
+
+    /**
+     * Formatta e colora una singola riga di attributo leggendo la traduzione nativa dell'Attribute
+     */
+    private Component formatAttributeLine(GemAttribute gemAttr, int tier) {
+        Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(gemAttr.attributeId());
+
+        // Nome tradotto dell'attributo Vanilla/Moddato (es. "Attack Damage", "Max Health")
+        Component attrName = attribute != null ? Component.translatable(attribute.getDescriptionId()) : Component.literal(gemAttr.attributeId().getPath());
+
+        double value = gemAttr.getValueForTier(tier);
+        boolean isPercentage = gemAttr.operation() != AttributeModifier.Operation.ADD_VALUE;
+
+        String formattedValue;
+        if (isPercentage) {
+            formattedValue = (value >= 0 ? "+" : "") + FORMAT.format(value * 100.0D) + "%";
+        } else {
+            formattedValue = (value >= 0 ? "+" : "") + FORMAT.format(value);
+        }
+
+        ChatFormatting valueColor = value >= 0 ? ChatFormatting.GREEN : ChatFormatting.RED;
+
+        return Component.literal("  • ").withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(formattedValue + " ").withStyle(valueColor))
+                .append(attrName.copy().withStyle(ChatFormatting.GRAY));
+    }
+
+    public static void register() {
+    }
+}

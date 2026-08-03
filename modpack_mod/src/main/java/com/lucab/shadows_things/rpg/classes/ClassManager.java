@@ -13,7 +13,7 @@ public class ClassManager {
         String formattedClass = rpgClass.toLowerCase();
 
         if (!formattedClass.equals(WANDERER)) {
-            Optional<ClassDataReader.ClassData> classData = ShadowsThings.RPG_READER.getClassData(formattedClass);
+            Optional<ClassDataReader.ClassData> classData = ShadowsThings.CLASS_READER.getClassData(formattedClass);
             if (classData.isEmpty()) {
                 throw new IllegalArgumentException("The class " + rpgClass + " does not exist in the datapacks.");
             }

@@ -14,12 +14,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 @Mod(value = ShadowsThings.MODID, dist = Dist.CLIENT)
@@ -49,7 +46,6 @@ public class ShadowsThingsClient {
 
     @SubscribeEvent
     public static void registerGuiLayers(RegisterGuiLayersEvent event) {
-        // Registra il nostro overlay appena sopra l'HOTBAR Vanilla
         event.registerAbove(
                 VanillaGuiLayers.HOTBAR,
                 ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "toast_overlay"),

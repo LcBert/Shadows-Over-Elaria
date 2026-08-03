@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "shadows_things:item/gem_base",
+    "layer1": "shadows_things:item/gem_overlay"
+  }
+}

@@ -3,10 +3,11 @@ package com.lucab.shadows_things.rpg.classes;
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+
 import java.util.List;
+import java.util.Map;
 
-public class ItemsManager {
-
+public class ClassItemsManager {
     /**
      * Checks if an item is bound to a specific class and a specific tier (or lower).
      */
@@ -24,7 +25,7 @@ public class ItemsManager {
             return false;
         }
 
-        var classDataOpt = ShadowsThings.RPG_READER.getClassData(playerClass);
+        var classDataOpt = ShadowsThings.CLASS_READER.getClassData(playerClass);
         if (classDataOpt.isEmpty()) return false;
 
         ClassDataReader.ClassData data = classDataOpt.get();
@@ -40,11 +41,22 @@ public class ItemsManager {
         return false;
     }
 
+    public static int getItemTier(Item item) {
+        for (ClassDataReader.ClassData classData : ShadowsThings.CLASS_READER.getAllClasses().values()) {
+            for (Map.Entry<Integer, List<Item>> entry : classData.tiers().entrySet()) {
+                if (entry.getValue() != null && entry.getValue().contains(item)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return -1;
+    }
+
     /**
      * Checks if the item is present within the loaded datapack JSON files.
      */
     private static boolean isItemBoundToAnyClass(Item item) {
-        for (ClassDataReader.ClassData classData : ShadowsThings.RPG_READER.getAllClasses().values()) {
+        for (ClassDataReader.ClassData classData : ShadowsThings.CLASS_READER.getAllClasses().values()) {
             for (List<Item> tierItems : classData.tiers().values()) {
                 if (tierItems.contains(item)) {
                     return true;

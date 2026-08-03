@@ -40,7 +40,7 @@ public class ClassCommand {
 
     private static CompletableFuture<Suggestions> suggestClasses(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
         // Dynamically suggests names registered via JSON file
-        for (String className : ShadowsThings.RPG_READER.getAllClasses().keySet()) {
+        for (String className : ShadowsThings.CLASS_READER.getAllClasses().keySet()) {
             builder.suggest(className);
         }
         return builder.buildFuture();

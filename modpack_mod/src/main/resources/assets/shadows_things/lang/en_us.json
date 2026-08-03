@@ -1,5 +1,6 @@
 {
-  "itemGroup.shadows_things": "Shadows Things",
+  "itemGroup.shadows_things.main": "Shadows Things",
+  "itemGroup.shadows_things.gems": "Shadows Things Gems",
   "item.shadows_things.flint_pickaxe": "Flint Pickaxe",
   "item.shadows_things.flint_axe": "Flint Axe",
   "item.shadows_things.raw_silver": "Raw Silver",
@@ -30,6 +31,7 @@
   "item.shadows_things.diamond_repair_kit": "Diamond Repair Kit",
   "item.shadows_things.netherite_repair_kit": "Netherite Repair Kit",
   "item.shadows_things.stone_pebble": "Stone Pebble",
+  "item.shadows_things.gem": "Generic Gem",
   "block.shadows_things.repair_table": "Repair Table",
   "block.shadows_things.oven": "Oven",
   "block.shadows_things.deep_cave_portal": "Deep Cave Portal",

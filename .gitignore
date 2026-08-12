@@ -1,24 +1,27 @@
 # FOLDERS
-.idea
-.mixin.out
-.vscode
-.probe
-config
-crash-reports
-downloads
-local
-logs
-saves
-screenshots
-data
+/.idea
+/.mixin.out
+/.vscode
+/.probe
+/config
+/crash-reports
+/downloads
+/local
+/logs
+/saves
+/screenshots
+/data
 
 # FILES
-.curseclient
-command_history.txt
-kubejs/README.txt
-options.txt
-usercache.json
-usernamecache.json
+/.curseclient
+/command_history.txt
+/options.txt
+/usercache.json
+/usernamecache.json
+
+# KUBEJS
+/kubejs/README.txt
+/kubejs/config
 
 # To remove when dev in the modpack
-mods
+/mods

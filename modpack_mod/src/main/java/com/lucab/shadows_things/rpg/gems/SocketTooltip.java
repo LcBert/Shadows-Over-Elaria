@@ -20,7 +20,7 @@ public class SocketTooltip {
         if (maxSockets > 0) {
             SocketDataComponent socketData = SocketManager.getOrCreateSocketData(stack);
 
-            event.getToolTip().add(3, Component.literal("Sockets:").withStyle(ChatFormatting.GOLD));
+            event.getToolTip().add(Component.literal("Sockets:").withStyle(ChatFormatting.GOLD));
 
             int currentGems = socketData.gems().size();
 
@@ -31,11 +31,11 @@ public class SocketTooltip {
                 Optional<GemDefinition> defOpt = GemDataReader.get(gemData.gemId());
                 String gemName = defOpt.isPresent() ? defOpt.get().name() : gemData.gemId().getPath();
 
-                event.getToolTip().add(4, Component.literal("  [" + gemName + " - Tier " + gemData.rarity() + "]").withStyle(ChatFormatting.GREEN));
+                event.getToolTip().add(Component.literal("  [" + gemName + " - Tier " + gemData.rarity() + "]").withStyle(ChatFormatting.GREEN));
             }
 
             for (int i = currentGems; i < maxSockets; i++) {
-                event.getToolTip().add(4, Component.literal("  [] Empty Socket").withStyle(ChatFormatting.DARK_GRAY));
+                event.getToolTip().add(Component.literal("  [] Empty Socket").withStyle(ChatFormatting.DARK_GRAY));
             }
         }
     }

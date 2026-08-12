@@ -10,6 +10,7 @@ local
 logs
 saves
 screenshots
+data
 
 # FILES
 .curseclient

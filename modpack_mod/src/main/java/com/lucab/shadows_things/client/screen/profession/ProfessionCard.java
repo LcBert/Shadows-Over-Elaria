@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.client.screen.profession;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.network.UpgradeProfessionPacket;
+import com.lucab.shadows_things.rpg.professions.UpgradeProfessionPacket;
 import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -10,8 +10,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.Locale;
 
 public class ProfessionCard {
     private final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/screen/profession/profession_card_background.png");

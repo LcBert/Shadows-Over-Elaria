@@ -107,7 +107,7 @@ public class ClassCommand {
 
         ClassManager.removeClass(player);
         // REMOVE: Distinct format indicating permanent removal of the active role
-        source.sendSuccess(() -> Component.literal(String.format("§eSuccessfully removed all active RPG classes from %s§r",
+        source.sendSuccess(() -> Component.literal(String.format("§eSuccessfully removed active RPG class from %s§r",
                 player.getName().getString())), false);
 
         return 1;

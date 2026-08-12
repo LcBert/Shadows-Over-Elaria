@@ -21,7 +21,7 @@ public class ClassModifierApplier {
             if (instance != null) instance.removeModifier(MODIFIER_ID);
         });
 
-        if (className.equals(ClassManager.WANDERER) || className.equals("none")) {
+        if (className.equals(ClassManager.WANDERER) || className.equals(ClassManager.NULL)) {
             restoreProportionalHealth(player, healthRatio);
             return;
         }

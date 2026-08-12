@@ -2,8 +2,10 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.menus.MenuRegistries;
-import com.lucab.shadows_things.network.OpenProfessionGuiPacket;
-import com.lucab.shadows_things.network.UpgradeProfessionPacket;
+import com.lucab.shadows_things.rpg.classes.ClassSelectPacket;
+import com.lucab.shadows_things.rpg.classes.SyncPlayerClassPacket;
+import com.lucab.shadows_things.rpg.professions.OpenProfessionGuiPacket;
+import com.lucab.shadows_things.rpg.professions.UpgradeProfessionPacket;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg.classes.ClassDataReader;
 import com.lucab.shadows_things.rpg.gems.GemDataReader;
@@ -110,6 +112,19 @@ public class ShadowsThings {
 
     public void registerPayLoad(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("5");
+
+        // Class
+        registrar.playToServer(
+                ClassSelectPacket.TYPE,
+                ClassSelectPacket.STREAM_CODEC,
+                ClassSelectPacket::handle
+        );
+
+        registrar.playToClient(
+                SyncPlayerClassPacket.TYPE,
+                SyncPlayerClassPacket.STREAM_CODEC,
+                SyncPlayerClassPacket::handle
+        );
 
         // Profession
         registrar.playToServer(

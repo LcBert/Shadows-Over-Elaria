@@ -7,12 +7,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.*;
 
 public class ClassDataReader extends SimpleJsonResourceReloadListener {
+    public record StarterKit(
+            Map<EquipmentSlot, Item> armorItems,
+            List<ItemStack> inventoryItems
+    ) {
+    }
+
     public record ClassAttribute(
             ResourceLocation attributeId,
             AttributeModifier.Operation operation,
@@ -22,6 +31,7 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
 
     public record ClassData(
             String className,
+            StarterKit starterKit,
             Map<Integer, List<Item>> tiers,
             List<ClassAttribute> attributes
     ) {
@@ -50,10 +60,20 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
             String className = resLoc.getPath().toLowerCase();
 
             try {
-                JsonObject jsonObject = entry.getValue().getAsJsonObject();
+                Map<EquipmentSlot, String> armorsTypes = new HashMap<>(Map.of(
+                        EquipmentSlot.HEAD, "head",
+                        EquipmentSlot.CHEST, "chest",
+                        EquipmentSlot.LEGS, "legs",
+                        EquipmentSlot.FEET, "feet"
+                ));
+
+                Map<EquipmentSlot, Item> armorsItems = new HashMap<>();
+                List<ItemStack> inventoryItems = new ArrayList<>();
+                StarterKit starterKit = new StarterKit(armorsItems, inventoryItems);
                 Map<Integer, List<Item>> tiersMap = new HashMap<>();
                 List<ClassAttribute> attributesList = new ArrayList<>();
 
+                JsonObject jsonObject = entry.getValue().getAsJsonObject();
                 if (jsonObject.has("tiers")) {
                     JsonObject tiersObj = jsonObject.getAsJsonObject("tiers");
 
@@ -93,7 +113,31 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
                     }
                 }
 
-                newClasses.put(className, new ClassData(className, tiersMap, attributesList));
+                if (jsonObject.has("starter_kit")) {
+                    JsonObject starterKitObj = jsonObject.getAsJsonObject("starter_kit");
+                    if (starterKitObj.has("armor")) {
+                        JsonObject armorObj = starterKitObj.getAsJsonObject("armor");
+                        armorsTypes.forEach((slot, name) -> {
+                            if (armorObj.has(name)) {
+                                String itemString = armorObj.get(name).getAsString();
+                                Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemString));
+                                armorsItems.put(slot, item);
+                            }
+                        });
+                    }
+                    if (starterKitObj.has("inventory")) {
+                        JsonArray inventoryArray = starterKitObj.getAsJsonArray("inventory");
+                        for (JsonElement element : inventoryArray) {
+                            JsonObject itemObj = element.getAsJsonObject();
+
+                            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemObj.get("item").getAsString()));
+                            int count = itemObj.has("count") ? itemObj.get("count").getAsInt() : 1;
+                            inventoryItems.add(new ItemStack(item, count));
+                        }
+                    }
+                }
+
+                newClasses.put(className, new ClassData(className, starterKit, tiersMap, attributesList));
             } catch (Exception e) {
                 ShadowsThings.LOGGER.error("Error while parsing RPG Class datapack for file: {}", resLoc, e);
             }

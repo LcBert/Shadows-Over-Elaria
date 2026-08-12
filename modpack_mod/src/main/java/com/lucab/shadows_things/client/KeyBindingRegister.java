@@ -1,8 +1,8 @@
 package com.lucab.shadows_things.client;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.menus.ProfessionMenu;
-import com.lucab.shadows_things.network.OpenProfessionGuiPacket;
+import com.lucab.shadows_things.client.screen.classes.ClassScreen;
+import com.lucab.shadows_things.rpg.professions.OpenProfessionGuiPacket;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -15,6 +15,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class KeyBindingRegister {
+    public static final KeyMapping OPEN_CLASS_SCREEN = new KeyMapping(
+            "key.shadows_things.open_class_screen",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_K,
+            "key.categories.shadows_things"
+    );
+
     public static final KeyMapping OPEN_PROFESSION_GUI = new KeyMapping(
             "key.shadows_things.open_profession_gui",
             KeyConflictContext.IN_GAME,
@@ -25,11 +33,16 @@ public class KeyBindingRegister {
 
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
+        event.register(OPEN_CLASS_SCREEN);
         event.register(OPEN_PROFESSION_GUI);
     }
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
+        if (KeyBindingRegister.OPEN_CLASS_SCREEN.consumeClick()) {
+            Minecraft.getInstance().setScreen(new ClassScreen());
+        }
+
         if (KeyBindingRegister.OPEN_PROFESSION_GUI.consumeClick()) {
             PacketDistributor.sendToServer(new OpenProfessionGuiPacket());
         }

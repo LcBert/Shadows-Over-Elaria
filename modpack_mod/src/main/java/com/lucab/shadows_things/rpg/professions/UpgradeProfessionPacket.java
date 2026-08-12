@@ -1,7 +1,6 @@
-package com.lucab.shadows_things.network;
+package com.lucab.shadows_things.rpg.professions;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.rpg.professions.ProfessionHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -31,7 +30,6 @@ public record UpgradeProfessionPacket(String name) implements CustomPacketPayloa
         context.enqueueWork(() -> {
             Player player = context.player();
             ProfessionHelper.Professions prof = ProfessionHelper.Professions.valueOf(packet.name.toUpperCase());
-            ShadowsThings.LOGGER.info(String.valueOf(ProfessionHelper.canUpgradeProfession(player, prof)));
             if (ProfessionHelper.canUpgradeProfession(player, prof)) {
                 ProfessionHelper.incrementLevel(player, prof);
                 player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F);

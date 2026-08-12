@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.network;
+package com.lucab.shadows_things.rpg.professions;
 
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.menus.ProfessionMenu;

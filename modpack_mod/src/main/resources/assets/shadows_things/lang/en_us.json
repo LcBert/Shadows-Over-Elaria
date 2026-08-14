@@ -34,6 +34,7 @@
   "item.shadows_things.gem": "Generic Gem",
   "block.shadows_things.repair_table": "Repair Table",
   "block.shadows_things.oven": "Oven",
+  "block.shadows_things.stone_smeltery": "Stone Smeltery",
   "block.shadows_things.deep_cave_portal": "Deep Cave Portal",
   "block.shadows_things.silver_ore": "Silver Ore",
   "key.categories.shadows_things": "Shadows Things",
@@ -55,5 +56,6 @@
   "gui.shadows_things.profession.available_points": "Available Points",
   "gui.shadows_things.profession.name.farmer": "Farmer",
   "gui.shadows_things.profession.name.blacksmith": "Blacksmith",
-  "gui.shadows_things.profession.name.cook": "Cook"
+  "gui.shadows_things.profession.name.cook": "Cook",
+  "gui.shadows_things.smeltery_gui.tier": "Tier: %d"
 }

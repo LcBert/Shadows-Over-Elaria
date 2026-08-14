@@ -16,13 +16,19 @@ public class RecipesRegistries {
     public static final DeferredRegister<RecipeType<?>> TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, ShadowsThings.MODID);
 
-    // Registrazione Serializer
+    // Oven
     public static final DeferredHolder<RecipeSerializer<?>, OvenRecipe.Serializer> OVEN_SERIALIZER =
             SERIALIZERS.register("oven_cooking", OvenRecipe.Serializer::new);
 
-    // Registrazione Type
     public static final DeferredHolder<RecipeType<?>, RecipeType<OvenRecipe>> OVEN_TYPE =
             TYPES.register("oven_cooking", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "oven_cooking")));
+
+    // Smeltery
+    public static final DeferredHolder<RecipeSerializer<?>, SmelteryRecipe.Serializer> SMELTERY_SERIALIZER =
+            SERIALIZERS.register("smeltery", SmelteryRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<SmelteryRecipe>> SMELTERY_TYPE =
+            TYPES.register("smeltery", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "smeltery")));
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);

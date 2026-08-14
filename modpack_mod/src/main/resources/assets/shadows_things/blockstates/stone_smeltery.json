@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "shadows_things:block/stone_smeltery"
+    },
+    "facing=east": {
+      "model": "shadows_things:block/stone_smeltery",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "shadows_things:block/stone_smeltery",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "shadows_things:block/stone_smeltery",
+      "y": 270
+    }
+  }
+}

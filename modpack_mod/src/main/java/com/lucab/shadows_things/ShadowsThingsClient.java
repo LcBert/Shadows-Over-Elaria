@@ -4,6 +4,7 @@ import com.lucab.shadows_things.client.DeepCaveEffects;
 import com.lucab.shadows_things.client.renderer.RepairTableRenderer;
 import com.lucab.shadows_things.client.screen.OvenScreen;
 import com.lucab.shadows_things.client.screen.SeedsBagScreen;
+import com.lucab.shadows_things.client.screen.SmelteryScreen;
 import com.lucab.shadows_things.client.screen.profession.ProfessionScreen;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.menus.MenuRegistries;
@@ -40,6 +41,7 @@ public class ShadowsThingsClient {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(MenuRegistries.OVEN_MENU.get(), OvenScreen::new);
+        event.register(MenuRegistries.SMELTERY_MENU.get(), SmelteryScreen::new);
         event.register(MenuRegistries.PROFESSION_MENU.get(), ProfessionScreen::new);
         event.register(MenuRegistries.SEEDS_BAG_MENU.get(), SeedsBagScreen::new);
     }

@@ -7,6 +7,7 @@ import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.content.block.sieve.Sieve;
 import com.lucab.shadows_things.content.block.sieve.SieveRegister;
+import com.lucab.shadows_things.content.block.smeltery.SmelteryRegister;
 import com.lucab.shadows_things.content.item.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
@@ -29,6 +30,7 @@ public class ModCreativeTabs {
                         // Blocks
                         output.acceptAll(RepairTableRegister.getItems());
                         output.acceptAll(OvenRegister.getItems());
+                        output.acceptAll(SmelteryRegister.getItems());
                         output.acceptAll(DeepCavePortalRegister.getItems());
                         output.acceptAll(SieveRegister.getItems());
                         output.acceptAll(SilverSet.getItems());

@@ -18,8 +18,8 @@ public class Plates {
     public static final DeferredItem<Item> GOLD_PLATE = ShadowsThings.ITEMS.register(
             "gold_plate", () -> new Item(new Item.Properties()));
 
-    public static final DeferredItem<Item> DIAMOND_PLATE = ShadowsThings.ITEMS.register(
-            "diamond_plate", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SILVER_PLATE = ShadowsThings.ITEMS.register(
+            "silver_plate", () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> NETHERITE_PLATE = ShadowsThings.ITEMS.register(
             "netherite_plate", () -> new Item(new Item.Properties()));
@@ -32,7 +32,7 @@ public class Plates {
                 new ItemStack(COPPER_PLATE.get()),
                 new ItemStack(IRON_PLATE.get()),
                 new ItemStack(GOLD_PLATE.get()),
-                new ItemStack(DIAMOND_PLATE.get()),
+                new ItemStack(SILVER_PLATE.get()),
                 new ItemStack(NETHERITE_PLATE.get()));
     }
 }

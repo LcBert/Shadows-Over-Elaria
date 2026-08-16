@@ -44,7 +44,7 @@ public class SmelteryRecipeCategory implements IRecipeCategory<SmelteryRecipe> {
 
     @Override
     public Component getTitle() {
-        return Component.literal("Smelter");
+        return Component.translatable("jei.shadows_things.recipe.smeltery");
     }
 
     @Override

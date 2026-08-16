@@ -18,8 +18,8 @@ public class Rods {
     public static final DeferredItem<Item> GOLD_ROD = ShadowsThings.ITEMS.register(
             "gold_rod", () -> new Item(new Item.Properties()));
 
-    public static final DeferredItem<Item> DIAMOND_ROD = ShadowsThings.ITEMS.register(
-            "diamond_rod", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SILVER_ROD = ShadowsThings.ITEMS.register(
+            "silver_rod", () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> NETHERITE_ROD = ShadowsThings.ITEMS.register(
             "netherite_rod", () -> new Item(new Item.Properties()));
@@ -32,7 +32,7 @@ public class Rods {
                 new ItemStack(COPPER_ROD.get()),
                 new ItemStack(IRON_ROD.get()),
                 new ItemStack(GOLD_ROD.get()),
-                new ItemStack(DIAMOND_ROD.get()),
+                new ItemStack(SILVER_ROD.get()),
                 new ItemStack(NETHERITE_ROD.get()));
     }
 }

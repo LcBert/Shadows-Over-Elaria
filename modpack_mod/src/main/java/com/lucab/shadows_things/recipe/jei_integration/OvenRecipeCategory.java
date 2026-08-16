@@ -45,7 +45,7 @@ public class OvenRecipeCategory implements IRecipeCategory<OvenRecipe> {
 
     @Override
     public Component getTitle() {
-        return Component.translatable("block.shadows_things.oven");
+        return Component.translatable("jei.shadows_things.recipe.oven_cooking");
     }
 
     @Override

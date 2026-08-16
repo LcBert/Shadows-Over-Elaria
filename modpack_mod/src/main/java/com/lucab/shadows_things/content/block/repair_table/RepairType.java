@@ -19,7 +19,7 @@ public enum RepairType {
         COPPER(RepairKits.COPPER_REPAIR_KIT.get()),
         IRON(RepairKits.IRON_REPAIR_KIT.get()),
         GOLD(RepairKits.GOLD_REPAIR_KIT.get()),
-        DIAMOND(RepairKits.DIAMOND_REPAIR_KIT.get()),
+        SILVER(RepairKits.SILVER_REPAIR_KIT.get()),
         NETHERITE(RepairKits.NETHERITE_REPAIR_KIT.get());
 
         public final Item kit;

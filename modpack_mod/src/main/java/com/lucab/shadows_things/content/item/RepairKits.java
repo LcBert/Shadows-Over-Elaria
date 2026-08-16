@@ -18,8 +18,8 @@ public class RepairKits {
     public static final DeferredItem<Item> GOLD_REPAIR_KIT = ShadowsThings.ITEMS.register(
             "gold_repair_kit", () -> new Item(new Item.Properties()));
 
-    public static final DeferredItem<Item> DIAMOND_REPAIR_KIT = ShadowsThings.ITEMS.register(
-            "diamond_repair_kit", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SILVER_REPAIR_KIT = ShadowsThings.ITEMS.register(
+            "silver_repair_kit", () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> NETHERITE_REPAIR_KIT = ShadowsThings.ITEMS.register(
             "netherite_repair_kit", () -> new Item(new Item.Properties()));
@@ -32,7 +32,7 @@ public class RepairKits {
                 new ItemStack(COPPER_REPAIR_KIT.get()),
                 new ItemStack(IRON_REPAIR_KIT.get()),
                 new ItemStack(GOLD_REPAIR_KIT.get()),
-                new ItemStack(DIAMOND_REPAIR_KIT.get()),
+                new ItemStack(SILVER_REPAIR_KIT.get()),
                 new ItemStack(NETHERITE_REPAIR_KIT.get()));
     }
 }

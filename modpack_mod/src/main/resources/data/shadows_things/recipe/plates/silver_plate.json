@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "tag": "c:ingots/silver"
+  },
+  "base": {
+    "tag": "c:ingots/silver"
+  },
+  "addition": {
+    "tag": "c:ingots/silver"
+  },
+  "result": {
+    "id": "shadows_things:silver_plate"
+  }
+}

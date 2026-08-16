@@ -1,13 +1,17 @@
 package com.lucab.shadows_things.recipe.jei_integration;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.client.screen.CauldronScreen;
 import com.lucab.shadows_things.client.screen.OvenScreen;
 import com.lucab.shadows_things.client.screen.SmelteryScreen;
+import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.content.block.smeltery.SmelteryRegister;
+import com.lucab.shadows_things.menus.CauldronMenu;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.menus.OvenMenu;
 import com.lucab.shadows_things.menus.SmelteryMenu;
+import com.lucab.shadows_things.recipe.CauldronRecipe;
 import com.lucab.shadows_things.recipe.OvenRecipe;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.recipe.SmelteryRecipe;
@@ -38,6 +42,7 @@ public class JeiIntegration implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new OvenRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SmelteryRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new CauldronRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -56,8 +61,14 @@ public class JeiIntegration implements IModPlugin {
                     .map(RecipeHolder::value)
                     .toList();
 
+            List<CauldronRecipe> cauldronRecipes = recipeManager.getAllRecipesFor(RecipesRegistries.CAULDRON_TYPE.get())
+                    .stream()
+                    .map(RecipeHolder::value)
+                    .toList();
+
             registration.addRecipes(OvenRecipeCategory.TYPE, ovenRecipes);
             registration.addRecipes(SmelteryRecipeCategory.TYPE, smelteryRecipes);
+            registration.addRecipes(CauldronRecipeCategory.TYPE, cauldronRecipes);
         }
     }
 
@@ -69,17 +80,21 @@ public class JeiIntegration implements IModPlugin {
             registration.addRecipeCatalyst(new ItemStack(smelter), SmelteryRecipeCategory.TYPE);
             registration.addRecipeCatalyst(new ItemStack(smelter), RecipeTypes.FUELING);
         });
+        registration.addRecipeCatalyst(new ItemStack(CauldronRegister.CAULDRON.get()), CauldronRecipeCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(CauldronRegister.CAULDRON.get()), RecipeTypes.FUELING);
     }
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addRecipeClickArea(OvenScreen.class, 43, 37, 64, 22, OvenRecipeCategory.TYPE);
         registration.addRecipeClickArea(SmelteryScreen.class, 131, 32, 20, 25, SmelteryRecipeCategory.TYPE);
+        registration.addRecipeClickArea(CauldronScreen.class, 120, 27, 22, 15, CauldronRecipeCategory.TYPE);
     }
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
         registration.addRecipeTransferHandler(OvenMenu.class, MenuRegistries.OVEN_MENU.get(), OvenRecipeCategory.TYPE, 0, 3, 7, 36);
         registration.addRecipeTransferHandler(SmelteryMenu.class, MenuRegistries.SMELTERY_MENU.get(), SmelteryRecipeCategory.TYPE, 0, 18, 19, 37);
+        registration.addRecipeTransferHandler(CauldronMenu.class, MenuRegistries.CAULDRON_MENU.get(), CauldronRecipeCategory.TYPE, 0, 6, 7, 36);
     }
 }

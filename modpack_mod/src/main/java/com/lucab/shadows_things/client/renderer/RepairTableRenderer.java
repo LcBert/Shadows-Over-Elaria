@@ -16,8 +16,7 @@ public class RepairTableRenderer implements BlockEntityRenderer<RepairTableEntit
     }
 
     @Override
-    public void render(RepairTableEntity blockEntity, float partialTick, PoseStack poseStack,
-            MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(RepairTableEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         ItemStack item = blockEntity.getItem();
         ItemStack kit = blockEntity.getKit();
 

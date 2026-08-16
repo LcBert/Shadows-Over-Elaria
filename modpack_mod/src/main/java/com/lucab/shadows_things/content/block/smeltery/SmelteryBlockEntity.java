@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -127,7 +128,7 @@ public class SmelteryBlockEntity extends BlockEntity {
     private void handleLitState() {
         BlockState currentState = getBlockState();
         if (currentState.getValue(SmelteryBlock.LIT) != isLit()) {
-            level.setBlock(getBlockPos(), currentState.setValue(SmelteryBlock.LIT, isLit()), SmelteryBlock.UPDATE_ALL);
+            level.setBlock(getBlockPos(), currentState.setValue(SmelteryBlock.LIT, isLit()), Block.UPDATE_ALL);
             setChanged();
         }
     }

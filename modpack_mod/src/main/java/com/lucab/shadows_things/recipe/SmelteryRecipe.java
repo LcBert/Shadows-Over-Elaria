@@ -93,14 +93,11 @@ public class SmelteryRecipe implements Recipe<SingleItemRecipeInput> {
                 Serializer::toNetwork, Serializer::fromNetwork
         );
 
-        @Override
-        public MapCodec<SmelteryRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, SmelteryRecipe> streamCodec() {
-            return STREAM_CODEC;
+        private static void toNetwork(RegistryFriendlyByteBuf buf, SmelteryRecipe recipe) {
+            SizedIngredient.STREAM_CODEC.encode(buf, recipe.ingredient);
+            ItemStack.STREAM_CODEC.encode(buf, recipe.result);
+            buf.writeVarInt(recipe.processTime);
+            buf.writeVarInt(recipe.tier);
         }
 
         private static SmelteryRecipe fromNetwork(RegistryFriendlyByteBuf buf) {
@@ -111,12 +108,16 @@ public class SmelteryRecipe implements Recipe<SingleItemRecipeInput> {
             return new SmelteryRecipe(ingredient, result, cookingTime, tier);
         }
 
-        private static void toNetwork(RegistryFriendlyByteBuf buf, SmelteryRecipe recipe) {
-            SizedIngredient.STREAM_CODEC.encode(buf, recipe.ingredient);
-            ItemStack.STREAM_CODEC.encode(buf, recipe.result);
-            buf.writeVarInt(recipe.processTime);
-            buf.writeVarInt(recipe.tier);
+        @Override
+        public MapCodec<SmelteryRecipe> codec() {
+            return CODEC;
         }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, SmelteryRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+
     }
 
     public static class RecipeInstance {

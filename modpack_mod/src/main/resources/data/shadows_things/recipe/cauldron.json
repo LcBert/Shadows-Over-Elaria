@@ -1,0 +1,17 @@
+{
+  "type": "shadows_things:cauldron",
+  "processing_time": 20,
+  "ingredients": [
+    {"item": "minecraft:diamond", "count": 2},
+    {"item": "minecraft:redstone", "count": 3}
+  ],
+  "output": {
+    "id": "minecraft:potion",
+    "count": 1,
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "minecraft:swiftness"
+      }
+    }
+  }
+}

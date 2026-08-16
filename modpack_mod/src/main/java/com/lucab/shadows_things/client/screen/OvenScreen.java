@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
     // Percorso della texture del background (assets/tuo_modid/textures/gui/container/oven_gui.png)
     private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/oven_gui.png");
-    private static final ResourceLocation PROGRESS_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/burn_progress.png");
+    private static final ResourceLocation PROGRESS_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/progress_bar.png");
     private static final ResourceLocation LIT_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/lit_progress.png");
 
     public OvenScreen(OvenMenu menu, Inventory playerInventory, Component title) {
@@ -30,13 +30,7 @@ public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
     }
 
     @Override
-    protected void init() {
-        super.init();
-    }
-
-    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Renderizza lo sfondo scuro trasparente classico dietro la GUI e i tooltip degli item
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
@@ -62,9 +56,9 @@ public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
         }
 
         // 3. Frecce di progresso verticali
-        int cookProgress0 = getCookProgressScaled(0, 24);
-        int cookProgress1 = getCookProgressScaled(1, 24);
-        int cookProgress2 = getCookProgressScaled(2, 24);
+        int cookProgress0 = getCookProgressScaled(0);
+        int cookProgress1 = getCookProgressScaled(1);
+        int cookProgress2 = getCookProgressScaled(2);
 
         RenderSystem.setShaderTexture(0, PROGRESS_TEXTURE);
 
@@ -91,10 +85,10 @@ public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
     }
 
     // Calcola quanti pixel riempire della freccia di cottura verticale (Altezza standard freccia giù = 14px)
-    private int getCookProgressScaled(int dataIndex, int maxPixels) {
+    private int getCookProgressScaled(int dataIndex) {
         int cookTime = this.menu.getBlockEntity().getContainerData().get(dataIndex + 2);
         int totalCookTime = this.menu.getBlockEntity().getContainerData().get(dataIndex + 5); // Indice 5 = totale ricetta
         if (totalCookTime == 0) return 0;
-        return cookTime * maxPixels / totalCookTime;
+        return cookTime * 24 / totalCookTime;
     }
 }

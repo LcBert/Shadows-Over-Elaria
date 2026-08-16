@@ -30,6 +30,13 @@ public class RecipesRegistries {
     public static final DeferredHolder<RecipeType<?>, RecipeType<SmelteryRecipe>> SMELTERY_TYPE =
             TYPES.register("smeltery", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "smeltery")));
 
+    // Cauldron
+    public static final DeferredHolder<RecipeSerializer<?>, CauldronRecipe.Serializer> CAULDRON_SERIALIZER =
+            SERIALIZERS.register("cauldron", CauldronRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<CauldronRecipe>> CAULDRON_TYPE =
+            TYPES.register("cauldron", ()->RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "cauldron")));
+
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);
         TYPES.register(eventBus);

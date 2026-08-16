@@ -33,6 +33,7 @@ public class SmelteryBlock extends BaseEntityBlock {
     public static final MapCodec<SmelteryBlock> CODEC = simpleCodec(SmelteryBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
+
     private static final String[][] STRUCTURE = {{
             "XXX",
             "XXX",
@@ -85,7 +86,6 @@ public class SmelteryBlock extends BaseEntityBlock {
                 .mapColor(MapColor.STONE)
                 .sound(SoundType.STONE)
                 .strength(3.5f)
-                .noOcclusion()
         );
         registerDefaultState();
         this.tier = tier;
@@ -216,8 +216,7 @@ public class SmelteryBlock extends BaseEntityBlock {
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof SmelteryBlockEntity smelteryBlockEntity) {
+            if (level.getBlockEntity(pos) instanceof SmelteryBlockEntity smelteryBlockEntity) {
                 IItemHandler inventory = smelteryBlockEntity.getInventoryHandler();
                 for (int i = 0; i < inventory.getSlots(); i++) {
                     ItemStack stack = inventory.getStackInSlot(i);

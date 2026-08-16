@@ -1,11 +1,14 @@
 package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.client.DeepCaveEffects;
+import com.lucab.shadows_things.client.renderer.CauldronRenderer;
 import com.lucab.shadows_things.client.renderer.RepairTableRenderer;
+import com.lucab.shadows_things.client.screen.CauldronScreen;
 import com.lucab.shadows_things.client.screen.OvenScreen;
 import com.lucab.shadows_things.client.screen.SeedsBagScreen;
 import com.lucab.shadows_things.client.screen.SmelteryScreen;
 import com.lucab.shadows_things.client.screen.profession.ProfessionScreen;
+import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.toast.ToastOverlay;
@@ -34,14 +37,15 @@ public class ShadowsThingsClient {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(RepairTableRegister.REPAIR_TABLE_ENTITY.get(),
-                RepairTableRenderer::new);
+        event.registerBlockEntityRenderer(RepairTableRegister.REPAIR_TABLE_ENTITY.get(), RepairTableRenderer::new);
+        event.registerBlockEntityRenderer(CauldronRegister.CAULDRON_BLOCK_ENTITY.get(), CauldronRenderer::new);
     }
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(MenuRegistries.OVEN_MENU.get(), OvenScreen::new);
         event.register(MenuRegistries.SMELTERY_MENU.get(), SmelteryScreen::new);
+        event.register(MenuRegistries.CAULDRON_MENU.get(), CauldronScreen::new);
         event.register(MenuRegistries.PROFESSION_MENU.get(), ProfessionScreen::new);
         event.register(MenuRegistries.SEEDS_BAG_MENU.get(), SeedsBagScreen::new);
     }

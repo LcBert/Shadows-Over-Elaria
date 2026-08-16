@@ -14,6 +14,10 @@ public class MenuRegistries {
     public static final DeferredHolder<MenuType<?>, MenuType<SmelteryMenu>> SMELTERY_MENU = ShadowsThings.MENUS.register("smeltery_menu",
             () -> IMenuTypeExtension.create(SmelteryMenu::new));
 
+    // Cauldron Menu
+    public static final DeferredHolder<MenuType<?>, MenuType<CauldronMenu>> CAULDRON_MENU = ShadowsThings.MENUS.register("cauldron_menu",
+            () -> IMenuTypeExtension.create(CauldronMenu::new));
+
     // Profession Menu
     public static final DeferredHolder<MenuType<?>, MenuType<ProfessionMenu>> PROFESSION_MENU = ShadowsThings.MENUS.register("profession_menu",
             () -> IMenuTypeExtension.create(ProfessionMenu::new));

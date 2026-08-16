@@ -54,14 +54,18 @@ public class SmelteryMenu extends AbstractContainerMenu {
 
         // Output Slot
         this.addSlot(new SlotItemHandler(itemHandler, slotIndex++, outputX, outputY));
+
+        // Fuel Slot
         this.addSlot(new SlotItemHandler(itemHandler, slotIndex++, fuelX, fuelY));
 
+        // Player Inventory
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 103 + row * 18));
             }
         }
 
+        // Player Hotbar
         for (int col = 0; col < 9; col++) {
             this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 161));
         }
@@ -83,25 +87,26 @@ public class SmelteryMenu extends AbstractContainerMenu {
             ItemStack rawStack = slot.getItem();
             quickMovedStack = rawStack.copy();
 
+            // Smeltery: 20 slots (0-19), Player: 36 slots (20-55)
             if (index < 20) {
                 // From block to player
-                if (!this.moveItemStackTo(rawStack, 18, 43, true)) {
+                if (!this.moveItemStackTo(rawStack, 20, 56, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(rawStack, quickMovedStack);
             } else {
                 // From player to block
-                Level level = this.blockEntity.getLevel();
                 boolean isFuel = rawStack.getBurnTime(null) > 0;
-                if (level != null && isFuel) {
-                    // First try to insert fuel items into fuel slot
+                if (isFuel) {
+                    // First try to insert fuel items into fuel slot (19)
                     if (!this.moveItemStackTo(rawStack, 19, 20, false)) {
+                        // If that fails, try to move to input slots (0-17)
                         if (!this.moveItemStackTo(rawStack, 0, 18, false)) {
                             return ItemStack.EMPTY;
                         }
                     }
                 } else {
-                    // If is not a fuel insert into Input Slots
+                    // If is not a fuel insert into Input Slots (0-17)
                     if (!this.moveItemStackTo(rawStack, 0, 18, false)) {
                         return ItemStack.EMPTY;
                     }

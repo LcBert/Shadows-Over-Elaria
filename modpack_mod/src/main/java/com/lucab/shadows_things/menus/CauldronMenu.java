@@ -8,27 +8,27 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-public class CauldronMenu extends AbstractContainerMenu {
+public class CauldronMenu extends BaseMachineMenu {
     private final CauldronBlockEntity blockEntity;
-    private final ContainerLevelAccess access;
 
     public CauldronMenu(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(buf.readBlockPos()));
     }
 
     public CauldronMenu(int containerId, Inventory playerInventory, BlockEntity blockEntity) {
-        super(MenuRegistries.CAULDRON_MENU.get(), containerId);
+        super(MenuRegistries.CAULDRON_MENU.get(), containerId, blockEntity,
+                new int[]{0, 5}, new int[]{0, 0}, 6, 7);
 
         if (!(blockEntity instanceof CauldronBlockEntity cauldronEntity)) {
             throw new IllegalStateException("BlockEntity is not an instance of CauldronBlockEntity");
         }
 
         this.blockEntity = cauldronEntity;
-        this.access = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
 
         IItemHandler itemHandler = cauldronEntity.getInventoryHandler();
 
@@ -67,16 +67,27 @@ public class CauldronMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
-        return ItemStack.EMPTY;
+    public CauldronBlockEntity getBlockEntity() {
+        return this.blockEntity;
     }
 
     @Override
-    public boolean stillValid(Player player) {
-        return stillValid(this.access, player, blockEntity.getBlockState().getBlock());
+    public int getProcessTime() {
+        return blockEntity.getProcessTime();
     }
 
-    public CauldronBlockEntity getBlockEntity() {
-        return this.blockEntity;
+    @Override
+    public int getTotalProcessTime() {
+        return blockEntity.getTotalProcessTime();
+    }
+
+    @Override
+    public int getLitTime() {
+        return blockEntity.getLitTime();
+    }
+
+    @Override
+    public int getLitDuration() {
+        return blockEntity.getLitDuration();
     }
 }

@@ -11,7 +11,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.*;
 
@@ -33,7 +32,11 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
             String className,
             StarterKit starterKit,
             Map<Integer, List<Item>> tiers,
-            List<ClassAttribute> attributes
+            List<ClassAttribute> attributes,
+            List<ClassActions.ActionData> primaryActions,
+            int primaryActionsCooldown,
+            List<ClassActions.ActionData> secondaryActions,
+            int secondaryActionsCooldown
     ) {
     }
 
@@ -72,6 +75,10 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
                 StarterKit starterKit = new StarterKit(armorsItems, inventoryItems);
                 Map<Integer, List<Item>> tiersMap = new HashMap<>();
                 List<ClassAttribute> attributesList = new ArrayList<>();
+                List<ClassActions.ActionData> primaryActions = new ArrayList<>();
+                int primaryActionsCooldown = 1200;
+                List<ClassActions.ActionData> secondaryActions = new ArrayList<>();
+                int secondaryActionsCooldown = 1200;
 
                 JsonObject jsonObject = entry.getValue().getAsJsonObject();
                 if (jsonObject.has("tiers")) {
@@ -137,7 +144,30 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
                     }
                 }
 
-                newClasses.put(className, new ClassData(className, starterKit, tiersMap, attributesList));
+                if (jsonObject.has("primary_actions")) {
+                    JsonObject actionsObj = jsonObject.getAsJsonObject("primary_actions");
+                    primaryActionsCooldown = actionsObj.has("cooldown") ? actionsObj.get("cooldown").getAsInt() : 1200;
+                    if (actionsObj.has("actions")) {
+                        JsonArray actionsArray = actionsObj.get("actions").getAsJsonArray();
+                        for (JsonElement element : actionsArray) {
+                            primaryActions.add(parseAction(element.getAsJsonObject()));
+                        }
+                    }
+                }
+
+                if (jsonObject.has("secondary_actions")) {
+                    JsonObject actionsObj = jsonObject.getAsJsonObject("secondary_actions");
+                    secondaryActionsCooldown = actionsObj.has("cooldown") ? actionsObj.get("cooldown").getAsInt() : 1200;
+                    if (actionsObj.has("actions")) {
+                        JsonArray actionsArray = actionsObj.get("actions").getAsJsonArray();
+                        for (JsonElement element : actionsArray) {
+                            secondaryActions.add(parseAction(element.getAsJsonObject()));
+                        }
+                    }
+                }
+
+                newClasses.put(className, new ClassData(className, starterKit, tiersMap, attributesList,
+                        primaryActions, primaryActionsCooldown, secondaryActions, secondaryActionsCooldown));
             } catch (Exception e) {
                 ShadowsThings.LOGGER.error("Error while parsing RPG Class datapack for file: {}", resLoc, e);
             }
@@ -145,6 +175,21 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
 
         this.rpgClasses = newClasses;
         ShadowsThings.LOGGER.info("Successfully loaded {} RPG Classes from datapacks", this.rpgClasses.size());
+    }
+
+    private ClassActions.ActionData parseAction(JsonObject actionObj) {
+        String type = actionObj.get("type").getAsString();
+        String value = actionObj.get("value").getAsString();
+
+        if (type.equals(ClassActions.ActionType.COMMAND.getType())) {
+            return new ClassActions.CommandActionData(type, value);
+        } else if (type.equals(ClassActions.ActionType.EFFECT.getType())) {
+            int duration = actionObj.has("duration") ? actionObj.get("duration").getAsInt() : 200;
+            int amplifier = actionObj.has("amplifier") ? actionObj.get("amplifier").getAsInt() : 0;
+            return new ClassActions.EffectActionData(type, value, duration, amplifier);
+        }
+
+        return new ClassActions.ActionData(type, value);
     }
 
     public Optional<ClassData> getClassData(String className) {

@@ -1,13 +1,12 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.attachments.ClassActionAttachments;
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.menus.MenuRegistries;
-import com.lucab.shadows_things.rpg.classes.ClassSelectPacket;
-import com.lucab.shadows_things.rpg.classes.SyncPlayerClassPacket;
+import com.lucab.shadows_things.rpg.classes.*;
 import com.lucab.shadows_things.rpg.professions.OpenProfessionGuiPacket;
 import com.lucab.shadows_things.rpg.professions.UpgradeProfessionPacket;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
-import com.lucab.shadows_things.rpg.classes.ClassDataReader;
 import com.lucab.shadows_things.rpg.gems.GemDataReader;
 import com.lucab.shadows_things.rpg.gems.SocketRegistries;
 import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
@@ -24,7 +23,6 @@ import org.slf4j.Logger;
 
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
 import com.lucab.shadows_things.loot.AddTreeBarkModifier;
-import com.lucab.shadows_things.rpg.classes.ClassCommand;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 
@@ -100,6 +98,7 @@ public class ShadowsThings {
 
         // Attachment register
         ExhaustionAttachments.register();
+        ClassActionAttachments.register();
         ProfessionAttachments.register();
     }
 
@@ -124,6 +123,12 @@ public class ShadowsThings {
                 SyncPlayerClassPacket.TYPE,
                 SyncPlayerClassPacket.STREAM_CODEC,
                 SyncPlayerClassPacket::handle
+        );
+
+        registrar.playToServer(
+                ClassActionExecutePacket.TYPE,
+                ClassActionExecutePacket.STREAM_CODEC,
+                ClassActionExecutePacket::handle
         );
 
         // Profession

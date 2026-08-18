@@ -1,11 +1,20 @@
 package com.lucab.shadows_things.rpg.classes;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.attachments.ClassActionAttachments;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ClassManager {
@@ -46,15 +55,17 @@ public class ClassManager {
     }
 
     public static void equipClass(Player player) {
+        if (ClassManager.getTier(player) != 1) return;
         ShadowsThings.CLASS_READER.getClassData(getClassName(player)).ifPresent(classData -> {
             // Equip armor items
             classData.starterKit().armorItems().forEach((slot, item) -> {
                 player.setItemSlot(slot, new ItemStack(item));
             });
 
-            // Give inventory items - drop if inventory is full
+            // Give inventory items
             classData.starterKit().inventoryItems().forEach(item -> {
-                if (!player.getInventory().add(item)) player.drop(item, false);
+                ItemStack itemStack = item.copy();
+                if (!player.getInventory().add(itemStack)) player.drop(itemStack, false);
             });
         });
     }
@@ -89,5 +100,56 @@ public class ClassManager {
 
     public static boolean is(Player player, String rpgClass) {
         return getClassName(player).equals(rpgClass.toLowerCase());
+    }
+
+    public static void executeAction(Player player, int actionType) {
+        Level level = player.level();
+        ClassDataReader.ClassData classData = ShadowsThings.CLASS_READER.getClassData(ClassManager.getClassName(player)).orElse(null);
+        ClassActionAttachments classActionAttachments = player.getData(ClassActionAttachments.CLASS_ACTION);
+        if (classData == null) return;
+
+        List<ClassActions.ActionData> actions = switch (actionType) {
+            case 0 -> classData.primaryActions();
+            case 1 -> classData.secondaryActions();
+            default -> null;
+        };
+
+        int cooldown = switch (actionType) {
+            case 0 -> classData.primaryActionsCooldown();
+            case 1 -> classData.secondaryActionsCooldown();
+            default -> -1;
+        };
+
+        if (actions == null || cooldown <= -1) return;
+
+        if (actionType == 0) {
+            if (!classActionAttachments.canUsePrimary(cooldown, level.getGameTime())) return;
+            else classActionAttachments.setPrimaryLastUseTick(level.getGameTime());
+        } else if (actionType == 1) {
+            if (!classActionAttachments.canUseSecondary(cooldown, level.getGameTime())) return;
+            else classActionAttachments.setSecondaryLastUseTick(level.getGameTime());
+        }
+
+        for (ClassActions.ActionData action : actions) {
+            if (action.type.equals(ClassActions.ActionType.COMMAND.getType())) {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    String commandToExecute = action.value;
+                    MinecraftServer server = serverPlayer.getServer();
+                    if (server != null) {
+                        server.getCommands().performPrefixedCommand(
+                                serverPlayer.createCommandSourceStack().withSuppressedOutput(),
+                                commandToExecute
+                        );
+                    }
+                }
+            } else if (action.type.equals(ClassActions.ActionType.EFFECT.getType())) {
+                if (action instanceof ClassActions.EffectActionData effectAction) {
+                    Holder<MobEffect> effectHolder = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(action.value)).orElse(null);
+                    if (effectHolder == null) continue;
+                    MobEffectInstance effectInstance = new MobEffectInstance(effectHolder, effectAction.duration, effectAction.amplifier);
+                    player.addEffect(effectInstance);
+                }
+            }
+        }
     }
 }

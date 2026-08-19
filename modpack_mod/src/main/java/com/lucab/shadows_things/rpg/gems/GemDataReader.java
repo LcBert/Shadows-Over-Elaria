@@ -26,7 +26,6 @@ public class GemDataReader extends SimpleJsonResourceReloadListener {
             ResourceLocation id = entry.getKey();
             try {
                 JsonObject json = entry.getValue().getAsJsonObject();
-                String name = json.get("name").getAsString();
                 int color = Integer.decode(json.get("color").getAsString());
 
                 JsonObject attrObj = json.getAsJsonObject("attributes");
@@ -34,7 +33,7 @@ public class GemDataReader extends SimpleJsonResourceReloadListener {
                 List<GemAttribute> armorAttrs = parseAttributes(attrObj, "armor");
                 List<GemAttribute> toolAttrs = parseAttributes(attrObj, "tool");
 
-                newGems.put(id, new GemDefinition(name, color, weaponAttrs, armorAttrs, toolAttrs));
+                newGems.put(id, new GemDefinition(color, weaponAttrs, armorAttrs, toolAttrs));
             } catch (Exception e) {
                 ShadowsThings.LOGGER.error("Failed to load gem JSON: {}", id, e);
             }

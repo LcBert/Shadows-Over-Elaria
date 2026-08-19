@@ -1,0 +1,15 @@
+{
+  "name": "shadows_things:deep_cave_overworld_portal_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "shadows_things:deep_cave_overworld_portal",
+        "processors": "minecraft:empty",
+        "projection": "rigid"
+      }
+    }
+  ]
+}

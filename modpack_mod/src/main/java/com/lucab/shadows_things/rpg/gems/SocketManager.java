@@ -26,13 +26,13 @@ public class SocketManager {
     public static SocketDataComponent getOrCreateSocketData(ItemStack stack) {
         if (stack.isEmpty()) return new SocketDataComponent(0, new ArrayList<>());
 
-        SocketDataComponent existingData = stack.get(SocketRegistries.SOCKET_COMPONENT.get());
+        SocketDataComponent existingData = stack.get(SocketRegistries.SOCKET_HOLDER.get());
         int maxSockets = getMaxSocketsForItem(stack);
 
         if (existingData != null) {
             if (existingData.maxSockets() != maxSockets) {
                 SocketDataComponent updated = new SocketDataComponent(maxSockets, existingData.gems());
-                stack.set(SocketRegistries.SOCKET_COMPONENT.get(), updated);
+                stack.set(SocketRegistries.SOCKET_HOLDER.get(), updated);
                 rebuildAttributes(stack, updated);
                 return updated;
             }
@@ -40,7 +40,7 @@ public class SocketManager {
         }
 
         SocketDataComponent newData = new SocketDataComponent(maxSockets, new ArrayList<>());
-        stack.set(SocketRegistries.SOCKET_COMPONENT.get(), newData);
+        stack.set(SocketRegistries.SOCKET_HOLDER.get(), newData);
         rebuildAttributes(stack, newData);
         return newData;
     }
@@ -49,7 +49,7 @@ public class SocketManager {
         SocketDataComponent socketData = getOrCreateSocketData(stack);
         if (socketData.canInsertGem()) {
             SocketDataComponent updatedData = socketData.withGem(gemSocket);
-            stack.set(SocketRegistries.SOCKET_COMPONENT.get(), updatedData);
+            stack.set(SocketRegistries.SOCKET_HOLDER.get(), updatedData);
 
             rebuildAttributes(stack, updatedData);
             return true;
@@ -60,11 +60,10 @@ public class SocketManager {
     public static void addSocketSlot(ItemStack stack) {
         SocketDataComponent socketData = getOrCreateSocketData(stack);
         SocketDataComponent updatedDAta = socketData.withMaxSockets(socketData.maxSockets() + 1);
-        stack.set(SocketRegistries.SOCKET_COMPONENT.get(), updatedDAta);
+        stack.set(SocketRegistries.SOCKET_HOLDER.get(), updatedDAta);
     }
 
     public static void rebuildAttributes(ItemStack itemStack, SocketDataComponent socketData) {
-        // Copia gli attributi originali dell'item in modo da non perdere il danno base dell'arma/utensile
         ItemAttributeModifiers originalModifiers = itemStack.get(DataComponents.ATTRIBUTE_MODIFIERS);
         ItemAttributeModifiers.Builder attrBuilder = ItemAttributeModifiers.builder();
 

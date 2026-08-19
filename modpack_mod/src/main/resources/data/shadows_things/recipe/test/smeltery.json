@@ -1,6 +1,6 @@
 {
   "type": "shadows_things:smeltery",
-  "tier": 3,
+  "tier": 1,
   "ingredient": {
     "item": "minecraft:raw_copper", "count": 3
   },

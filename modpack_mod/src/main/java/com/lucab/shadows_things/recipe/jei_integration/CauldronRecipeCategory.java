@@ -16,9 +16,12 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,7 +113,20 @@ public class CauldronRecipeCategory implements IRecipeCategory<CauldronRecipe> {
             }
         }
 
+        ItemStack potionStack = recipe.getResultItem(null);
+        PotionContents potionContents = potionStack.get(DataComponents.POTION_CONTENTS);
+
+        ItemStack splashStack = new ItemStack(Items.SPLASH_POTION);
+        splashStack.set(DataComponents.POTION_CONTENTS, potionContents);
+
+        ItemStack lingeringStack = new ItemStack(Items.LINGERING_POTION);
+        lingeringStack.set(DataComponents.POTION_CONTENTS, potionContents);
+
         builder.addSlot(RecipeIngredientRole.OUTPUT, 81, 21)
-                .addItemStack(recipe.getResultItem(null));
+                .addItemStacks(List.of(
+                        potionStack,
+                        splashStack,
+                        lingeringStack
+                ));
     }
 }

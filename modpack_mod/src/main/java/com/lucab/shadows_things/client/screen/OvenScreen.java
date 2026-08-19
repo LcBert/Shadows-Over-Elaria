@@ -14,8 +14,8 @@ import net.minecraft.world.entity.player.Inventory;
 public class OvenScreen extends AbstractContainerScreen<OvenMenu> {
     // Percorso della texture del background (assets/tuo_modid/textures/gui/container/oven_gui.png)
     private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/oven_gui.png");
-    private static final ResourceLocation PROGRESS_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/progress_bar.png");
-    private static final ResourceLocation LIT_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/lit_progress.png");
+    private static final ResourceLocation PROGRESS_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/progress.png");
+    private static final ResourceLocation LIT_TEXTURE = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "textures/gui/container/oven/lit.png");
 
     public OvenScreen(OvenMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

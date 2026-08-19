@@ -24,12 +24,12 @@ public class GemItem extends Item {
     public static final DeferredItem<Item> GEM_ITEM = ShadowsThings.ITEMS.register("gem", GemItem::new);
 
     public GemItem() {
-        super(new Item.Properties());
+        super(new Item.Properties().stacksTo(1));
     }
 
     public static ItemStack createGem(ResourceLocation gemId, int rarity) {
         ItemStack stack = new ItemStack(GEM_ITEM.get());
-        stack.set(SocketRegistries.GEM_DATA_COMPONENT.get(), new GemData(gemId, rarity));
+        stack.set(SocketRegistries.GEM_DATA.get(), new GemData(gemId, rarity));
         return stack;
     }
 
@@ -46,24 +46,21 @@ public class GemItem extends Item {
 
     @Override
     public Component getName(ItemStack stack) {
-        if (stack.has(SocketRegistries.GEM_DATA_COMPONENT.get())) {
-            GemData data = stack.get(SocketRegistries.GEM_DATA_COMPONENT.get());
-            var def = GemDataReader.get(data.gemId());
-            if (def.isPresent()) {
-                return Component.literal(def.get().name() + " (Tier " + data.rarity() + ")");
-            }
+        if (stack.has(SocketRegistries.GEM_DATA.get())) {
+            GemData data = stack.get(SocketRegistries.GEM_DATA.get());
+            return Component.translatable(String.format("item.shadows_things.gem.%s", data.gemId().toString().split(":")[1].toLowerCase()));
         }
-        return Component.translatable("item.shadows_things.gem");
+        return Component.translatable("item.shadows_things.gem.generic");
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!stack.has(SocketRegistries.GEM_DATA_COMPONENT.get())) {
+        if (!stack.has(SocketRegistries.GEM_DATA.get())) {
             tooltipComponents.add(Component.literal("Unattuned Gem Stone").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
             return;
         }
 
-        GemData data = stack.get(SocketRegistries.GEM_DATA_COMPONENT.get());
+        GemData data = stack.get(SocketRegistries.GEM_DATA.get());
         var gemDefOpt = GemDataReader.get(data.gemId());
 
         if (gemDefOpt.isEmpty()) {

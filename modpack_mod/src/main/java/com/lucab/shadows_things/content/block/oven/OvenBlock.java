@@ -4,7 +4,11 @@ import com.lucab.shadows_things.menus.OvenMenu;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -93,6 +97,28 @@ public class OvenBlock extends BaseEntityBlock {
                 }
             }
             super.onRemove(state, level, pos, newState, movedByPiston);
+        }
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (state.getValue(LIT)) {
+            double posX = (double) pos.getX() + 0.5;
+            double posY = pos.getY();
+            double posZ = (double) pos.getZ() + 0.5;
+
+            if (random.nextDouble() < 0.3) {
+                level.playLocalSound(posX, posY, posZ, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F, false);
+            }
+
+            Direction direction = state.getValue(FACING);
+            Direction.Axis direction_axis = direction.getAxis();
+            double rand = random.nextDouble() * 0.6 - 0.3;
+            double fireParticleX = direction_axis == Direction.Axis.X ? (double) direction.getStepX() * 0.52 : rand;
+            double fireParticleY = random.nextDouble() * 6.0 / 16.0;
+            double fireParticleZ = direction_axis == Direction.Axis.Z ? (double) direction.getStepZ() * 0.52 : rand;
+            level.addParticle(ParticleTypes.SMOKE, posX + fireParticleX, posY + fireParticleY, posZ + fireParticleZ, 0.0, 0.0, 0.0);
+            level.addParticle(ParticleTypes.FLAME, posX + fireParticleX, posY + fireParticleY, posZ + fireParticleZ, 0.0, 0.0, 0.0);
         }
     }
 

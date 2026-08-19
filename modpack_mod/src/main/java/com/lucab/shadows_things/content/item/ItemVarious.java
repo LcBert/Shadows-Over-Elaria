@@ -10,6 +10,7 @@ import java.util.List;
 
 public class ItemVarious {
     public static final DeferredItem<Item> STONE_PEBBLE = ShadowsThings.ITEMS.register("stone_pebble", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> GEM_DUST = ShadowsThings.ITEMS.register("gem_dust", () -> new Item(new Item.Properties()));
 
     public static void register() {
         BlockVarious.register();
@@ -17,7 +18,8 @@ public class ItemVarious {
 
     public static List<ItemStack> getItems() {
         return List.of(
-                new ItemStack(STONE_PEBBLE.get())
+                new ItemStack(STONE_PEBBLE.get()),
+                new ItemStack(GEM_DUST.get())
         );
     }
 }

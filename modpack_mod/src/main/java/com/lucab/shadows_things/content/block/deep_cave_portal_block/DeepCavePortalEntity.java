@@ -1,10 +1,14 @@
 package com.lucab.shadows_things.content.block.deep_cave_portal_block;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -23,6 +27,7 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -32,7 +37,10 @@ public class DeepCavePortalEntity extends BlockEntity {
             Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "deep_cave"));
 
     protected static final int ENTRANCE_RADIUS = 3;
-    private static final int ENTRANCE_TICK = 100;
+    private static final int ENTRANCE_TICK = 300;
+    private static final int ENTRANCE_EFFECTS_TICK = 50;
+    private static final int ENTRANCE_FIRST_MESSAGE_TICK = 50;
+    private static final int ENTRANCE_SECOND_MESSAGE_TICK = 150;
 
     private int tickCount = 0;
 
@@ -40,8 +48,44 @@ public class DeepCavePortalEntity extends BlockEntity {
         super(DeepCavePortalRegister.DEEP_CAVE_PORTAL_ENTITY.get(), pos, state);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, DeepCavePortalEntity be) {
-        if (level == null || level.isClientSide) return;
+    public static void clientTick(Level level, BlockPos pos, BlockState state, DeepCavePortalEntity be) {
+        be.tickCount++;
+
+        double centerX = pos.getX() + 0.5;
+        double centerY = pos.getY() + 1;
+        double centerZ = pos.getZ() + 0.5;
+
+        // Circle
+        if (be.tickCount % 5 == 0) {
+            DustParticleOptions particle = new DustParticleOptions(new Vector3f(1.0f, 0.0f, 1.0f), 1);
+            int points = 32;
+            for (int i = 0; i < points; i++) {
+                double angle = (2 * Math.PI / points) * i;
+                double x = pos.getX() + 0.5 + Math.cos(angle) * DeepCavePortalEntity.ENTRANCE_RADIUS;
+                double z = pos.getZ() + 0.5 + Math.sin(angle) * DeepCavePortalEntity.ENTRANCE_RADIUS;
+                double y = pos.getY() + 1.2;
+                level.addParticle(particle, x, y, z, 0.5, 0.0, 0.0);
+            }
+        }
+
+        // Spiral / Vortex effect
+        int particlesPerTick = 3;
+        for (int i = 0; i < particlesPerTick; i++) {
+            double angle = (be.tickCount * 0.2) + (i * (Math.PI / 2));
+            double radius = ENTRANCE_RADIUS * (1.0 - ((be.tickCount % 40) / 40.0)); // inward pull effect
+            if (radius < 0.1) radius = ENTRANCE_RADIUS;
+
+            double x = centerX + Math.cos(angle) * radius;
+            double z = centerZ + Math.sin(angle) * radius;
+            double y = centerY + ((be.tickCount % 40) * 0.1); // moves upward
+
+            level.addParticle(ParticleTypes.SOUL, x, y, z, 0.0, 0.0, 0.0);
+        }
+    }
+
+    public static void serverTick(Level level, BlockPos pos, BlockState state, DeepCavePortalEntity be) {
+        if (level == null) return;
+
         List<Player> nearbyPlayers = be.getNearbyEntities();
         if (nearbyPlayers.isEmpty()) be.tickCount = 0;
         else be.tickCount++;
@@ -55,10 +99,30 @@ public class DeepCavePortalEntity extends BlockEntity {
             level.playSound(null, pos, SoundEvents.BEACON_AMBIENT, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
 
-        if (be.tickCount >= ENTRANCE_TICK / 2) {
+        // Add Effects
+        if (be.tickCount >= ENTRANCE_EFFECTS_TICK) {
             nearbyPlayers.forEach(player -> {
                 player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 1, false, false));
+            });
+        }
+
+        // Show messages
+        if (be.tickCount == ENTRANCE_FIRST_MESSAGE_TICK) {
+            nearbyPlayers.forEach(player -> {
+                Utils.sendTitleMessage(player,
+                        Component.literal("Allineamento al portale"),
+                        Component.literal("La tua essenza si sta allineando al portale")
+                );
+            });
+        }
+
+        if (be.tickCount == ENTRANCE_SECOND_MESSAGE_TICK) {
+            nearbyPlayers.forEach(player -> {
+                Utils.sendTitleMessage(player,
+                        Component.literal("Portale aperto"),
+                        Component.literal("Preparati ad entrare")
+                );
             });
         }
 
@@ -66,21 +130,36 @@ public class DeepCavePortalEntity extends BlockEntity {
             be.teleportPlayers(nearbyPlayers);
             be.tickCount = ENTRANCE_TICK - 20;
         }
-
     }
 
     private List<Player> getNearbyEntities() {
-        AABB search_box = new AABB(this.getBlockPos()).inflate(ENTRANCE_RADIUS);
-        double radiusSq = ENTRANCE_RADIUS * ENTRANCE_RADIUS;
+        BlockPos pos = this.getBlockPos();
 
-        double centerX = this.getBlockPos().getX() + 0.5;
-        double centerY = this.getBlockPos().getY() + 0.5;
-        double centerZ = this.getBlockPos().getZ() + 0.5;
+        // Define AABB starting from the top of the block, going up by 3 blocks, and bounded horizontally by ENTRANCE_RADIUS
+        AABB search_box = new AABB(
+                pos.getX() - ENTRANCE_RADIUS, pos.getY() + 1, pos.getZ() - ENTRANCE_RADIUS,
+                pos.getX() + 1 + ENTRANCE_RADIUS, pos.getY() + 4, pos.getZ() + 1 + ENTRANCE_RADIUS
+        );
+
+        double radiusSq = ENTRANCE_RADIUS * ENTRANCE_RADIUS;
+        double centerX = pos.getX() + 0.5;
+        double centerZ = pos.getZ() + 0.5;
 
         return level.getEntities(
                 EntityTypeTest.forClass(Player.class),
                 search_box,
-                player -> player.distanceToSqr(centerX, centerY, centerZ) <= radiusSq
+                player -> {
+                    // Check if player is strictly within the vertical range [pos.getY() + 1, pos.getY() + 3]
+                    // and within the circular radius on the XZ plane
+                    double playerY = player.getY();
+                    if (playerY < pos.getY() + 1 || playerY > pos.getY() + 4) {
+                        return false;
+                    }
+
+                    double dx = player.getX() - centerX;
+                    double dz = player.getZ() - centerZ;
+                    return (dx * dx + dz * dz) <= radiusSq;
+                }
         );
     }
 
@@ -90,8 +169,8 @@ public class DeepCavePortalEntity extends BlockEntity {
         ServerLevel targetLevel = server.getLevel(DIMENSION_KEY);
         if (targetLevel == null) return;
 
-        int x = ThreadLocalRandom.current().nextInt(-1000, 1000);
-        int z = ThreadLocalRandom.current().nextInt(-1000, 1000);
+        int x = this.worldPosition.getX() + ThreadLocalRandom.current().nextInt(-1000, 1000);
+        int z = this.worldPosition.getZ() + ThreadLocalRandom.current().nextInt(-1000, 1000);
         int y = getBlockPos().getY();
 
         BlockPos targetPos = findSafePosition(targetLevel, new BlockPos(x, y, z));
@@ -133,15 +212,5 @@ public class DeepCavePortalEntity extends BlockEntity {
         return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty() &&
                 level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty() &&
                 !level.getBlockState(pos.below()).getCollisionShape(level, pos.below()).isEmpty();
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
     }
 }

@@ -1,0 +1,15 @@
+{
+  "type": "shadows_things:dungeon",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "shadows_things:dungeon",
+      "layers": [
+        {
+          "height": 512,
+          "block": "minecraft:stone"
+        }
+      ]
+    }
+  }
+}

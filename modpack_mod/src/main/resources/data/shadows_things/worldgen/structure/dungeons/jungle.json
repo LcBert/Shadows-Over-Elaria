@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": "shadows_things:dungeon",
+  "step": "raw_generation",
+  "spawn_overrides": {},
+  "start_pool": "shadows_things:dungeons/jungle/dungeon",
+  "size": 20,
+  "max_distance_from_center": 128,
+  "use_expansion_hack": false,
+  "start_height": {
+    "absolute": 64
+  }
+}

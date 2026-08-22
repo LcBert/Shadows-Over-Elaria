@@ -2,6 +2,7 @@ package com.lucab.shadows_things.content.block.deep_cave_portal_block;
 
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.Utils;
+import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveDimension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -33,9 +34,6 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DeepCavePortalEntity extends BlockEntity {
-    private static final ResourceKey<Level> DIMENSION_KEY = ResourceKey.create(
-            Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "deep_cave"));
-
     protected static final int ENTRANCE_RADIUS = 3;
     private static final int ENTRANCE_TICK = 300;
     private static final int ENTRANCE_EFFECTS_TICK = 50;
@@ -87,8 +85,10 @@ public class DeepCavePortalEntity extends BlockEntity {
         if (level == null) return;
 
         List<Player> nearbyPlayers = be.getNearbyEntities();
-        if (nearbyPlayers.isEmpty()) be.tickCount = 0;
-        else be.tickCount++;
+        if (nearbyPlayers.isEmpty())
+            be.tickCount = 0;
+        else
+            be.tickCount++;
 
         if (be.tickCount == 1) {
             level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -149,8 +149,6 @@ public class DeepCavePortalEntity extends BlockEntity {
                 EntityTypeTest.forClass(Player.class),
                 search_box,
                 player -> {
-                    // Check if player is strictly within the vertical range [pos.getY() + 1, pos.getY() + 3]
-                    // and within the circular radius on the XZ plane
                     double playerY = player.getY();
                     if (playerY < pos.getY() + 1 || playerY > pos.getY() + 4) {
                         return false;
@@ -166,7 +164,7 @@ public class DeepCavePortalEntity extends BlockEntity {
     private void teleportPlayers(List<Player> players) {
         MinecraftServer server = level.getServer();
         if (server == null) return;
-        ServerLevel targetLevel = server.getLevel(DIMENSION_KEY);
+        ServerLevel targetLevel = server.getLevel(DeepCaveDimension.DEEP_CAVE_LEVEL_KEY);
         if (targetLevel == null) return;
 
         int x = this.worldPosition.getX() + ThreadLocalRandom.current().nextInt(-1000, 1000);

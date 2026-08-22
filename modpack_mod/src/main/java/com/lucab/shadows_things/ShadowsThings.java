@@ -13,9 +13,17 @@ import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
 import com.lucab.shadows_things.rpg.professions.ProfessionCommand;
 import com.lucab.shadows_things.toast.ToastCommand;
 import com.lucab.shadows_things.toast.ToastPacket;
+import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveDimension;
+import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveNoiseSettings;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.inventory.MenuType;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -39,6 +47,9 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Mod(ShadowsThings.MODID)
 public class ShadowsThings {
@@ -77,6 +88,7 @@ public class ShadowsThings {
         ATTACHMENT_TYPES.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
+        modEventBus.addListener(this::onGatherData);
         modEventBus.addListener(this::registerPayLoad);
 
         // Content Register
@@ -100,6 +112,22 @@ public class ShadowsThings {
         ExhaustionAttachments.register();
         ClassActionAttachments.register();
         ProfessionAttachments.register();
+    }
+
+    public void onGatherData(GatherDataEvent event) {
+        DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+
+        RegistrySetBuilder registrySetBuilder = new RegistrySetBuilder()
+                // Deep Cave Dimension
+                .add(Registries.DIMENSION_TYPE, DeepCaveDimension::bootstrapType)
+                .add(Registries.LEVEL_STEM, DeepCaveDimension::bootstrapStem)
+                // Deep Cave Noise Settings
+                .add(Registries.NOISE_SETTINGS, DeepCaveNoiseSettings::bootstrap);
+
+        generator.addProvider(event.includeServer(),
+                new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, registrySetBuilder, Set.of(ShadowsThings.MODID)));
     }
 
     @SubscribeEvent

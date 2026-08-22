@@ -4,7 +4,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
-import java.util.Map;
 
 public class DeepCaveData {
     public record Layer(Block block, String randomName) {
@@ -28,7 +27,10 @@ public class DeepCaveData {
 
     public static int[] getLayerCoordinates(int layerIndex) {
         int totalLayers = layers.size();
-        if (layerIndex < 1 || layerIndex > totalLayers) return new int[0];
+        if (layerIndex < 1)
+            return new int[]{maxY, maxY};
+        if (layerIndex > totalLayers)
+            return new int[]{0, 0};
 
         int totalHeight = getHeight();
         int sectionHeight = totalHeight / totalLayers;
@@ -39,5 +41,16 @@ public class DeepCaveData {
         int layerMaxY = layerMinY - layersSeparations;
 
         return new int[]{layerMinY, layerMaxY};
+    }
+
+    public static int[] getLayerHeight(int layerIndex) {
+        int totalLayers = layers.size();
+
+        int totalHeight = getHeight();
+        int sectionHeight = totalHeight / totalLayers;
+        int invertedIndex = totalLayers - layerIndex;
+        int maxY = sectionHeight * (invertedIndex + 1);
+        int minY = maxY - sectionHeight;
+        return new int[]{minY, maxY};
     }
 }

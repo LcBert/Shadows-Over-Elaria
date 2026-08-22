@@ -1,17 +1,13 @@
 package com.lucab.shadows_things.content.block.deep_cave_portal_block;
 
-import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.Utils;
+import com.lucab.shadows_things.rpg.classes.ClassManager;
+import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveData;
 import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveDimension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -167,11 +163,20 @@ public class DeepCavePortalEntity extends BlockEntity {
         ServerLevel targetLevel = server.getLevel(DeepCaveDimension.DEEP_CAVE_LEVEL_KEY);
         if (targetLevel == null) return;
 
+        int minTier = players.stream()
+                .mapToInt(ClassManager::getTier)
+                .filter(tier -> tier >= 1 && tier <= 5)
+                .min()
+                .orElse(1);
+
+        int[] layerBounds = DeepCaveData.getLayerHeight(minTier);
+        int targetMinY = Math.min(layerBounds[1], layerBounds[0]);
+        int targetMaxY = Math.max(layerBounds[1], layerBounds[0]);
+
         int x = this.worldPosition.getX() + ThreadLocalRandom.current().nextInt(-1000, 1000);
         int z = this.worldPosition.getZ() + ThreadLocalRandom.current().nextInt(-1000, 1000);
-        int y = getBlockPos().getY();
 
-        BlockPos targetPos = findSafePosition(targetLevel, new BlockPos(x, y, z));
+        BlockPos targetPos = findSafePosition(targetLevel, x, z, targetMinY, targetMaxY);
 
         if (targetPos == null) return;
 
@@ -191,13 +196,13 @@ public class DeepCavePortalEntity extends BlockEntity {
         }
     }
 
-    private BlockPos findSafePosition(ServerLevel level, BlockPos targetPos) {
-        int x = targetPos.getX();
-        int z = targetPos.getZ();
-
+    private BlockPos findSafePosition(ServerLevel level, int x, int z, int minY, int maxY) {
         level.getChunkSource().getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
 
-        for (int y = level.getMinBuildHeight(); y < level.getMaxBuildHeight() - 1; y++) {
+        int clampedMinY = Math.max(level.getMinBuildHeight(), minY);
+        int clampedMaxY = Math.min(level.getMaxBuildHeight() - 1, maxY);
+
+        for (int y = clampedMinY; y <= clampedMaxY; y++) {
             BlockPos pos = new BlockPos(x, y, z);
             if (isSafe(level, pos)) {
                 return pos;

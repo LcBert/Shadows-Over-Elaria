@@ -1,7 +1,7 @@
 {
   "type": "minecraft:ore",
   "config": {
-    "discard_chance_on_air_exposure": 0.0,
+    "discard_chance_on_air_exposure": 0,
     "size": 15,
     "targets": [
       {
@@ -9,17 +9,44 @@
           "Name": "minecraft:gold_ore"
         },
         "target": {
-          "predicate_type": "minecraft:tag_match",
-          "tag": "minecraft:stone_ore_replaceables"
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:stone"
         }
       },
       {
         "state": {
-          "Name": "minecraft:deepslate_gold_ore"
+          "Name": "minecraft:gold_ore"
         },
         "target": {
-          "predicate_type": "minecraft:tag_match",
-          "tag": "minecraft:deepslate_ore_replaceables"
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:tuff"
+        }
+      },
+      {
+        "state": {
+          "Name": "minecraft:gold_ore"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:deepslate"
+        }
+      },
+      {
+        "state": {
+          "Name": "minecraft:gold_ore"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:basalt"
+        }
+      },
+      {
+        "state": {
+          "Name": "minecraft:gold_ore"
+        },
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:blackstone"
         }
       }
     ]

@@ -26,6 +26,7 @@ public class Sieve extends Block {
                 .mapColor(MapColor.WOOD)
                 .sound(SoundType.WOOD)
                 .strength(1.0F)
+                .requiresCorrectToolForDrops()
         );
     }
 

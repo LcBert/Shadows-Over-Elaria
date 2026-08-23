@@ -25,6 +25,7 @@ public class DeepCavePortalBlock extends BaseEntityBlock {
                 .mapColor(MapColor.STONE)
                 .sound(SoundType.STONE)
                 .strength(-1.0f)
+                .noLootTable()
         );
     }
 

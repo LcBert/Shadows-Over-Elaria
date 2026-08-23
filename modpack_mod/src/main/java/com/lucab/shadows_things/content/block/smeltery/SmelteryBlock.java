@@ -88,6 +88,7 @@ public class SmelteryBlock extends BaseEntityBlock {
                 .mapColor(MapColor.STONE)
                 .sound(SoundType.STONE)
                 .strength(3.5f)
+                .requiresCorrectToolForDrops()
         );
         registerDefaultState();
         this.tier = tier;

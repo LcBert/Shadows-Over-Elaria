@@ -18,7 +18,10 @@ public class SilverSet {
             () -> new Block(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .sound(SoundType.STONE)
-                    .strength(2.0f)));
+                    .strength(2.0f)
+                    .requiresCorrectToolForDrops()
+            )
+    );
 
     public static final DeferredItem<BlockItem> SILVER_ORE_ITEM = ShadowsThings.ITEMS.register("silver_ore",
             () -> new BlockItem(SILVER_ORE.get(), new Item.Properties()));

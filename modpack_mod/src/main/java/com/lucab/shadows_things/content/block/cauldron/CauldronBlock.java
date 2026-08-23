@@ -50,6 +50,7 @@ public class CauldronBlock extends BaseEntityBlock {
                 .sound(SoundType.STONE)
                 .strength(3.5f)
                 .noOcclusion()
+                .requiresCorrectToolForDrops()
         );
         registerDefaultState();
     }

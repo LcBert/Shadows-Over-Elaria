@@ -8,6 +8,7 @@ import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.content.block.sieve.SieveRegister;
 import com.lucab.shadows_things.content.block.smeltery.SmelteryRegister;
 import com.lucab.shadows_things.content.item.*;
+import com.lucab.shadows_things.content.item.EscapeRope;
 
 public class ContentRegister {
     public static void register() {
@@ -31,6 +32,7 @@ public class ContentRegister {
         RepairKits.register();
         Rods.register();
         GemItem.register();
+        EscapeRope.register();
         ItemVarious.register();
 
         SilverSet.register();

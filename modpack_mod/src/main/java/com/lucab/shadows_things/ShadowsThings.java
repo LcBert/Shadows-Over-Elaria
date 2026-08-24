@@ -2,6 +2,7 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.attachments.ClassActionAttachments;
 import com.lucab.shadows_things.content.ContentRegister;
+import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.rpg.classes.*;
 import com.lucab.shadows_things.rpg.professions.OpenProfessionGuiPacket;
@@ -110,6 +111,7 @@ public class ShadowsThings {
 
         // Attachment register
         ExhaustionAttachments.register();
+        DeepCavePlayerAttachment.register();
         ClassActionAttachments.register();
         ProfessionAttachments.register();
     }

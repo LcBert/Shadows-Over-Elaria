@@ -1,16 +1,11 @@
 package com.lucab.shadows_things.content.block.deep_cave_portal_block;
 
 import com.lucab.shadows_things.Utils;
-import com.lucab.shadows_things.rpg.classes.ClassManager;
-import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveData;
-import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveDimension;
+import com.lucab.shadows_things.deep_cave.DeepCaveHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,15 +14,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class DeepCavePortalEntity extends BlockEntity {
     protected static final int ENTRANCE_RADIUS = 3;
@@ -123,7 +114,12 @@ public class DeepCavePortalEntity extends BlockEntity {
         }
 
         if (be.tickCount >= ENTRANCE_TICK) {
-            be.teleportPlayers(nearbyPlayers);
+            DeepCaveHelper.teleportPlayersIntoCave(
+                    level,
+                    be.worldPosition,
+                    level.getBlockState(pos).getValue(DeepCavePortalBlock.FACING),
+                    nearbyPlayers
+            );
             be.tickCount = ENTRANCE_TICK - 20;
         }
     }
@@ -155,65 +151,5 @@ public class DeepCavePortalEntity extends BlockEntity {
                     return (dx * dx + dz * dz) <= radiusSq;
                 }
         );
-    }
-
-    private void teleportPlayers(List<Player> players) {
-        MinecraftServer server = level.getServer();
-        if (server == null) return;
-        ServerLevel targetLevel = server.getLevel(DeepCaveDimension.DEEP_CAVE_LEVEL_KEY);
-        if (targetLevel == null) return;
-
-        int minTier = players.stream()
-                .mapToInt(ClassManager::getTier)
-                .filter(tier -> tier >= 1 && tier <= 5)
-                .min()
-                .orElse(1);
-
-        int[] layerBounds = DeepCaveData.getLayerHeight(minTier);
-        int targetMinY = Math.min(layerBounds[1], layerBounds[0]);
-        int targetMaxY = Math.max(layerBounds[1], layerBounds[0]);
-
-        int x = this.worldPosition.getX() + ThreadLocalRandom.current().nextInt(-1000, 1000);
-        int z = this.worldPosition.getZ() + ThreadLocalRandom.current().nextInt(-1000, 1000);
-
-        BlockPos targetPos = findSafePosition(targetLevel, x, z, targetMinY, targetMaxY);
-
-        if (targetPos == null) return;
-
-        for (Player player : players) {
-            if (player instanceof ServerPlayer serverPlayer) {
-                DimensionTransition transition = new DimensionTransition(
-                        targetLevel,
-                        targetPos.getCenter(),
-                        Vec3.ZERO,
-                        serverPlayer.getYRot(),
-                        serverPlayer.getXRot(),
-                        DimensionTransition.DO_NOTHING
-                );
-                serverPlayer.changeDimension(transition);
-                player.playSound(SoundEvents.BEACON_POWER_SELECT, 1.0F, 1.0F);
-            }
-        }
-    }
-
-    private BlockPos findSafePosition(ServerLevel level, int x, int z, int minY, int maxY) {
-        level.getChunkSource().getChunk(x >> 4, z >> 4, ChunkStatus.FULL, true);
-
-        int clampedMinY = Math.max(level.getMinBuildHeight(), minY);
-        int clampedMaxY = Math.min(level.getMaxBuildHeight() - 1, maxY);
-
-        for (int y = clampedMinY; y <= clampedMaxY; y++) {
-            BlockPos pos = new BlockPos(x, y, z);
-            if (isSafe(level, pos)) {
-                return pos;
-            }
-        }
-        return null;
-    }
-
-    private boolean isSafe(ServerLevel level, BlockPos pos) {
-        return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty() &&
-                level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty() &&
-                !level.getBlockState(pos.below()).getCollisionShape(level, pos.below()).isEmpty();
     }
 }

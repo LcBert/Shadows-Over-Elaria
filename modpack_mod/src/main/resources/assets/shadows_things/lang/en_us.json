@@ -32,6 +32,7 @@
   "item.shadows_things.silver_repair_kit": "Silver Repair Kit",
   "item.shadows_things.netherite_repair_kit": "Netherite Repair Kit",
   "item.shadows_things.stone_pebble": "Stone Pebble",
+  "item.shadows_things.escape_rope": "Escape Rope",
   "item.shadows_things.gem_dust": "Gem Dust",
   "item.shadows_things.gem.generic": "Generic Gem",
   "item.shadows_things.gem.ruby": "Ruby",
@@ -70,5 +71,8 @@
   "gui.shadows_things.smeltery_gui.tier": "Tier: %d",
   "jei.shadows_things.recipe.oven_cooking": "Oven Cooking",
   "jei.shadows_things.recipe.smeltery": "Smeltery",
-  "jei.shadows_things.recipe.cauldron": "Cauldron"
+  "jei.shadows_things.recipe.cauldron": "Cauldron",
+  "tooltip.shadows_things.escape_rope.info": "Allow you to exit Deep Cave dimension",
+  "tooltip.shadows_things.escape_rope.noOwner": "No Owner",
+  "tooltip.shadows_things.escape_rope.owner": "Owner: %s"
 }

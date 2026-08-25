@@ -66,7 +66,42 @@ public class DryingRackMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        return null;
+        ItemStack quickMovedStack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(index);
+
+        int slotsCount = 10;
+        int[] inputSlotIndex = new int[]{0, 4};
+        int[] outputSlotIndex = new int[]{5, 9};
+
+        if (slot.hasItem()) {
+            ItemStack rawStack = slot.getItem();
+            quickMovedStack = rawStack.copy();
+
+            if (index < slotsCount) {
+                // From block to player
+                if (!this.moveItemStackTo(rawStack, slotsCount, 43, true)) {
+                    return ItemStack.EMPTY;
+                }
+                slot.onQuickCraft(rawStack, quickMovedStack);
+            } else {
+                // From player to block
+                if (!this.moveItemStackTo(rawStack, inputSlotIndex[0], inputSlotIndex[1] + 1, false)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+            if (rawStack.isEmpty()) {
+                slot.setByPlayer(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+
+            if (rawStack.getCount() == quickMovedStack.getCount()) {
+                return ItemStack.EMPTY;
+            }
+
+            slot.onTake(player, rawStack);
+        }
+        return quickMovedStack;
     }
 
     @Override

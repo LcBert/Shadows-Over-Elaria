@@ -1,0 +1,15 @@
+{
+  "type": "shadows_things:smeltery",
+  "tier": 3,
+  "ingredient": {
+    "item": "minecraft:gold_ingot", "count": 3
+  },
+  "die": {
+    "item": "shadows_things:forged_plate_die"
+  },
+  "consume_die": false,
+  "result": {
+    "id": "shadows_things:gold_plate", "count": 1
+  },
+  "process_time": 200
+}

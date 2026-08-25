@@ -3,6 +3,7 @@ package com.lucab.shadows_things.content;
 import com.lucab.shadows_things.content.block.BlockVarious;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.deep_cave_portal_block.DeepCavePortalRegister;
+import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.content.block.sieve.SieveRegister;
@@ -19,6 +20,7 @@ public class ContentRegister {
         CauldronRegister.register();
         DeepCavePortalRegister.register();
         SieveRegister.register();
+        DryingRackRegister.register();
         BlockVarious.register();
 
         // Items
@@ -27,6 +29,7 @@ public class ContentRegister {
         SeedsBagItem.register();
         GlassBottles.register();
         Crops.register();
+        SmelteryDie.register();
         Hilts.register();
         Plates.register();
         RepairKits.register();

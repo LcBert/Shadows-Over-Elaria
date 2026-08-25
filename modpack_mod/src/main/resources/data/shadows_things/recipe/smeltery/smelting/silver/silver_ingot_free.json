@@ -1,0 +1,15 @@
+{
+  "type": "shadows_things:smeltery",
+  "tier": 4,
+  "ingredient": {
+    "item": "shadows_things:raw_silver", "count": 3
+  },
+  "die": {
+    "item": "shadows_things:forged_ingot_die"
+  },
+  "consume_die": false,
+  "result": {
+    "id": "shadows_things:silver_ingot", "count": 1
+  },
+  "process_time": 200
+}

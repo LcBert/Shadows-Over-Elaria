@@ -51,7 +51,7 @@ public class ClassActionAttachments implements INBTSerializable<CompoundTag> {
     }
 
     public static final Supplier<AttachmentType<ClassActionAttachments>> CLASS_ACTION = ShadowsThings.ATTACHMENT_TYPES
-            .register("class_action", () -> AttachmentType.serializable(ClassActionAttachments::new).build());
+            .register("class_action", () -> AttachmentType.serializable(ClassActionAttachments::new).copyOnDeath().build());
 
 
     public static void register() {

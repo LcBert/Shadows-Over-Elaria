@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item": "magistuarmory:leather_strip"},
+    {"item": "shadows_things:iron_rod"}
+  ],
+  "result": {
+    "count": 1,
+    "id": "shadows_things:iron_hilt"
+  }
+}

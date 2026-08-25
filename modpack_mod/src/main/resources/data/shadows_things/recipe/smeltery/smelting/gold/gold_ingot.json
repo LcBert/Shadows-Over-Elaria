@@ -1,0 +1,15 @@
+{
+  "type": "shadows_things:smeltery",
+  "tier": 3,
+  "ingredient": {
+    "item": "minecraft:raw_gold", "count": 3
+  },
+  "die": {
+    "item": "shadows_things:sand_ingot_die"
+  },
+  "consume_die": true,
+  "result": {
+    "id": "minecraft:gold_ingot", "count": 1
+  },
+  "process_time": 200
+}

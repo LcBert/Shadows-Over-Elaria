@@ -149,10 +149,7 @@ public class SmelteryBlock extends BaseEntityBlock {
                 if (be instanceof SmelteryBlockEntity smelteryEntity) {
                     player.openMenu(new SimpleMenuProvider(
                             (containerId, playerInventory, p) -> new SmelteryMenu(containerId, playerInventory, smelteryEntity),
-                            Component.translatable(state.getBlock().getDescriptionId())
-                                    .append(Component.literal(" | ")
-                                            .append(Component.translatable("gui.shadows_things.smeltery_gui.tier", smelteryBlock.getTier()))
-                                    )
+                            state.getBlock().getName().append(Component.literal(" | ").append(Component.translatable("gui.shadows_things.smeltery_gui.tier", smelteryBlock.getTier())))
                     ), pos);
                 }
             }

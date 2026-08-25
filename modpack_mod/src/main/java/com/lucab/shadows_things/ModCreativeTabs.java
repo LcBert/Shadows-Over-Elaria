@@ -4,6 +4,7 @@ import com.lucab.shadows_things.content.SilverSet;
 import com.lucab.shadows_things.content.block.BlockVarious;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.deep_cave_portal_block.DeepCavePortalRegister;
+import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.content.block.sieve.SieveRegister;
@@ -37,6 +38,7 @@ public class ModCreativeTabs {
                         output.acceptAll(DeepCavePortalRegister.getItems());
                         output.accept(EscapeRope.getItem());
                         output.acceptAll(SieveRegister.getItems());
+                        output.acceptAll(DryingRackRegister.getItems());
                         output.acceptAll(SilverSet.getItems());
                         output.acceptAll(BlockVarious.getItems());
 
@@ -46,6 +48,7 @@ public class ModCreativeTabs {
                         output.acceptAll(SeedsBagItem.getItems());
                         output.acceptAll(Crops.getItems());
                         output.acceptAll(ItemVarious.getItems());
+                        output.acceptAll(SmelteryDie.getItems());
                         output.acceptAll(Plates.getItems());
                         output.acceptAll(RepairKits.getItems());
                         output.acceptAll(Rods.getItems());

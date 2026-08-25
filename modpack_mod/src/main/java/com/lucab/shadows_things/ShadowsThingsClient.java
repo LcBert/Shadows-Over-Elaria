@@ -2,13 +2,12 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.client.DeepCaveEffects;
 import com.lucab.shadows_things.client.renderer.CauldronRenderer;
+import com.lucab.shadows_things.client.renderer.DryingRackRenderer;
 import com.lucab.shadows_things.client.renderer.RepairTableRenderer;
-import com.lucab.shadows_things.client.screen.CauldronScreen;
-import com.lucab.shadows_things.client.screen.OvenScreen;
-import com.lucab.shadows_things.client.screen.SeedsBagScreen;
-import com.lucab.shadows_things.client.screen.SmelteryScreen;
+import com.lucab.shadows_things.client.screen.*;
 import com.lucab.shadows_things.client.screen.profession.ProfessionScreen;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
+import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.toast.ToastOverlay;
@@ -39,6 +38,7 @@ public class ShadowsThingsClient {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(RepairTableRegister.REPAIR_TABLE_ENTITY.get(), RepairTableRenderer::new);
         event.registerBlockEntityRenderer(CauldronRegister.CAULDRON_BLOCK_ENTITY.get(), CauldronRenderer::new);
+        event.registerBlockEntityRenderer(DryingRackRegister.DRYING_RACK_BLOCK_ENTITY.get(), DryingRackRenderer::new);
     }
 
     @SubscribeEvent
@@ -46,6 +46,7 @@ public class ShadowsThingsClient {
         event.register(MenuRegistries.OVEN_MENU.get(), OvenScreen::new);
         event.register(MenuRegistries.SMELTERY_MENU.get(), SmelteryScreen::new);
         event.register(MenuRegistries.CAULDRON_MENU.get(), CauldronScreen::new);
+        event.register(MenuRegistries.DRYING_RACK_MENU.get(), DryingRackScreen::new);
         event.register(MenuRegistries.PROFESSION_MENU.get(), ProfessionScreen::new);
         event.register(MenuRegistries.SEEDS_BAG_MENU.get(), SeedsBagScreen::new);
     }

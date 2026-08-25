@@ -1,0 +1,10 @@
+{
+  "type": "shadows_things:drying_rack",
+  "ingredient": {
+    "item": "minecraft:rotten_flesh", "count": 1
+  },
+  "result": {
+    "id": "minecraft:leather", "count": 1
+  },
+  "process_time": 200
+}

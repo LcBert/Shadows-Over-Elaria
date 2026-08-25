@@ -1,0 +1,15 @@
+{
+  "type": "shadows_things:smeltery",
+  "tier": 1,
+  "ingredient": {
+    "item": "minecraft:iron_ingot", "count": 2
+  },
+  "die": {
+    "tag": "shadows_things:plates"
+  },
+  "consume_die": true,
+  "result": {
+    "id": "shadows_things:forged_plate_die", "count": 1
+  },
+  "process_time": 200
+}

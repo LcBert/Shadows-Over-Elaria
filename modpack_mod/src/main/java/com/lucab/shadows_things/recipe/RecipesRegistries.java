@@ -35,7 +35,14 @@ public class RecipesRegistries {
             SERIALIZERS.register("cauldron", CauldronRecipe.Serializer::new);
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<CauldronRecipe>> CAULDRON_TYPE =
-            TYPES.register("cauldron", ()->RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "cauldron")));
+            TYPES.register("cauldron", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "cauldron")));
+
+    // Drying Rack
+    public static final DeferredHolder<RecipeSerializer<?>, DryingRackRecipe.Serializer> DRYING_RACK_SERIALIZER =
+            SERIALIZERS.register("drying_rack", DryingRackRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<DryingRackRecipe>> DRYING_RACK_TYPE =
+            TYPES.register("drying_rack", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "drying_rack")));
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);

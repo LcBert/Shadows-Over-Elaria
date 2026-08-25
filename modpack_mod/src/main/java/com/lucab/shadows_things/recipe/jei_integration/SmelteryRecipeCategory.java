@@ -13,6 +13,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +21,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 public class SmelteryRecipeCategory implements IRecipeCategory<SmelteryRecipe> {
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "smeltery");
@@ -59,17 +62,22 @@ public class SmelteryRecipeCategory implements IRecipeCategory<SmelteryRecipe> {
 
     @Override
     public int getHeight() {
-        return 27;
+        return 45;
     }
 
     @Override
     public void draw(SmelteryRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
 
+        // Input
         slot.draw(guiGraphics, 0, 10);
-        slot.draw(guiGraphics, 47, 10);
-        arrow.draw(guiGraphics, 22, 10);
-        filledArrow.draw(guiGraphics, 22, 10);
+        // Die
+        slot.draw(guiGraphics, 0, 28);
+        // Output
+        slot.draw(guiGraphics, 47, 20);
+
+        arrow.draw(guiGraphics, 22, 20);
+        filledArrow.draw(guiGraphics, 22, 20);
 
         int tier = recipe.getTier();
         String tierString = "Tier: " + tier;
@@ -90,7 +98,14 @@ public class SmelteryRecipeCategory implements IRecipeCategory<SmelteryRecipe> {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 11)
                 .addItemStack(new ItemStack(recipe.getIngredient().ingredient().getItems()[0].getItem(), recipe.getIngredientCount()));
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 48, 11)
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 29)
+                .addItemStacks(Arrays.stream(recipe.getDie().getItems()).toList())
+                .addRichTooltipCallback(((recipeSlotView, tooltip) -> {
+                    if (recipe.isConsumeDie())
+                        tooltip.add(Component.literal("Consumed").withStyle(ChatFormatting.RED));
+                }));
+
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 48, 21)
                 .addItemStack(recipe.getResult());
     }
 }

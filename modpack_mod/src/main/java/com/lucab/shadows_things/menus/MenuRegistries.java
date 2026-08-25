@@ -22,6 +22,10 @@ public class MenuRegistries {
     public static final DeferredHolder<MenuType<?>, MenuType<ProfessionMenu>> PROFESSION_MENU = ShadowsThings.MENUS.register("profession_menu",
             () -> IMenuTypeExtension.create(ProfessionMenu::new));
 
+    // Drying Rack Menu
+    public static final DeferredHolder<MenuType<?>, MenuType<DryingRackMenu>> DRYING_RACK_MENU = ShadowsThings.MENUS.register("drying_rack_menu",
+            () -> IMenuTypeExtension.create(DryingRackMenu::new));
+
     // Seeds bag Menu
     public static final DeferredHolder<MenuType<?>, MenuType<SeedsBagMenu>> SEEDS_BAG_MENU = ShadowsThings.MENUS.register("seeds_bag_menu",
             () -> IMenuTypeExtension.create(SeedsBagMenu::new));

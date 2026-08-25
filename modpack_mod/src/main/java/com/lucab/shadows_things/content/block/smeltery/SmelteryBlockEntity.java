@@ -1,5 +1,6 @@
 package com.lucab.shadows_things.content.block.smeltery;
 
+import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.recipe.SmelteryRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -25,7 +26,7 @@ public class SmelteryBlockEntity extends BlockEntity {
 
     private SmelteryRecipe.RecipeInstance recipeInstance = null;
 
-    public final ItemStackHandler inventory = new ItemStackHandler(20) {
+    public final ItemStackHandler inventory = new ItemStackHandler(12) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
@@ -34,13 +35,16 @@ public class SmelteryBlockEntity extends BlockEntity {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             // Input Slots
-            if (slot >= 0 && slot <= 17) return true;
+            if (slot >= 0 && slot <= 8) return true;
+
+            // Die Slot
+            if (slot == 9) return true;
 
             // Output Slot
-            if (slot == 18) return false;
+            if (slot == 10) return false;
 
             // Fuel Slot (Only burnable items)
-            if (slot == 19) return stack.getBurnTime(null) > 0;
+            if (slot == 11) return stack.getBurnTime(null) > 0;
             return super.isItemValid(slot, stack);
         }
     };
@@ -137,7 +141,7 @@ public class SmelteryBlockEntity extends BlockEntity {
         if (!(level.getBlockState(getBlockPos()).getBlock() instanceof SmelteryBlock smelteryBlock)) return;
 
         if (!isLit() && canProcess() && smelteryBlock.validateStructure(level, getBlockPos(), level.getBlockState(getBlockPos()))) {
-            ItemStack fuelStack = inventory.getStackInSlot(19);
+            ItemStack fuelStack = inventory.getStackInSlot(11);
             if (!fuelStack.isEmpty()) {
                 int burnTime = fuelStack.getBurnTime(null);
                 if (burnTime > 0) {
@@ -152,15 +156,18 @@ public class SmelteryBlockEntity extends BlockEntity {
     }
 
     private void findRecipe() {
-        if (!(level.getBlockState(getBlockPos()).getBlock() instanceof SmelteryBlock smelteryBlock)) return;
+        if (!(level.getBlockState(getBlockPos()).getBlock() instanceof SmelteryBlock)) return;
+
+        ItemStack dieStack = this.inventory.getStackInSlot(9);
 
         int inputStartSlot = 0;
-        int inputEndSlot = 17;
+        int inputEndSlot = 8;
+
         for (int slot = inputStartSlot; slot <= inputEndSlot; slot++) {
             ItemStack inputStack = this.inventory.getStackInSlot(slot);
             if (inputStack.isEmpty()) continue;
 
-            SmelteryRecipe recipe = SmelteryRecipe.getRecipe(this.level, inputStack);
+            SmelteryRecipe recipe = SmelteryRecipe.getRecipe(this.level, inputStack, dieStack);
             if (recipe == null) continue;
 
             int inputCount = recipe.getIngredientCount();
@@ -170,7 +177,9 @@ public class SmelteryBlockEntity extends BlockEntity {
             recipeInstance = new SmelteryRecipe.RecipeInstance(
                     slot,
                     inputStack.copyWithCount(inputCount),
+                    dieStack.copy(),
                     recipeResult,
+                    recipe.isConsumeDie(),
                     recipe.getProcessTime(),
                     recipe.getTier()
             );
@@ -185,19 +194,30 @@ public class SmelteryBlockEntity extends BlockEntity {
             findRecipe();
             return false;
         }
+
         int recipeSlot = recipeInstance.slot;
         ItemStack recipeInput = recipeInstance.inputStack;
+        ItemStack recipeDie = recipeInstance.dieStack;
         ItemStack recipeOutput = recipeInstance.outputStack;
         this.totalProcessTime = recipeInstance.processTime;
         int recipeTier = recipeInstance.tier;
 
+        // Check if input slot changed or is insufficient
         ItemStack inputStack = this.inventory.getStackInSlot(recipeSlot);
-        if (!ItemStack.isSameItemSameComponents(inputStack, recipeInput)) {
+        if (!ItemStack.isSameItemSameComponents(inputStack, recipeInput) || inputStack.getCount() < recipeInput.getCount()) {
             recipeInstance = null;
             return false;
         }
 
-        ItemStack outputStack = this.inventory.getStackInSlot(18);
+        // Check if die slot is changed
+        ItemStack dieStack = this.inventory.getStackInSlot(9);
+        if (!ItemStack.isSameItemSameComponents(dieStack, recipeDie)) {
+            recipeInstance = null;
+            return false;
+        }
+
+        // Check output slot capacity and compatibility
+        ItemStack outputStack = this.inventory.getStackInSlot(10);
         if (!outputStack.isEmpty()) {
             if (!ItemStack.isSameItemSameComponents(outputStack, recipeOutput)) {
                 recipeInstance = null;
@@ -220,12 +240,20 @@ public class SmelteryBlockEntity extends BlockEntity {
         int recipeSlot = recipeInstance.slot;
         int inputCount = recipeInstance.inputStack.getCount();
         ItemStack recipeOutput = recipeInstance.outputStack;
+        boolean consumeDie = recipeInstance.consumeDie;
 
+        // Shrink input and optionally consume 1 from die slot
         this.inventory.getStackInSlot(recipeSlot).shrink(inputCount);
-        ItemStack outputStack = this.inventory.getStackInSlot(18);
+        if (consumeDie) {
+            this.inventory.getStackInSlot(9).shrink(1);
+        }
 
-        if (outputStack.isEmpty()) this.inventory.setStackInSlot(18, recipeOutput.copy());
-        else outputStack.grow(recipeOutput.getCount());
+        ItemStack outputStack = this.inventory.getStackInSlot(10);
+        if (outputStack.isEmpty()) {
+            this.inventory.setStackInSlot(10, recipeOutput.copy());
+        } else {
+            outputStack.grow(recipeOutput.getCount());
+        }
 
         recipeInstance = null;
     }

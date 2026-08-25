@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "shadows_things:smeltery_dies/sand"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "shadows_things:sand_base_die"
+  }
+}

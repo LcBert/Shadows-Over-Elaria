@@ -22,7 +22,7 @@ public class SmelteryMenu extends BaseMachineMenu {
 
     public SmelteryMenu(int containerId, Inventory playerInventory, BlockEntity blockEntity) {
         super(MenuRegistries.SMELTERY_MENU.get(), containerId, blockEntity,
-                new int[]{0, 17}, new int[]{18, 18}, 19, 20);
+                new int[]{0, 9}, new int[]{10, 10}, 11, 12);
 
         if (!(blockEntity instanceof SmelteryBlockEntity smelteryEntity)) {
             throw new IllegalStateException("BlockEntity is not an instance of SmelteryBlockEntity");
@@ -32,16 +32,19 @@ public class SmelteryMenu extends BaseMachineMenu {
 
         IItemHandler itemHandler = smelteryEntity.getInventoryHandler();
 
-        int inputStartX = 22;
-        int inputStartY = 28;
+        int inputStartX = 14;
+        int inputStartY = 29;
         int inputRow = 3;
-        int inputColumn = 6;
+        int inputColumn = 3;
 
-        int outputX = 152;
-        int outputY = 28;
+        int moldX = 90;
+        int moldY = 29;
 
-        int fuelX = 152;
-        int fuelY = 64;
+        int outputX = 130;
+        int outputY = 47;
+
+        int fuelX = 90;
+        int fuelY = 65;
 
         // Input Slots
         int slotIndex = 0;
@@ -50,6 +53,9 @@ public class SmelteryMenu extends BaseMachineMenu {
                 this.addSlot(new SlotItemHandler(itemHandler, slotIndex++, inputStartX + (col * 18), inputStartY + (row * 18)));
             }
         }
+
+        // Mold Slot
+        this.addSlot(new SlotItemHandler(itemHandler, slotIndex++, moldX, moldY));
 
         // Output Slot
         this.addSlot(new SlotItemHandler(itemHandler, slotIndex++, outputX, outputY));

@@ -1,8 +1,58 @@
 {
   "tiers": {
-    "1": ["minecraft:wooden_sword"]
+    "1": [
+      "magistuarmory:stone_heavymace", "magistuarmory:copper_heavymace",
+      "magistuarmory:stone_morgenstern", "magistuarmory:copper_morgenstern",
+      "magistuarmory:stone_heavywarhammer", "magistuarmory:copper_heavywarhammer",
+      "magistuarmory:stone_bastardsword", "magistuarmory:copper_bastardsword",
+      "magistuarmory:stone_claymore", "magistuarmory:copper_claymore",
+      "magistuarmory:stone_zweihander", "magistuarmory:copper_zweihander"
+    ],
+    "2": [
+      "magistuarmory:iron_heavymace",
+      "magistuarmory:iron_morgenstern",
+      "magistuarmory:iron_heavywarhammer",
+      "magistuarmory:iron_bastardsword",
+      "magistuarmory:iron_claymore",
+      "magistuarmory:iron_zweihander"
+    ],
+    "3": [
+      "magistuarmory:gold_heavymace",
+      "magistuarmory:gold_morgenstern",
+      "magistuarmory:gold_heavywarhammer",
+      "magistuarmory:gold_bastardsword",
+      "magistuarmory:gold_claymore",
+      "magistuarmory:gold_zweihander"
+    ],
+    "4": [
+      "magistuarmory:silver_heavymace",
+      "magistuarmory:silver_morgenstern",
+      "magistuarmory:silver_heavywarhammer",
+      "magistuarmory:silver_bastardsword",
+      "magistuarmory:silver_claymore",
+      "magistuarmory:silver_zweihander"
+    ],
+    "5": [
+      "magistuarmory:netherite_heavymace",
+      "magistuarmory:netherite_morgenstern",
+      "magistuarmory:netherite_heavywarhammer",
+      "magistuarmory:netherite_bastardsword",
+      "magistuarmory:netherite_claymore",
+      "magistuarmory:netherite_zweihander"
+    ]
   },
   "attributes": {
+  },
+  "starter_kit": {
+    "armor": {
+      "head": "minecraft:leather_helmet",
+      "chest": "minecraft:leather_chestplate",
+      "legs": "minecraft:leather_leggings",
+      "feet": "minecraft:leather_boots"
+    },
+    "inventory": [
+      {"item": "magistuarmory:stone_heavymace", "count": 1}
+    ]
   },
   "primary_actions": {
     "cooldown": 1200,

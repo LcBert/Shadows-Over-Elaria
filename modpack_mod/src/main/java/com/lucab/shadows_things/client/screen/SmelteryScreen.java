@@ -13,6 +13,6 @@ import net.minecraft.world.entity.player.Inventory;
 public class SmelteryScreen extends BaseMachineScreen<SmelteryMenu> {
     public SmelteryScreen(SmelteryMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, "smeltery",
-                new int[]{130, 31}, new int[]{152, 47}, new int[]{20, 25}, ProgressDirection.RIGHT);
+                new int[]{68, 32}, new int[]{90, 48}, new int[]{60, 28}, ProgressDirection.RIGHT);
     }
 }

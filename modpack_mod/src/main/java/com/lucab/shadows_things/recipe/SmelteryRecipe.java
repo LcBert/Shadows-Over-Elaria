@@ -7,6 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -15,17 +16,19 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 public class SmelteryRecipe implements Recipe<SingleItemRecipeInput> {
     private final SizedIngredient ingredient;
+    private final Ingredient die;
     private final ItemStack result;
+    private final boolean consumeDie;
     private final int processTime;
     private final int tier;
 
-    public SmelteryRecipe(SizedIngredient ingredient, ItemStack result, int processTime, int tier) {
+    public SmelteryRecipe(SizedIngredient ingredient, Ingredient die, ItemStack result, boolean consumeDie, int processTime, int tier) {
         this.ingredient = ingredient;
+        this.die = die;
         this.result = result;
+        this.consumeDie = consumeDie;
         this.processTime = processTime;
         this.tier = tier;
     }
@@ -65,8 +68,16 @@ public class SmelteryRecipe implements Recipe<SingleItemRecipeInput> {
         return this.ingredient;
     }
 
+    public Ingredient getDie() {
+        return this.die;
+    }
+
     public ItemStack getResult() {
         return this.result;
+    }
+
+    public boolean isConsumeDie() {
+        return this.consumeDie;
     }
 
     public int getProcessTime() {
@@ -84,7 +95,9 @@ public class SmelteryRecipe implements Recipe<SingleItemRecipeInput> {
     public static class Serializer implements RecipeSerializer<SmelteryRecipe> {
         public static final MapCodec<SmelteryRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                 SizedIngredient.FLAT_CODEC.fieldOf("ingredient").forGetter(SmelteryRecipe::getIngredient),
+                Ingredient.CODEC.fieldOf("die").forGetter(SmelteryRecipe::getDie),
                 ItemStack.CODEC.fieldOf("result").forGetter(SmelteryRecipe::getResult),
+                Codec.BOOL.optionalFieldOf("consume_die", false).forGetter(SmelteryRecipe::isConsumeDie),
                 Codec.INT.optionalFieldOf("process_time", 200).forGetter(SmelteryRecipe::getProcessTime),
                 Codec.INT.optionalFieldOf("tier", 1).forGetter(SmelteryRecipe::getTier)
         ).apply(inst, SmelteryRecipe::new));
@@ -95,17 +108,21 @@ public class SmelteryRecipe implements Recipe<SingleItemRecipeInput> {
 
         private static void toNetwork(RegistryFriendlyByteBuf buf, SmelteryRecipe recipe) {
             SizedIngredient.STREAM_CODEC.encode(buf, recipe.ingredient);
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.die);
             ItemStack.STREAM_CODEC.encode(buf, recipe.result);
+            buf.writeBoolean(recipe.consumeDie);
             buf.writeVarInt(recipe.processTime);
             buf.writeVarInt(recipe.tier);
         }
 
         private static SmelteryRecipe fromNetwork(RegistryFriendlyByteBuf buf) {
             SizedIngredient ingredient = SizedIngredient.STREAM_CODEC.decode(buf);
+            Ingredient die = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
             ItemStack result = ItemStack.STREAM_CODEC.decode(buf);
-            int cookingTime = buf.readVarInt();
+            boolean consumeDie = buf.readBoolean();
+            int processTime = buf.readVarInt();
             int tier = buf.readVarInt();
-            return new SmelteryRecipe(ingredient, result, cookingTime, tier);
+            return new SmelteryRecipe(ingredient, die, result, consumeDie, processTime, tier);
         }
 
         @Override
@@ -117,28 +134,35 @@ public class SmelteryRecipe implements Recipe<SingleItemRecipeInput> {
         public StreamCodec<RegistryFriendlyByteBuf, SmelteryRecipe> streamCodec() {
             return STREAM_CODEC;
         }
-
     }
 
     public static class RecipeInstance {
         public final int slot;
         public final ItemStack inputStack;
+        public final ItemStack dieStack;
         public final ItemStack outputStack;
+        public final boolean consumeDie;
         public final int processTime;
         public final int tier;
 
-        public RecipeInstance(int slot, ItemStack inputStack, ItemStack outputStack, int processTime, int tier) {
+        public RecipeInstance(int slot, ItemStack inputStack, ItemStack dieStack, ItemStack outputStack, boolean consumeDie, int processTime, int tier) {
             this.slot = slot;
             this.inputStack = inputStack;
+            this.dieStack = dieStack;
             this.outputStack = outputStack;
+            this.consumeDie = consumeDie;
             this.processTime = processTime;
             this.tier = tier;
         }
     }
 
-    public static SmelteryRecipe getRecipe(@NotNull Level level, ItemStack inputStack) {
-        SingleItemRecipeInput inputWrapper = new SingleItemRecipeInput(inputStack);
-        Optional<RecipeHolder<SmelteryRecipe>> match = level.getRecipeManager().getRecipeFor(RecipesRegistries.SMELTERY_TYPE.get(), inputWrapper, level);
-        return match.map(RecipeHolder::value).orElse(null);
+    public static SmelteryRecipe getRecipe(@NotNull Level level, ItemStack inputStack, ItemStack dieStack) {
+        for (RecipeHolder<SmelteryRecipe> holder : level.getRecipeManager().getAllRecipesFor(RecipesRegistries.SMELTERY_TYPE.get())) {
+            SmelteryRecipe recipe = holder.value();
+            if (recipe.ingredient.test(inputStack) && recipe.die.test(dieStack)) {
+                return recipe;
+            }
+        }
+        return null;
     }
 }

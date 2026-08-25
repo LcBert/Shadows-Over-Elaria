@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -76,7 +75,7 @@ public class OvenBlock extends BaseEntityBlock {
             if (be instanceof OvenBlockEntity ovenEntity) {
                 player.openMenu(new SimpleMenuProvider(
                         (containerId, playerInventory, p) -> new OvenMenu(containerId, playerInventory, ovenEntity),
-                        Component.literal("Oven")
+                        state.getBlock().getName()
                 ), pos);
             }
         }

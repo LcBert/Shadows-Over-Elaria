@@ -5,7 +5,6 @@ import com.lucab.shadows_things.menus.CauldronMenu;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
@@ -116,7 +115,7 @@ public class CauldronBlock extends BaseEntityBlock {
                 } else {
                     player.openMenu(new SimpleMenuProvider(
                             (containerId, playerInventory, p) -> new CauldronMenu(containerId, playerInventory, cauldronEntity),
-                            Component.translatable(state.getBlock().getDescriptionId())
+                            state.getBlock().getName()
                     ), pos);
                 }
             }

@@ -20,7 +20,7 @@ public class BaseMachineScreen<T extends BaseMachineMenu> extends AbstractContai
     private final int[] progressSize;
     private final ProgressDirection progressDirection;
 
-    public static enum ProgressDirection {UP, DOWN, LEFT, RIGHT;}
+    public enum ProgressDirection {UP, DOWN, LEFT, RIGHT;}
 
     public BaseMachineScreen(T menu, Inventory playerInventory, Component title, String name,
                              int[] progressCords, int[] fuelCords, int[] progressSize, ProgressDirection progressDirection) {

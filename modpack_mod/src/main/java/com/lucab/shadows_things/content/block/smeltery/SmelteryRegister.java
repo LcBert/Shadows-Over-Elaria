@@ -20,7 +20,7 @@ public class SmelteryRegister {
             "brick_smeltery", () -> new SmelteryBlock(2, Blocks.BRICKS));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SmelteryBlockEntity>> SMELTERY_BLOCK_ENTITY = ShadowsThings.BLOCK_ENTITIES
-            .register("smeltery_be",
+            .register("smeltery",
                     () -> BlockEntityType.Builder.of(SmelteryBlockEntity::new,
                             STONE_SMELTERY.get(),
                             BRICK_SMELTERY.get()

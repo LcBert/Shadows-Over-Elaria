@@ -3,17 +3,15 @@ package com.lucab.shadows_things.rpg.professions;
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.toast.ToastHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 
 public class ProfessionHelper {
     public enum Professions {
-        TEST("minecraft:asd"),
-        COOK("minecraft:cooked_beef"), BLACKSMITH("minecraft:anvil"), FARMER("minecraft:iron_hoe");
+        COOK("minecraft:cooked_beef"),
+        BLACKSMITH("minecraft:anvil"),
+        FARMER("minecraft:iron_hoe");
 
         private final String iconItemKey;
 

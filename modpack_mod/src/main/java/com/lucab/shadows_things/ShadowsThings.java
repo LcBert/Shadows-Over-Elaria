@@ -3,6 +3,7 @@ package com.lucab.shadows_things;
 import com.lucab.shadows_things.attachments.ClassActionAttachments;
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
+import com.lucab.shadows_things.exhaustion.ExhaustionData;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.rpg.classes.*;
 import com.lucab.shadows_things.rpg.professions.UpgradeProfessionPacket;
@@ -29,7 +30,6 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
-import com.lucab.shadows_things.attachments.ExhaustionAttachments;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -72,7 +72,6 @@ public class ShadowsThings {
 
     public ShadowsThings(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
-        ATTACHMENT_TYPES.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
         modEventBus.addListener(this::onGatherData);
@@ -96,7 +95,8 @@ public class ShadowsThings {
         RecipesRegistries.register(modEventBus);
 
         // Attachment register
-        ExhaustionAttachments.register();
+        ATTACHMENT_TYPES.register(modEventBus);
+        ExhaustionData.register();
         DeepCavePlayerAttachment.register();
         ClassActionAttachments.register();
         ProfessionAttachments.register();

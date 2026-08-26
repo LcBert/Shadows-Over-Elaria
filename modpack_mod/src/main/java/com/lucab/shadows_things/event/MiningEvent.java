@@ -2,17 +2,23 @@ package com.lucab.shadows_things.event;
 
 import com.lucab.shadows_things.ShadowsThings;
 
+import com.lucab.shadows_things.content.item.FlintTools;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class MiningEvent {
@@ -41,17 +47,25 @@ public class MiningEvent {
             event.setCanceled(true);
     }
 
-    @SubscribeEvent
-    public static void mineableWithPickaxe(LeftClickBlock event) {
-        if (event.getEntity().isCreative())
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void logsBreak(BlockEvent.BreakEvent event) {
+        if (event.getPlayer().isCreative())
             return;
 
-        BlockState state = event.getLevel().getBlockState(event.getPos());
-        boolean isMineablePickaxe = state.is(BlockTags.create(ResourceLocation.parse("minecraft:mineable/pickaxe.json")));
-        boolean isPickaxe = event.getItemStack().is(ItemTags.create(ResourceLocation.parse("minecraft:pickaxes")));
+        Level level = event.getPlayer().level();
+        BlockState state = event.getState();
+        boolean isLog = state.is(BlockTags.LOGS);
+        boolean isFlintAxe = event.getPlayer().getMainHandItem().is(FlintTools.FLINT_AXE);
 
-        if (isMineablePickaxe && !isPickaxe)
+        if (isLog && isFlintAxe) {
             event.setCanceled(true);
+            level.removeBlock(event.getPos(), false);
+
+            Item treeBarkItem = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("farmersdelight", "tree_bark"));
+            Block.popResource(level, event.getPos(), treeBarkItem.getDefaultInstance());
+
+            event.getPlayer().getMainHandItem().hurtAndBreak(1, event.getPlayer(), EquipmentSlot.MAINHAND);
+        }
     }
 
     @SubscribeEvent

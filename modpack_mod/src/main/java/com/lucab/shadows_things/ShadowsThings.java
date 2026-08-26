@@ -30,9 +30,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.lucab.shadows_things.attachments.ExhaustionAttachments;
-import com.lucab.shadows_things.loot.AddTreeBarkModifier;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -42,9 +40,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
@@ -71,20 +67,11 @@ public class ShadowsThings {
     // Menu
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
 
-    // In your Mod Loot Modifier class or Registry class
-    public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS = DeferredRegister
-            .create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, "shadows_things");
-
-    // This text "add_tree_bark" MUST match the "type" in your JSON
-    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<AddTreeBarkModifier>> ADD_BARK_CODEC = LOOT_MODIFIER_SERIALIZERS
-            .register("add_tree_bark", () -> AddTreeBarkModifier.CODEC);
-
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister
             .create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
 
     public ShadowsThings(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
-        LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
         ATTACHMENT_TYPES.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 

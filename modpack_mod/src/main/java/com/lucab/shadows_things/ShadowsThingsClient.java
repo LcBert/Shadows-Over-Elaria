@@ -5,7 +5,6 @@ import com.lucab.shadows_things.client.renderer.CauldronRenderer;
 import com.lucab.shadows_things.client.renderer.DryingRackRenderer;
 import com.lucab.shadows_things.client.renderer.RepairTableRenderer;
 import com.lucab.shadows_things.client.screen.*;
-import com.lucab.shadows_things.client.screen.profession.ProfessionScreen;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
@@ -47,7 +46,6 @@ public class ShadowsThingsClient {
         event.register(MenuRegistries.SMELTERY_MENU.get(), SmelteryScreen::new);
         event.register(MenuRegistries.CAULDRON_MENU.get(), CauldronScreen::new);
         event.register(MenuRegistries.DRYING_RACK_MENU.get(), DryingRackScreen::new);
-        event.register(MenuRegistries.PROFESSION_MENU.get(), ProfessionScreen::new);
         event.register(MenuRegistries.SEEDS_BAG_MENU.get(), SeedsBagScreen::new);
     }
 

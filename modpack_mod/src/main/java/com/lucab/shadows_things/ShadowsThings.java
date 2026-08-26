@@ -5,7 +5,6 @@ import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.rpg.classes.*;
-import com.lucab.shadows_things.rpg.professions.OpenProfessionGuiPacket;
 import com.lucab.shadows_things.rpg.professions.UpgradeProfessionPacket;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg.gems.GemDataReader;
@@ -159,13 +158,6 @@ public class ShadowsThings {
                 ClassActionExecutePacket.TYPE,
                 ClassActionExecutePacket.STREAM_CODEC,
                 ClassActionExecutePacket::handle
-        );
-
-        // Profession
-        registrar.playToServer(
-                OpenProfessionGuiPacket.TYPE,
-                OpenProfessionGuiPacket.STREAM_CODEC,
-                OpenProfessionGuiPacket::handle
         );
 
         registrar.playToServer(

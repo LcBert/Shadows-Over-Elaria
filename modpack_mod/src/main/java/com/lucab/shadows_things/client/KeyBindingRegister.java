@@ -2,8 +2,8 @@ package com.lucab.shadows_things.client;
 
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.client.screen.classes.ClassScreen;
+import com.lucab.shadows_things.client.screen.profession.ProfessionScreen;
 import com.lucab.shadows_things.rpg.classes.ClassActionExecutePacket;
-import com.lucab.shadows_things.rpg.professions.OpenProfessionGuiPacket;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -67,7 +67,8 @@ public class KeyBindingRegister {
             Minecraft.getInstance().setScreen(new ClassScreen());
         }
         if (OPEN_PROFESSION_GUI.isActiveAndMatches(InputConstants.getKey(key, event.getScanCode()))) {
-            PacketDistributor.sendToServer(new OpenProfessionGuiPacket());
+//            PacketDistributor.sendToServer(new OpenProfessionGuiPacket());
+            Minecraft.getInstance().setScreen(new ProfessionScreen());
         }
         if (CLASS_PRIMARY_ACTION.isActiveAndMatches(InputConstants.getKey(key, event.getScanCode()))) {
             PacketDistributor.sendToServer(new ClassActionExecutePacket(0));

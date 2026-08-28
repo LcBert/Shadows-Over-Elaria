@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.worldgen.DeepCave;
+package com.lucab.shadows_things.worldgen.deep_cave;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.core.registries.Registries;
@@ -12,7 +12,6 @@ import net.minecraft.world.level.levelgen.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class DeepCaveNoiseSettings {
     private static final int MIN_Y = 0;

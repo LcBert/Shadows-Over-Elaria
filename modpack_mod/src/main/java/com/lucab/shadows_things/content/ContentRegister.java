@@ -10,6 +10,8 @@ import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAl
 import com.lucab.shadows_things.content.block.resonant.resonant_pedestal.ResonantPedestalRegistry;
 import com.lucab.shadows_things.content.block.sieve.SieveRegister;
 import com.lucab.shadows_things.content.block.smeltery.SmelteryRegister;
+import com.lucab.shadows_things.content.gem_set.GemItem;
+import com.lucab.shadows_things.content.gem_set.GemSetRegistry;
 import com.lucab.shadows_things.content.item.*;
 import com.lucab.shadows_things.content.item.EscapeRope;
 
@@ -38,7 +40,7 @@ public class ContentRegister {
         Plates.register();
         RepairKits.register();
         Rods.register();
-        GemItem.register();
+        GemSetRegistry.register();
         EscapeRope.register();
         ItemVarious.register();
 

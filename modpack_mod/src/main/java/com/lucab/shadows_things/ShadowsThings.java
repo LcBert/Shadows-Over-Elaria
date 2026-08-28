@@ -14,8 +14,9 @@ import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
 import com.lucab.shadows_things.rpg.professions.ProfessionCommand;
 import com.lucab.shadows_things.toast.ToastCommand;
 import com.lucab.shadows_things.toast.ToastPacket;
-import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveDimension;
-import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveNoiseSettings;
+import com.lucab.shadows_things.worldgen.deep_cave.DeepCaveDimension;
+import com.lucab.shadows_things.worldgen.deep_cave.DeepCaveNoiseSettings;
+import com.lucab.shadows_things.worldgen.features_type.FeaturesRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.component.DataComponentType;
@@ -67,6 +68,7 @@ public class ShadowsThings {
     // Menu
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
 
+    // Attachments
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister
             .create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
 
@@ -87,19 +89,22 @@ public class ShadowsThings {
         DATA_COMPONENTS.register(modEventBus);
         SocketRegistries.register();
 
-        // Menus register
+        // Menus Register
         MENUS.register(modEventBus);
         MenuRegistries.register();
 
-        //Recipes register
+        //Recipes Register
         RecipesRegistries.register(modEventBus);
 
-        // Attachment register
+        // Attachment Register
         ATTACHMENT_TYPES.register(modEventBus);
         ExhaustionData.register();
         DeepCavePlayerAttachment.register();
         ClassActionAttachments.register();
         ProfessionAttachments.register();
+
+        // Features Types
+        FeaturesRegistry.register(modEventBus);
     }
 
     public void onGatherData(GatherDataEvent event) {

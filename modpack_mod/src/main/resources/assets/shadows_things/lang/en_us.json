@@ -59,6 +59,7 @@
   "block.shadows_things.drying_rack": "Drying Rack",
   "block.shadows_things.underground_roots": "Underground Roots",
   "block.shadows_things.silver_ore": "Silver Ore",
+  "block.shadows_things.gem_cluster": "Gem Cluster",
   "key.categories.shadows_things": "Shadows Things",
   "key.shadows_things.open_class_screen": "Open Class Screen",
   "key.shadows_things.open_profession_gui": "Open Profession Gui",
@@ -87,6 +88,12 @@
   "jei.shadows_things.recipe.smeltery": "Smeltery",
   "jei.shadows_things.recipe.cauldron": "Cauldron",
   "tooltip.shadows_things.escape_rope.info": "Allow you to exit Deep Cave dimension",
-  "tooltip.shadows_things.escape_rope.noOwner": "No Owner",
-  "tooltip.shadows_things.escape_rope.owner": "Owner: %s"
+  "tooltip.shadows_things.unattuned_gem": "Unattuned Gem",
+  "tooltip.shadows_things.unknown": "Unknown Gem Type",
+  "tooltip.shadows_things.quality": "Quality: ",
+  "tooltip.shadows_things.tier": "Tier: %s",
+  "tooltip.shadows_things.socket_effects": "Socket Effects: ",
+  "tooltip.shadows_things.when_socketed_weapon": "When Socketed on Weapon: ",
+  "tooltip.shadows_things.when_socketed_armor": "When Socketed on Armor: ",
+  "tooltip.shadows_things.when_socketed_tool": "When Socketed on Tool: "
 }

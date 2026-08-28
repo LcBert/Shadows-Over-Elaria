@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.content.item;
+package com.lucab.shadows_things.content.gem_set;
 
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.rpg.gems.*;
@@ -16,6 +16,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,14 @@ public class GemItem extends Item {
 
     public GemItem() {
         super(new Item.Properties().stacksTo(1));
+    }
+
+    public static ItemStack getRandomGem(int rarity) {
+        ItemStack stack = new ItemStack(GEM_ITEM.get());
+        List<ResourceLocation> gemIds = new ArrayList<>(ShadowsThings.GEM_READER.getGems().keySet().stream().toList());
+        Collections.shuffle(gemIds);
+        stack.set(SocketRegistries.GEM_DATA.get(), new GemData(gemIds.getFirst(), rarity));
+        return stack;
     }
 
     public static ItemStack createGem(ResourceLocation gemId, int rarity) {
@@ -56,7 +65,7 @@ public class GemItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!stack.has(SocketRegistries.GEM_DATA.get())) {
-            tooltipComponents.add(Component.literal("Unattuned Gem Stone").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            tooltipComponents.add(Component.translatable("tooltip.shadows_things.unattuned_gem").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
             return;
         }
 
@@ -64,7 +73,7 @@ public class GemItem extends Item {
         var gemDefOpt = ShadowsThings.GEM_READER.getGemDefinition(data.gemId());
 
         if (gemDefOpt.isEmpty()) {
-            tooltipComponents.add(Component.literal("Unknown Gem Type").withStyle(ChatFormatting.RED));
+            tooltipComponents.add(Component.translatable("tooltip.shadows_things.unknown").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -72,15 +81,15 @@ public class GemItem extends Item {
         int tier = data.rarity();
 
         // 1. Grado / Tier
-        tooltipComponents.add(Component.literal("Quality: ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal("Tier " + tier).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+        tooltipComponents.add(Component.translatable("tooltip.shadows_things.quality").withStyle(ChatFormatting.GRAY)
+                .append(Component.translatable("tooltip.shadows_things.tier", tier).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
 
         tooltipComponents.add(Component.empty());
-        tooltipComponents.add(Component.literal("Socket Effects:").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.UNDERLINE));
+        tooltipComponents.add(Component.translatable("tooltip.shadows_things.socket_effects").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.UNDERLINE));
 
         // 2. Rendering Sezione Armi
         if (!gemDef.weaponAttributes().isEmpty()) {
-            tooltipComponents.add(Component.literal(" When Socketed on Weapons:").withStyle(ChatFormatting.RED));
+            tooltipComponents.add(Component.translatable("tooltip.shadows_things.when_socketed_weapon").withStyle(ChatFormatting.RED));
             for (GemAttribute attr : gemDef.weaponAttributes()) {
                 tooltipComponents.add(formatAttributeLine(attr, tier));
             }
@@ -88,7 +97,7 @@ public class GemItem extends Item {
 
         // 3. Rendering Sezione Armature
         if (!gemDef.armorAttributes().isEmpty()) {
-            tooltipComponents.add(Component.literal(" When Socketed on Armor:").withStyle(ChatFormatting.BLUE));
+            tooltipComponents.add(Component.translatable("tooltip.shadows_things.when_socketed_armor").withStyle(ChatFormatting.BLUE));
             for (GemAttribute attr : gemDef.armorAttributes()) {
                 tooltipComponents.add(formatAttributeLine(attr, tier));
             }
@@ -96,7 +105,7 @@ public class GemItem extends Item {
 
         // 4. Rendering Sezione Utensili
         if (!gemDef.toolAttributes().isEmpty()) {
-            tooltipComponents.add(Component.literal(" When Socketed on Tools:").withStyle(ChatFormatting.YELLOW));
+            tooltipComponents.add(Component.translatable("tooltip.shadows_things.when_socketed_tool").withStyle(ChatFormatting.YELLOW));
             for (GemAttribute attr : gemDef.toolAttributes()) {
                 tooltipComponents.add(formatAttributeLine(attr, tier));
             }

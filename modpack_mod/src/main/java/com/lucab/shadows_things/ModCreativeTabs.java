@@ -1,5 +1,7 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.content.gem_set.GemCluster;
+import com.lucab.shadows_things.content.gem_set.GemItem;
 import com.lucab.shadows_things.content.SilverSet;
 import com.lucab.shadows_things.content.block.BlockVarious;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
@@ -63,8 +65,9 @@ public class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SHADOWS_GEM_TAB = CREATIVE_TABS
             .register("shadows_gem_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup." + ShadowsThings.MODID + ".gems"))
-                    .icon(() -> GemItem.getGems().getFirst())
+                    .icon(() -> GemCluster.getItems().getFirst())
                     .displayItems((parameters, output) -> {
+                        output.acceptAll(GemCluster.getItems());
                         output.acceptAll(GemItem.getGems());
                     })
                     .build());

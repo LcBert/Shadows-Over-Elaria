@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "shadows_things:block/gem_cluster",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "shadows_things:block/gem_cluster",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "shadows_things:block/gem_cluster",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "shadows_things:block/gem_cluster",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "shadows_things:block/gem_cluster"
+    },
+    "facing=west": {
+      "model": "shadows_things:block/gem_cluster",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

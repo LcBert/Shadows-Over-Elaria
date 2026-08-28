@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "shadows_things:deep_cave",
+  "features": "shadows_things:deep_cave/gem_cluster",
+  "step": "underground_decoration"
+}

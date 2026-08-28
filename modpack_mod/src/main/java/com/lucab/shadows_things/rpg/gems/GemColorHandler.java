@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.rpg.gems;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.content.item.GemItem;
+import com.lucab.shadows_things.content.gem_set.GemItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

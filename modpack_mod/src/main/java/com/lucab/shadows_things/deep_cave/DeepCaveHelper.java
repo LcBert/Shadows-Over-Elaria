@@ -2,8 +2,8 @@ package com.lucab.shadows_things.deep_cave;
 
 import com.lucab.shadows_things.content.item.EscapeRope;
 import com.lucab.shadows_things.rpg.classes.ClassManager;
-import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveData;
-import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveDimension;
+import com.lucab.shadows_things.worldgen.deep_cave.DeepCaveData;
+import com.lucab.shadows_things.worldgen.deep_cave.DeepCaveDimension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;

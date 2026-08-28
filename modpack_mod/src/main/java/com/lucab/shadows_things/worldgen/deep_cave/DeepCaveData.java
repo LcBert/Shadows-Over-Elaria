@@ -1,8 +1,9 @@
-package com.lucab.shadows_things.worldgen.DeepCave;
+package com.lucab.shadows_things.worldgen.deep_cave;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DeepCaveData {
@@ -52,5 +53,16 @@ public class DeepCaveData {
         int maxY = sectionHeight * (invertedIndex + 1);
         int minY = maxY - sectionHeight;
         return new int[]{minY, maxY};
+    }
+
+    public static List<int[]> getHeights() {
+        List<int[]> heights = new ArrayList<>();
+        int totalLayers = layers.size();
+
+        for (int index = 1; index <= totalLayers; index++) {
+            heights.add(getLayerHeight(index));
+        }
+
+        return heights;
     }
 }

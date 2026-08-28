@@ -1,8 +1,7 @@
-package com.lucab.shadows_things.worldgen.DeepCave;
+package com.lucab.shadows_things.worldgen.deep_cave;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;

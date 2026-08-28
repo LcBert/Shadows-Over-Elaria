@@ -48,13 +48,13 @@
       "shadows_things:deep_cave/ore/tier5/iron",
       "shadows_things:deep_cave/ore/tier5/gold",
       "shadows_things:deep_cave/ore/tier5/silver",
-      "shadows_things:deep_cave/ore/tier5/netherite"
+      "shadows_things:deep_cave/ore/tier5/netherite",
+      "shadows_things:deep_cave/gem_cluster"
     ],
     [],
     [],
     [
       "shadows_things:deep_cave/vegetation/glow_lichen"
-    ],
-    []
+    ]
   ]
 }

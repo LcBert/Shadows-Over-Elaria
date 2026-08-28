@@ -2,7 +2,7 @@ package com.lucab.shadows_things.content.item;
 
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.deep_cave.DeepCaveHelper;
-import com.lucab.shadows_things.worldgen.DeepCave.DeepCaveDimension;
+import com.lucab.shadows_things.worldgen.deep_cave.DeepCaveDimension;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;

@@ -8,6 +8,7 @@ import com.lucab.shadows_things.client.screen.SmelteryScreen;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.oven.OvenRegister;
+import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegistry;
 import com.lucab.shadows_things.content.block.smeltery.SmelteryRegister;
 import com.lucab.shadows_things.menus.*;
 import com.lucab.shadows_things.recipe.*;
@@ -39,6 +40,7 @@ public class JeiIntegration implements IModPlugin {
         registration.addRecipeCategories(new OvenRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SmelteryRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new CauldronRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ResonantAltarRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new DryingRackRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
@@ -63,6 +65,11 @@ public class JeiIntegration implements IModPlugin {
                     .map(RecipeHolder::value)
                     .toList();
 
+            List<ResonantAltarRecipe> resonantAltarRecipes = recipeManager.getAllRecipesFor(RecipesRegistries.RESONANT_ALTAR_TYPE.get())
+                    .stream()
+                    .map(RecipeHolder::value)
+                    .toList();
+
             List<DryingRackRecipe> dryingRackRecipes = recipeManager.getAllRecipesFor(RecipesRegistries.DRYING_RACK_TYPE.get())
                     .stream()
                     .map(RecipeHolder::value)
@@ -71,6 +78,7 @@ public class JeiIntegration implements IModPlugin {
             registration.addRecipes(OvenRecipeCategory.TYPE, ovenRecipes);
             registration.addRecipes(SmelteryRecipeCategory.TYPE, smelteryRecipes);
             registration.addRecipes(CauldronRecipeCategory.TYPE, cauldronRecipes);
+            registration.addRecipes(ResonantAltarRecipeCategory.TYPE, resonantAltarRecipes);
             registration.addRecipes(DryingRackRecipeCategory.TYPE, dryingRackRecipes);
         }
     }
@@ -85,6 +93,7 @@ public class JeiIntegration implements IModPlugin {
         });
         registration.addRecipeCatalyst(new ItemStack(CauldronRegister.CAULDRON.get()), CauldronRecipeCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(CauldronRegister.CAULDRON.get()), RecipeTypes.FUELING);
+        registration.addRecipeCatalyst(new ItemStack(ResonantAltarRegistry.RESONANT_ALTAR.get()), ResonantAltarRecipeCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(DryingRackRegister.DRYING_RACK_BLOCK.get()), DryingRackRecipeCategory.TYPE);
     }
 

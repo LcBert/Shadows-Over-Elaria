@@ -1,5 +1,15 @@
 {
-  "color": "0x122EFF",
+  "upgrades": {
+    "from1to2": {
+      "process_time": 200,
+      "reagents": [
+        "minecraft:stick"
+      ],
+      "offerings": [
+        "minecraft:lapis_lazuli"
+      ]
+    }
+  },
   "attributes": {
     "weapon": [
       {

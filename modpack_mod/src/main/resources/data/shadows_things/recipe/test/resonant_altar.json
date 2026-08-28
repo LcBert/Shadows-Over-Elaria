@@ -1,0 +1,14 @@
+{
+  "type": "shadows_things:resonant_altar",
+  "ingredient": {
+    "item": "minecraft:stick"
+  },
+  "reagents": [
+    {"item": "minecraft:redstone"}
+  ],
+  "offerings": [
+    {"item": "minecraft:lapis_lazuli"}
+  ],
+  "result": {"id": "minecraft:diamond", "count": 1},
+  "process_time": 200
+}

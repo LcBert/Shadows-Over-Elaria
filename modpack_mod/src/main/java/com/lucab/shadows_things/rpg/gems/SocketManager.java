@@ -76,10 +76,10 @@ public class SocketManager {
         int socketIndex = 0;
         for (GemSocket socket : socketData.gems()) {
             GemData data = socket.gemData();
-            Optional<GemDefinition> defOpt = GemDataReader.get(data.gemId());
+            Optional<GemDefinition.Gem> defOpt = ShadowsThings.GEM_READER.getGemDefinition(data.gemId());
 
             if (defOpt.isPresent()) {
-                GemDefinition def = defOpt.get();
+                GemDefinition.Gem def = defOpt.get();
                 int tier = data.rarity();
 
                 List<GemAttribute> attributesToApply = getAttributesForEquipmentType(itemStack, def);
@@ -110,7 +110,7 @@ public class SocketManager {
         itemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, attrBuilder.build());
     }
 
-    private static List<GemAttribute> getAttributesForEquipmentType(ItemStack stack, GemDefinition def) {
+    private static List<GemAttribute> getAttributesForEquipmentType(ItemStack stack, GemDefinition.Gem def) {
         if (stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem) {
             return def.weaponAttributes();
         } else if (stack.getItem() instanceof ArmorItem) {

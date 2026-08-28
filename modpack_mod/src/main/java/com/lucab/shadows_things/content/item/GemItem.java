@@ -61,14 +61,14 @@ public class GemItem extends Item {
         }
 
         GemData data = stack.get(SocketRegistries.GEM_DATA.get());
-        var gemDefOpt = GemDataReader.get(data.gemId());
+        var gemDefOpt = ShadowsThings.GEM_READER.getGemDefinition(data.gemId());
 
         if (gemDefOpt.isEmpty()) {
             tooltipComponents.add(Component.literal("Unknown Gem Type").withStyle(ChatFormatting.RED));
             return;
         }
 
-        GemDefinition gemDef = gemDefOpt.get();
+        GemDefinition.Gem gemDef = gemDefOpt.get();
         int tier = data.rarity();
 
         // 1. Grado / Tier

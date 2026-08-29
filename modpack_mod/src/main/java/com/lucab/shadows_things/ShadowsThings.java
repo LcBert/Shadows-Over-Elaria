@@ -1,6 +1,5 @@
 package com.lucab.shadows_things;
 
-import com.lucab.shadows_things.attachments.ClassActionAttachments;
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
 import com.lucab.shadows_things.exhaustion.ExhaustionData;
@@ -100,7 +99,7 @@ public class ShadowsThings {
         ATTACHMENT_TYPES.register(modEventBus);
         ExhaustionData.register();
         DeepCavePlayerAttachment.register();
-        ClassActionAttachments.register();
+        ClassPlayerData.register();
         ProfessionAttachments.register();
 
         // Features Types
@@ -138,12 +137,6 @@ public class ShadowsThings {
                 ClassSelectPacket.TYPE,
                 ClassSelectPacket.STREAM_CODEC,
                 ClassSelectPacket::handle
-        );
-
-        registrar.playToClient(
-                SyncPlayerClassPacket.TYPE,
-                SyncPlayerClassPacket.STREAM_CODEC,
-                SyncPlayerClassPacket::handle
         );
 
         registrar.playToServer(

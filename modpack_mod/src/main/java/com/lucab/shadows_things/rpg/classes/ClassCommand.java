@@ -80,7 +80,7 @@ public class ClassCommand {
         if (!ClassManager.hasClass(player)) {
             source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7%s currently has §cno class§7.§r",
                     player.getName().getString())), false);
-        } else if (ClassManager.getClassName(player).equals(ClassManager.WANDERER)) {
+        } else if (ClassManager.getClassName(player).equals(ClassPlayerData.WANDERER_CLASS)) {
             source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7Player: §f%s§r\n§7Class:  §b%s§r",
                     player.getName().getString(), ClassManager.getClassName(player).toUpperCase())), false);
         } else {
@@ -97,7 +97,7 @@ public class ClassCommand {
         ClassManager.resetClass(player);
         // RESET: Gold warning / feedback color to indicate status reset to default
         source.sendSuccess(() -> Component.literal(String.format("§eReset %s's class back to §b%s§r",
-                player.getName().getString(), ClassManager.WANDERER.toUpperCase())), false);
+                player.getName().getString(), ClassPlayerData.WANDERER_CLASS.toUpperCase())), false);
         return 1;
     }
 

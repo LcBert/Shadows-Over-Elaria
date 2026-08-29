@@ -1,8 +1,8 @@
 package com.lucab.shadows_things.client.screen.classes;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.rpg.classes.ClassManager;
 import com.lucab.shadows_things.rpg.classes.ClassSelectPacket;
-import com.lucab.shadows_things.rpg.classes.ClientClassDataHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,13 +36,14 @@ public class ClassScreen extends Screen {
 
     public ClassScreen() {
         super(Component.translatable("gui.shadows_things.class.title" +
-                (!ClientClassDataHolder.hasClass() ? "_selector" : "")));
+                (ClassManager.isWandererOrNull(Minecraft.getInstance().player) ? "_selector" : "")));
     }
 
     @Override
     protected void init() {
         super.init();
-        this.hasClass = ClientClassDataHolder.hasClass();
+        Player player = getMinecraft().player;
+        this.hasClass = !ClassManager.isWandererOrNull(player);
 
         this.leftPos = (this.width - this.imageWidth) / 2;
         this.topPos = (this.height - this.imageHeight) / 2;
@@ -64,7 +66,7 @@ public class ClassScreen extends Screen {
         );
 
         if (hasClass) {
-            selectedClass = ClientClassDataHolder.getClassName();
+            selectedClass = ClassManager.getClassName(player);
             for (int i = 0; i < allClasses.size(); i++) {
                 if (allClasses.get(i).equals(selectedClass)) {
                     currentTab = i;
@@ -153,7 +155,7 @@ public class ClassScreen extends Screen {
         String className;
         className = Component.translatable(String.format("class.shadows_things.%s.name", selectedClass)).getString();
         if (hasClass)
-            className += " - " + Component.translatable("class.shadows_things.tier", ClientClassDataHolder.getTier()).getString();
+            className += " - " + Component.translatable("class.shadows_things.tier", ClassManager.getTier(getMinecraft().player)).getString();
 
         int classNameX = this.leftPos + 40;
         int classNameY = this.topPos + 34;

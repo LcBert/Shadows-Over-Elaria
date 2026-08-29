@@ -21,18 +21,16 @@ public class ClassItemsManager {
         int playerTier = ClassManager.getTier(player);
 
         // If the player is a wanderer or has no class but the item belongs to a specific class, they cannot use it.
-        if (playerClass.equals(ClassManager.WANDERER) || playerClass.equals("none")) {
+        if (playerClass.equals(ClassPlayerData.NONE_CLASS) || playerClass.equals(ClassPlayerData.WANDERER_CLASS)) {
             return false;
         }
 
-        var classDataOpt = ShadowsThings.CLASS_READER.getClassData(playerClass);
-        if (classDataOpt.isEmpty()) return false;
-
-        ClassDataReader.ClassData data = classDataOpt.get();
+        ClassDataReader.ClassData classData = ShadowsThings.CLASS_READER.getClassData(playerClass);
+        if (classData == null) return false;
 
         // Allows usage if the item is present in the current tier or lower ones.
         for (int tier = playerTier; tier >= 1; tier--) {
-            List<Item> allowedItems = data.tiers().get(tier);
+            List<Item> allowedItems = classData.tiers().get(tier);
             if (allowedItems != null && allowedItems.contains(item)) {
                 return true;
             }

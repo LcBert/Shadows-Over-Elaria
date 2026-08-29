@@ -192,8 +192,9 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
         return new ClassActions.ActionData(type, value);
     }
 
-    public Optional<ClassData> getClassData(String className) {
-        return Optional.ofNullable(this.rpgClasses.get(className.toLowerCase()));
+    public ClassData getClassData(String className) {
+        Optional<ClassData> classOpt = Optional.ofNullable(this.rpgClasses.get(className.toLowerCase()));
+        return classOpt.orElse(null);
     }
 
     public Map<String, ClassData> getAllClasses() {

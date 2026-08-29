@@ -16,20 +16,17 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 public class ClassHandler {
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity().level().isClientSide) return;
         Player player = event.getEntity();
-        if (!ClassManager.hasClass(player)) {
-            ClassManager.resetClass(player);
-        } else {
-            ClassManager.syncClass(player);
-        }
-
-        String playerClass = ClassManager.getClassName(player);
-        ClassModifierApplier.updatePlayerAttributes(player, playerClass);
+        if (!ClassManager.hasClass(player)) ClassManager.resetClass(player);
+        ClassManager.syncClass(player);
+        ClassModifierApplier.updatePlayerAttributes(player, ClassManager.getClassName(player));
     }
 
     @SubscribeEvent
     public static void onPlayerAttack(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof Player player)) return;
+        if (player.level().isClientSide) return;
         if (player.isCreative()) return;
         if (!ClassManager.hasClass(player)) return;
 
@@ -42,6 +39,7 @@ public class ClassHandler {
 
     @SubscribeEvent
     public static void onItemUse(LivingEntityUseItemEvent.Start event) {
+        if (event.getEntity().level().isClientSide) return;
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.isCreative()) return;
         if (!ClassManager.hasClass(player)) return;
@@ -56,6 +54,7 @@ public class ClassHandler {
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+        if (event.getEntity().level().isClientSide) return;
         if (!(event.getEntity() instanceof Player player) || player.isCreative()) return;
 
         EquipmentSlot slot = event.getSlot();

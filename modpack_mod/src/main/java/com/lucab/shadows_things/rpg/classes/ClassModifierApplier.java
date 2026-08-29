@@ -21,13 +21,15 @@ public class ClassModifierApplier {
             if (instance != null) instance.removeModifier(MODIFIER_ID);
         });
 
-        if (className.equals(ClassManager.WANDERER) || className.equals(ClassManager.NULL)) {
+        if (className.equals(ClassPlayerData.WANDERER_CLASS) || className.equals(ClassPlayerData.NONE_CLASS)) {
             restoreProportionalHealth(player, healthRatio);
             return;
         }
 
-        ShadowsThings.CLASS_READER.getClassData(className).ifPresent(data -> {
-            for (ClassDataReader.ClassAttribute parsedAttr : data.attributes()) {
+        ClassDataReader.ClassData classData = ShadowsThings.CLASS_READER.getClassData(className);
+
+        if (classData != null) {
+            for (ClassDataReader.ClassAttribute parsedAttr : classData.attributes()) {
                 Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(parsedAttr.attributeId());
                 if (attribute != null) {
                     AttributeInstance instance = player.getAttribute(BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute));
@@ -42,7 +44,8 @@ public class ClassModifierApplier {
                     }
                 }
             }
-        });
+        }
+        ;
 
         restoreProportionalHealth(player, healthRatio);
     }

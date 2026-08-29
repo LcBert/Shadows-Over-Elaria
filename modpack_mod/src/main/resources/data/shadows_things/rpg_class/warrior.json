@@ -55,13 +55,13 @@
     ]
   },
   "primary_actions": {
-    "cooldown": 1200,
+    "cooldown": 200,
     "actions": [
       {
         "type": "shadows_things:effect",
         "value": "minecraft:regeneration",
         "duration": 200,
-        "amplifier": 5
+        "amplifier": 1
       }
     ]
   }

@@ -95,5 +95,7 @@
   "tooltip.shadows_things.socket_effects": "Socket Effects: ",
   "tooltip.shadows_things.when_socketed_weapon": "When Socketed on Weapon: ",
   "tooltip.shadows_things.when_socketed_armor": "When Socketed on Armor: ",
-  "tooltip.shadows_things.when_socketed_tool": "When Socketed on Tool: "
+  "tooltip.shadows_things.when_socketed_tool": "When Socketed on Tool: ",
+  "message.shadows_thibgs.class.primary_action.on_cooldown": "Primary action is on cooldown",
+  "message.shadows_thibgs.class.secondary_action.on_cooldown": "Secondary action is on cooldown"
 }

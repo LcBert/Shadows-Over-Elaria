@@ -142,77 +142,77 @@ public class ResonantPedestalBlock extends BaseEntityBlock {
                     );
                 }
             }
+        }
 
-            if (pedestal.hasItem()) {
-                // 1. Dual-Helix Orbiting Resonant Dust around the floating item
-                double orbitRadius = 0.45D;
-                double orbitSpeed = 0.12D;
+        if (pedestal.hasItem()) {
+            // 1. Dual-Helix Orbiting Resonant Dust around the floating item
+            double orbitRadius = 0.45D;
+            double orbitSpeed = 0.12D;
 
-                for (int arm = 0; arm < 2; arm++) {
-                    double currentAngle = (gameTime + partialTicks) * orbitSpeed + (arm * Math.PI);
-                    double offsetX = Math.cos(currentAngle) * orbitRadius;
-                    double offsetZ = Math.sin(currentAngle) * orbitRadius;
-                    // Subtle vertical oscillation on the helix
-                    double offsetY = Math.sin((gameTime + partialTicks) * 0.08D + (arm * Math.PI)) * 0.1D;
+            for (int arm = 0; arm < 2; arm++) {
+                double currentAngle = (gameTime + partialTicks) * orbitSpeed + (arm * Math.PI);
+                double offsetX = Math.cos(currentAngle) * orbitRadius;
+                double offsetZ = Math.sin(currentAngle) * orbitRadius;
+                // Subtle vertical oscillation on the helix
+                double offsetY = Math.sin((gameTime + partialTicks) * 0.08D + (arm * Math.PI)) * 0.1D;
 
-                    level.addParticle(
-                            resonantDust,
-                            centerX + offsetX,
-                            centerY + offsetY,
-                            centerZ + offsetZ,
-                            0.0D, 0.005D, 0.0D
-                    );
-                }
+                level.addParticle(
+                        resonantDust,
+                        centerX + offsetX,
+                        centerY + offsetY,
+                        centerZ + offsetZ,
+                        0.0D, 0.005D, 0.0D
+                );
+            }
 
-                // 2. Inward Converging Enchantment Glyphs
-                if (random.nextFloat() < 0.6F) {
-                    double spawnAngle = random.nextDouble() * Math.PI * 2.0D;
-                    double spawnDist = 0.7D + random.nextDouble() * 0.3D;
-                    double spawnHeight = centerY + (random.nextDouble() - 0.5D) * 0.5D;
+            // 2. Inward Converging Enchantment Glyphs
+            if (random.nextFloat() < 0.6F) {
+                double spawnAngle = random.nextDouble() * Math.PI * 2.0D;
+                double spawnDist = 0.7D + random.nextDouble() * 0.3D;
+                double spawnHeight = centerY + (random.nextDouble() - 0.5D) * 0.5D;
 
-                    double glyphX = centerX + Math.cos(spawnAngle) * spawnDist;
-                    double glyphZ = centerZ + Math.sin(spawnAngle) * spawnDist;
+                double glyphX = centerX + Math.cos(spawnAngle) * spawnDist;
+                double glyphZ = centerZ + Math.sin(spawnAngle) * spawnDist;
 
-                    // Velocity vector pointing directly to item core
-                    double velX = (centerX - glyphX) * 0.08D;
-                    double velY = (centerY - spawnHeight) * 0.08D;
-                    double velZ = (centerZ - glyphZ) * 0.08D;
+                // Velocity vector pointing directly to item core
+                double velX = (centerX - glyphX) * 0.08D;
+                double velY = (centerY - spawnHeight) * 0.08D;
+                double velZ = (centerZ - glyphZ) * 0.08D;
 
-                    level.addParticle(ParticleTypes.ENCHANT, glyphX, spawnHeight, glyphZ, velX, velY, velZ);
-                }
+                level.addParticle(ParticleTypes.ENCHANT, glyphX, spawnHeight, glyphZ, velX, velY, velZ);
+            }
 
-                // 3. Resonant Pulse / Spark bursts
-                if (random.nextFloat() < 0.15F) {
-                    // Sculk charge pop creates a crisp resonant 'snap' effect
-                    level.addParticle(
-                            ParticleTypes.SCULK_CHARGE_POP,
-                            centerX + (random.nextDouble() - 0.5D) * 0.2D,
-                            centerY + (random.nextDouble() - 0.5D) * 0.2D,
-                            centerZ + (random.nextDouble() - 0.5D) * 0.2D,
-                            (random.nextDouble() - 0.5D) * 0.01D,
-                            0.02D,
-                            (random.nextDouble() - 0.5D) * 0.01D
-                    );
-                }
+            // 3. Resonant Pulse / Spark bursts
+            if (random.nextFloat() < 0.15F) {
+                // Sculk charge pop creates a crisp resonant 'snap' effect
+                level.addParticle(
+                        ParticleTypes.SCULK_CHARGE_POP,
+                        centerX + (random.nextDouble() - 0.5D) * 0.2D,
+                        centerY + (random.nextDouble() - 0.5D) * 0.2D,
+                        centerZ + (random.nextDouble() - 0.5D) * 0.2D,
+                        (random.nextDouble() - 0.5D) * 0.01D,
+                        0.02D,
+                        (random.nextDouble() - 0.5D) * 0.01D
+                );
+            }
 
-                // 4. Subtle Base Uplift (Ascending particles from the pedestal top to the item)
-                if (random.nextFloat() < 0.25F) {
-                    double baseRadius = 0.25D;
-                    double angle = random.nextDouble() * Math.PI * 2.0D;
-                    double baseParticleX = centerX + Math.cos(angle) * (random.nextDouble() * baseRadius);
-                    double baseParticleZ = centerZ + Math.sin(angle) * (random.nextDouble() * baseRadius);
-                    double baseParticleY = pos.getY() + 0.95D;
+            // 4. Subtle Base Uplift (Ascending particles from the pedestal top to the item)
+            if (random.nextFloat() < 0.25F) {
+                double baseRadius = 0.25D;
+                double angle = random.nextDouble() * Math.PI * 2.0D;
+                double baseParticleX = centerX + Math.cos(angle) * (random.nextDouble() * baseRadius);
+                double baseParticleZ = centerZ + Math.sin(angle) * (random.nextDouble() * baseRadius);
+                double baseParticleY = pos.getY() + 0.95D;
 
-                    level.addParticle(
-                            ParticleTypes.WITCH,
-                            baseParticleX,
-                            baseParticleY,
-                            baseParticleZ,
-                            0.0D,
-                            0.035D,
-                            0.0D
-                    );
-                }
+                level.addParticle(
+                        ParticleTypes.WITCH,
+                        baseParticleX,
+                        baseParticleY,
+                        baseParticleZ,
+                        0.0D,
+                        0.035D,
+                        0.0D
+                );
             }
         }
     }

@@ -28,7 +28,7 @@ public class ResonantAltarBlock extends BaseEntityBlock {
 
     public ResonantAltarBlock() {
         super(Properties.of()
-                .mapColor(MapColor.METAL)
+                .mapColor(MapColor.COLOR_PURPLE)
                 .sound(SoundType.AMETHYST)
                 .strength(3.5F)
                 .requiresCorrectToolForDrops()

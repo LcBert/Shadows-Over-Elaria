@@ -31,7 +31,7 @@ public class ResonantPedestalBlock extends BaseEntityBlock {
 
     public ResonantPedestalBlock() {
         super(Properties.of()
-                .mapColor(MapColor.METAL)
+                .mapColor(MapColor.COLOR_PURPLE)
                 .sound(SoundType.AMETHYST)
                 .strength(3.5F)
                 .requiresCorrectToolForDrops()

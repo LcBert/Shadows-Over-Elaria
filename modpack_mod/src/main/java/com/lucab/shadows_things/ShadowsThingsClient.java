@@ -1,6 +1,7 @@
 package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.client.DeepCaveEffects;
+import com.lucab.shadows_things.client.overlay.ClassExperienceBarOverlay;
 import com.lucab.shadows_things.client.renderer.*;
 import com.lucab.shadows_things.client.screen.*;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
@@ -57,6 +58,12 @@ public class ShadowsThingsClient {
                 VanillaGuiLayers.HOTBAR,
                 ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "toast_overlay"),
                 ToastOverlay.INSTANCE
+        );
+
+        event.registerAbove(
+                VanillaGuiLayers.EXPERIENCE_BAR,
+                ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "class_experience_bar"),
+                new ClassExperienceBarOverlay()
         );
     }
 }

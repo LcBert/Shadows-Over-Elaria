@@ -8,6 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -28,13 +29,33 @@ public class ClassCommand {
                                                         .suggests(ClassCommand::suggestClasses)
                                                         .then(Commands.argument("tier", IntegerArgumentType.integer(1, 5))
                                                                 .suggests(ClassCommand::suggestTiers)
-                                                                .executes(ClassCommand::setClass))))
+                                                                .executes(ClassCommand::setClassAndTier))
+                                                        .executes(ClassCommand::setClass)))
+                                        .then(Commands.literal("setTier")
+                                                .then(Commands.argument("tier", IntegerArgumentType.integer(1, 5))
+                                                        .suggests(ClassCommand::suggestTiers)
+                                                        .executes(ClassCommand::setTier)))
                                         .then(Commands.literal("get")
                                                 .executes(ClassCommand::getClass))
                                         .then(Commands.literal("reset")
                                                 .executes(ClassCommand::resetClass))
                                         .then(Commands.literal("remove")
                                                 .executes(ClassCommand::removeClass))
+                                        .then(Commands.literal("experience")
+                                                .then(Commands.literal("set")
+                                                        .then(Commands.argument("value", IntegerArgumentType.integer(0))
+                                                                .executes(ClassCommand::setExperience)))
+                                                .then(Commands.literal("add")
+                                                        .then(Commands.argument("value", IntegerArgumentType.integer(1))
+                                                                .executes(ClassCommand::addExperience)))
+                                                .then(Commands.literal("remove")
+                                                        .then(Commands.argument("value", IntegerArgumentType.integer(1))
+                                                                .executes(ClassCommand::removeExperience)))
+                                                .then(Commands.literal("reset")
+                                                        .executes(ClassCommand::resetExperience))
+                                                .then(Commands.literal("get")
+                                                        .executes(ClassCommand::getExperience))
+                                        )
                                 )));
     }
 
@@ -53,7 +74,7 @@ public class ClassCommand {
         return builder.buildFuture();
     }
 
-    private static int setClass(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int setClassAndTier(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         Player player = EntityArgument.getPlayer(context, "player");
         String className = StringArgumentType.getString(context, "class");
@@ -63,10 +84,44 @@ public class ClassCommand {
             ClassManager.setClass(player, className, tier);
             // SUCCESS: Green message, styled layout for class and tier updates
             source.sendSuccess(() -> Component.literal(String.format("§aSuccessfully set %s's class to §b%s§a (Tier §6%d§a)§r",
-                    player.getName().getString(), ClassManager.getClassName(player).toUpperCase(), tier)), false);
+                    player.getScoreboardName(), ClassManager.getClassName(player).toUpperCase(), tier)), false);
         } catch (IllegalArgumentException e) {
             // FAILURE: Standard red error notification
             source.sendSuccess(() -> Component.literal(String.format("§cInvalid class text or tier: %s§r", className)), false);
+        }
+
+        return 1;
+    }
+
+    private static int setClass(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        Player player = EntityArgument.getPlayer(context, "player");
+        String className = StringArgumentType.getString(context, "class");
+
+        try {
+            ClassManager.setClass(player, className, 1);
+            // SUCCESS: Green message, styled layout for class and tier updates
+            source.sendSuccess(() -> Component.literal(String.format("§aSuccessfully set %s's class to §b%s§a (Tier §6%d§a)§r",
+                    player.getScoreboardName(), ClassManager.getClassName(player).toUpperCase(), 1)), false);
+        } catch (IllegalArgumentException e) {
+            // FAILURE: Standard red error notification
+            source.sendSuccess(() -> Component.literal(String.format("§cInvalid class text or tier: %s§r", className)), false);
+        }
+
+        return 1;
+    }
+
+    private static int setTier(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        Player player = EntityArgument.getPlayer(context, "player");
+        int tier = IntegerArgumentType.getInteger(context, "tier");
+
+        try {
+            ClassManager.setTier(player, tier);
+            source.sendSuccess(() -> Component.literal(String.format("§aSuccessfully set %s's tier to §b%s§r", player.getScoreboardName(), tier)),
+                    false);
+        } catch (IllegalArgumentException e) {
+            source.sendSuccess(() -> Component.literal(String.format("§cInvalid class tier: %d§r", tier)), false);
         }
 
         return 1;
@@ -76,16 +131,15 @@ public class ClassCommand {
         CommandSourceStack source = context.getSource();
         Player player = EntityArgument.getPlayer(context, "player");
 
-        // GET Responses: Beautiful formatted layouts using consistent colors
         if (!ClassManager.hasClass(player)) {
             source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7%s currently has §cno class§7.§r",
-                    player.getName().getString())), false);
+                    player.getScoreboardName())), false);
         } else if (ClassManager.getClassName(player).equals(ClassPlayerData.WANDERER_CLASS)) {
             source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7Player: §f%s§r\n§7Class:  §b%s§r",
-                    player.getName().getString(), ClassManager.getClassName(player).toUpperCase())), false);
+                    player.getScoreboardName(), ClassManager.getClassName(player).toUpperCase())), false);
         } else {
             source.sendSuccess(() -> Component.literal(String.format("§e=== RPG Class Status ===§r\n§7Player: §f%s§r\n§7Class:  §b%s§r\n§7Tier:   §6%d§r",
-                    player.getName().getString(), ClassManager.getClassName(player).toUpperCase(), ClassManager.getTier(player))), false);
+                    player.getScoreboardName(), ClassManager.getClassName(player).toUpperCase(), ClassManager.getTier(player))), false);
         }
         return 1;
     }
@@ -95,9 +149,8 @@ public class ClassCommand {
         Player player = EntityArgument.getPlayer(context, "player");
 
         ClassManager.resetClass(player);
-        // RESET: Gold warning / feedback color to indicate status reset to default
         source.sendSuccess(() -> Component.literal(String.format("§eReset %s's class back to §b%s§r",
-                player.getName().getString(), ClassPlayerData.WANDERER_CLASS.toUpperCase())), false);
+                player.getScoreboardName(), ClassPlayerData.WANDERER_CLASS.toUpperCase())), false);
         return 1;
     }
 
@@ -106,10 +159,101 @@ public class ClassCommand {
         Player player = EntityArgument.getPlayer(context, "player");
 
         ClassManager.removeClass(player);
-        // REMOVE: Distinct format indicating permanent removal of the active role
         source.sendSuccess(() -> Component.literal(String.format("§eSuccessfully removed active RPG class from %s§r",
-                player.getName().getString())), false);
+                player.getScoreboardName())), false);
 
         return 1;
+    }
+
+    private static int setExperience(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        Player player = EntityArgument.getPlayer(context, "player");
+        int value = IntegerArgumentType.getInteger(context, "value");
+
+        ClassManager.setExperience(player, value);
+
+        int currentExp = ClassManager.getExperience(player);
+        int maxExp = ClassManager.getExperienceRequired(player);
+
+        source.sendSuccess(() -> Component.literal("Set ")
+                .withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(player.getScoreboardName()).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal("'s experience to ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(String.valueOf(currentExp)).withStyle(ChatFormatting.GREEN))
+                .append(Component.literal("/" + maxExp).withStyle(ChatFormatting.DARK_GREEN)), true);
+
+        return 1;
+    }
+
+    private static int addExperience(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        Player player = EntityArgument.getPlayer(context, "player");
+        int value = IntegerArgumentType.getInteger(context, "value");
+
+        ClassManager.addExperience(player, value);
+
+        int currentExp = ClassManager.getExperience(player);
+        int maxExp = ClassManager.getExperienceRequired(player);
+
+        source.sendSuccess(() -> Component.literal("Added ")
+                .withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(String.valueOf(value)).withStyle(ChatFormatting.GREEN))
+                .append(Component.literal(" experience to ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(player.getScoreboardName()).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(String.format(" (%d/%d)", currentExp, maxExp)).withStyle(ChatFormatting.DARK_GREEN)), true);
+
+        return currentExp;
+    }
+
+    private static int removeExperience(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        Player player = EntityArgument.getPlayer(context, "player");
+        int value = IntegerArgumentType.getInteger(context, "value");
+
+        ClassManager.removeExperience(player, value);
+
+        int currentExp = ClassManager.getExperience(player);
+        int maxExp = ClassManager.getExperienceRequired(player);
+
+        source.sendSuccess(() -> Component.literal("Removed ")
+                .withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(String.valueOf(value)).withStyle(ChatFormatting.RED))
+                .append(Component.literal(" experience from ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(player.getScoreboardName()).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(String.format(" (%d/%d)", currentExp, maxExp)).withStyle(ChatFormatting.DARK_GREEN)), true);
+
+        return currentExp;
+    }
+
+    private static int resetExperience(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        Player player = EntityArgument.getPlayer(context, "player");
+
+        ClassManager.resetExperience(player);
+
+        source.sendSuccess(() -> Component.literal("Reset experience for ")
+                .withStyle(ChatFormatting.YELLOW)
+                .append(Component.literal(player.getScoreboardName()).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(" to 0.").withStyle(ChatFormatting.YELLOW)), true);
+
+        return 0;
+    }
+
+    private static int getExperience(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        Player player = EntityArgument.getPlayer(context, "player");
+
+        int currentExp = ClassManager.getExperience(player);
+        int maxExp = ClassManager.getExperienceRequired(player);
+        float progress = ClassManager.getExperienceProgress(player) * 100.0f;
+
+        source.sendSuccess(() -> Component.literal("=== RPG Experience Status ===")
+                .withStyle(ChatFormatting.GOLD)
+                .append(Component.literal("\nPlayer: ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(player.getScoreboardName()).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal("\nProgress: ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(String.format("%d / %d (%.1f%%)", currentExp, maxExp, progress)).withStyle(ChatFormatting.AQUA)), false);
+
+        return currentExp;
     }
 }

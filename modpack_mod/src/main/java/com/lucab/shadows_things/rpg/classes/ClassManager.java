@@ -2,30 +2,14 @@ package com.lucab.shadows_things.rpg.classes;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ClassManager {
-    public static void syncClass(Player player) {
-        player.setData(ClassPlayerData.CLASS_PLAYER_DATA.get(), getClassData(player));
-    }
-
-    public static ClassPlayerData getClassData(Player player) {
-        return player.getData(ClassPlayerData.CLASS_PLAYER_DATA.get());
-    }
 
     public static void setClass(Player player, String rpgClass, int tier) throws IllegalArgumentException {
         String formattedClass = rpgClass.toLowerCase();
@@ -43,15 +27,20 @@ public class ClassManager {
             tier = 0;
         }
 
-        ClassPlayerData classPlayerData = getClassData(player);
+        ClassPlayerData classPlayerData = ClassPlayerData.getClassData(player);
 
         classPlayerData.setClassName(formattedClass);
         classPlayerData.setClassTier(tier);
-
-        ClassModifierApplier.updatePlayerAttributes(player, rpgClass);
-
         equipClass(player);
-        syncClass(player);
+        ClassPlayerData.sync(player);
+    }
+
+    public static void setClass(Player player, String rpgClass) throws IllegalArgumentException {
+        setClass(player, rpgClass, 1);
+    }
+
+    public static void setTier(Player player, int tier) throws IllegalArgumentException {
+        setClass(player, getClassName(player), tier);
     }
 
     public static void equipClass(Player player) {
@@ -89,15 +78,59 @@ public class ClassManager {
     }
 
     public static String getClassName(Player player) {
-        return getClassData(player).getClassName();
+        return ClassPlayerData.getClassData(player).getClassName();
     }
 
     public static int getTier(Player player) {
-        return getClassData(player).getClassTier();
+        return ClassPlayerData.getClassData(player).getClassTier();
     }
 
     public static boolean is(Player player, String rpgClass) {
         return getClassName(player).equals(rpgClass);
+    }
+
+    public static void clampExperience(Player player) {
+        ClassPlayerData.getClassData(player).setExperience(Math.clamp(getExperience(player), 0, getExperienceRequired(player)));
+    }
+
+    public static void setExperience(Player player, int experience) {
+        ClassPlayerData.getClassData(player).setExperience(experience);
+        clampExperience(player);
+        ClassPlayerData.sync(player);
+    }
+
+    public static void addExperience(Player player, int experience) {
+        setExperience(player, getExperience(player) + experience);
+    }
+
+    public static void removeExperience(Player player, int experience) {
+        setExperience(player, getExperience(player) - experience);
+    }
+
+    public static void resetExperience(Player player) {
+        setExperience(player, 0);
+    }
+
+    public static int getExperience(Player player) {
+        return ClassPlayerData.getClassData(player).getExperience();
+    }
+
+    public static int getExperienceRequired(Player player) {
+        int tier = getTier(player);
+        if (tier <= 0) return 0;
+        return (int) (500 * (Math.pow(tier, 1.6)) + 250 * (tier - 1));
+    }
+
+    public static float getExperienceProgress(Player player) {
+        return getExperience(player) / (float) ClassManager.getExperienceRequired(player);
+    }
+
+    public static void levelUp(Player player) {
+        if (getTier(player) == 5) return;
+        if (getExperience(player) == getExperienceRequired(player)) {
+            setClass(player, getClassName(player), getTier(player) + 1);
+            setExperience(player, 0);
+        }
     }
 
     public static void executeAction(Player player, int actionType) {
@@ -105,7 +138,7 @@ public class ClassManager {
 
         Level level = player.level();
         ClassDataReader.ClassData classData = ShadowsThings.CLASS_READER.getClassData(getClassName(player));
-        ClassPlayerData classPlayerData = ClassManager.getClassData(player);
+        ClassPlayerData classPlayerData = ClassPlayerData.getClassData(player);
         if (classData == null) return;
 
         List<ClassActions.ActionData> actions = switch (actionType) {

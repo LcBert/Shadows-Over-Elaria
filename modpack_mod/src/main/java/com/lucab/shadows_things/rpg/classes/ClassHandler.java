@@ -19,7 +19,7 @@ public class ClassHandler {
         if (event.getEntity().level().isClientSide) return;
         Player player = event.getEntity();
         if (!ClassManager.hasClass(player)) ClassManager.resetClass(player);
-        ClassManager.syncClass(player);
+        ClassPlayerData.sync(player);
         ClassModifierApplier.updatePlayerAttributes(player, ClassManager.getClassName(player));
     }
 

@@ -125,6 +125,21 @@ public class ClassManager {
         return getExperience(player) / (float) ClassManager.getExperienceRequired(player);
     }
 
+    public static float getKillFormula(float maxHealth, float damageDealt) {
+        final float baseExpMultiplier = 0.5f;
+        final double scalingExponent = 0.68;
+
+        if (maxHealth <= 0.0f || damageDealt <= 0.0f) return 0.0f;
+
+        float contributionRatio = damageDealt / maxHealth;
+        if (contributionRatio < 0.01f) contributionRatio = 0.0f;
+
+        contributionRatio = Math.clamp(contributionRatio, 0.0f, 1.0f);
+
+        float totalMobExp = (float) (baseExpMultiplier * Math.pow(maxHealth, scalingExponent));
+        return totalMobExp * contributionRatio;
+    }
+
     public static void levelUp(Player player) {
         if (getTier(player) == 5) return;
         if (getExperience(player) == getExperienceRequired(player)) {

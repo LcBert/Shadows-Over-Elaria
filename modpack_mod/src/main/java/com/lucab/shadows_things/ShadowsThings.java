@@ -100,6 +100,7 @@ public class ShadowsThings {
         ExhaustionData.register();
         DeepCavePlayerAttachment.register();
         ClassPlayerData.register();
+        ClassEntityData.register();
         ProfessionAttachments.register();
 
         // Features Types

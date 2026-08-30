@@ -141,25 +141,7 @@ public class ClassManager {
         }
 
         for (ClassActions.ActionData action : actions) {
-            if (action.type.equals(ClassActions.ActionType.COMMAND.getType())) {
-                if (player instanceof ServerPlayer serverPlayer) {
-                    String commandToExecute = action.value;
-                    MinecraftServer server = serverPlayer.getServer();
-                    if (server != null) {
-                        server.getCommands().performPrefixedCommand(
-                                serverPlayer.createCommandSourceStack().withSuppressedOutput(),
-                                commandToExecute
-                        );
-                    }
-                }
-            } else if (action.type.equals(ClassActions.ActionType.EFFECT.getType())) {
-                if (action instanceof ClassActions.EffectActionData effectAction) {
-                    Holder<MobEffect> effectHolder = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(action.value)).orElse(null);
-                    if (effectHolder == null) continue;
-                    MobEffectInstance effectInstance = new MobEffectInstance(effectHolder, effectAction.duration, effectAction.amplifier);
-                    player.addEffect(effectInstance);
-                }
-            }
+            action.execute(player);
         }
     }
 }

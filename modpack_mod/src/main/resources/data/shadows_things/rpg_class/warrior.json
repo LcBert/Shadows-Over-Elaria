@@ -59,7 +59,7 @@
     "actions": [
       {
         "type": "shadows_things:effect",
-        "value": "minecraft:regeneration",
+        "effect": "minecraft:regeneration",
         "duration": 200,
         "amplifier": 1
       }

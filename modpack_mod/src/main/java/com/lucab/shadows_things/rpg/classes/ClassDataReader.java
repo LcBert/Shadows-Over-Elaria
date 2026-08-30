@@ -150,7 +150,8 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
                     if (actionsObj.has("actions")) {
                         JsonArray actionsArray = actionsObj.get("actions").getAsJsonArray();
                         for (JsonElement element : actionsArray) {
-                            primaryActions.add(parseAction(element.getAsJsonObject()));
+                            ClassActions.ActionData action = ClassActions.ActionType.parse(element.getAsJsonObject());
+                            if (action != null) primaryActions.add(action);
                         }
                     }
                 }
@@ -161,7 +162,8 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
                     if (actionsObj.has("actions")) {
                         JsonArray actionsArray = actionsObj.get("actions").getAsJsonArray();
                         for (JsonElement element : actionsArray) {
-                            secondaryActions.add(parseAction(element.getAsJsonObject()));
+                            ClassActions.ActionData action = ClassActions.ActionType.parse(element.getAsJsonObject());
+                            if (action != null) secondaryActions.add(action);
                         }
                     }
                 }
@@ -175,21 +177,6 @@ public class ClassDataReader extends SimpleJsonResourceReloadListener {
 
         this.rpgClasses = newClasses;
         ShadowsThings.LOGGER.info("Successfully loaded {} RPG Classes from datapacks", this.rpgClasses.size());
-    }
-
-    private ClassActions.ActionData parseAction(JsonObject actionObj) {
-        String type = actionObj.get("type").getAsString();
-        String value = actionObj.get("value").getAsString();
-
-        if (type.equals(ClassActions.ActionType.COMMAND.getType())) {
-            return new ClassActions.CommandActionData(type, value);
-        } else if (type.equals(ClassActions.ActionType.EFFECT.getType())) {
-            int duration = actionObj.has("duration") ? actionObj.get("duration").getAsInt() : 200;
-            int amplifier = actionObj.has("amplifier") ? actionObj.get("amplifier").getAsInt() : 0;
-            return new ClassActions.EffectActionData(type, value, duration, amplifier);
-        }
-
-        return new ClassActions.ActionData(type, value);
     }
 
     public ClassData getClassData(String className) {

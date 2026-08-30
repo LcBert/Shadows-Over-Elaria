@@ -14,7 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-
 public class DryingRackRenderer implements BlockEntityRenderer<DryingRackBlockEntity> {
     public DryingRackRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -30,6 +29,7 @@ public class DryingRackRenderer implements BlockEntityRenderer<DryingRackBlockEn
 
         for (int i = 0; i < 5; i++) {
             ItemStack stack = rackEntity.getInventoryHandler().getStackInSlot(i);
+            if (stack.isEmpty()) stack = rackEntity.getInventoryHandler().getStackInSlot(i + 5);
             if (stack.isEmpty()) continue;
 
             poseStack.pushPose();

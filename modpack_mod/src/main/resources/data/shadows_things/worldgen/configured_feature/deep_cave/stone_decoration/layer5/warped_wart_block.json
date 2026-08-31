@@ -6,11 +6,11 @@
     "targets": [
       {
         "state": {
-          "Name": "minecraft:diorite"
+          "Name": "minecraft:warped_wart_block"
         },
         "target": {
-          "predicate_type": "minecraft:tag_match",
-          "tag": "minecraft:base_stone_overworld"
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:netherrack"
         }
       }
     ]

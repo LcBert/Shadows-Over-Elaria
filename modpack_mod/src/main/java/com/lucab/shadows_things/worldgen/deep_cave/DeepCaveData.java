@@ -17,8 +17,8 @@ public class DeepCaveData {
             new Layer(Blocks.STONE, "layer_i"),
             new Layer(Blocks.TUFF, "layer_ii"),
             new Layer(Blocks.DEEPSLATE, "layer_iii"),
-            new Layer(Blocks.BASALT, "layer_iv"),
-            new Layer(Blocks.BLACKSTONE, "layer_v")
+            new Layer(Blocks.BLACKSTONE, "layer_iv"),
+            new Layer(Blocks.NETHERRACK, "layer_v")
     );
     public static final int layersSeparations = 5;
 

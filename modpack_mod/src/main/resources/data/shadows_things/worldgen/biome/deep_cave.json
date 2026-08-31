@@ -24,16 +24,10 @@
     [],
     [],
     [
-      "shadows_things:deep_cave/vegetation/glow_berries"
+      "shadows_things:deep_cave/vegetation/layer1/glow_berries"
     ],
     [],
     [
-      "shadows_things:deep_cave/stone_decoration/andesite",
-      "shadows_things:deep_cave/stone_decoration/diorite",
-      "shadows_things:deep_cave/stone_decoration/granite",
-      "shadows_things:deep_cave/vegetation/underground_roots",
-      "shadows_things:deep_cave/vegetation/rooted_dirt",
-      "shadows_things:deep_cave/vegetation/moss_block",
       "shadows_things:deep_cave/ore/tier1/copper",
       "shadows_things:deep_cave/ore/tier2/copper",
       "shadows_things:deep_cave/ore/tier2/iron",
@@ -49,12 +43,32 @@
       "shadows_things:deep_cave/ore/tier5/gold",
       "shadows_things:deep_cave/ore/tier5/silver",
       "shadows_things:deep_cave/ore/tier5/netherite",
-      "shadows_things:deep_cave/gem_cluster"
+      "shadows_things:deep_cave/gem_cluster",
+
+      "shadows_things:deep_cave/stone_decoration/layer1/andesite",
+      "shadows_things:deep_cave/stone_decoration/layer1/diorite",
+      "shadows_things:deep_cave/stone_decoration/layer1/granite",
+      "shadows_things:deep_cave/vegetation/layer1/underground_roots",
+      "shadows_things:deep_cave/vegetation/layer1/rooted_dirt",
+      "shadows_things:deep_cave/vegetation/layer1/moss_block",
+
+      "shadows_things:deep_cave/stone_decoration/layer2/calcite",
+
+      "shadows_things:deep_cave/stone_decoration/layer3/dripstone_block",
+      "shadows_things:deep_cave/vegetation/layer3/pointed_dripstone",
+
+      "shadows_things:deep_cave/stone_decoration/layer4/magma_block",
+      "shadows_things:deep_cave/stone_decoration/layer4/basalt",
+
+      "shadows_things:deep_cave/stone_decoration/layer5/nether_wart_block",
+      "shadows_things:deep_cave/stone_decoration/layer5/warped_wart_block",
+      "shadows_things:deep_cave/vegetation/layer5/twisting_vines",
+      "shadows_things:deep_cave/vegetation/layer5/weeping_vines"
     ],
     [],
     [],
     [
-      "shadows_things:deep_cave/vegetation/glow_lichen"
+      "shadows_things:deep_cave/vegetation/layer1/glow_lichen"
     ]
   ]
 }

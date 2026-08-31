@@ -1,9 +1,9 @@
 {
-  "feature": "shadows_things:deep_cave/vegetation/moss_block",
+  "feature": "shadows_things:deep_cave/stone_decoration/layer1/diorite",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 46
+      "count": 2
     },
     {
       "type": "minecraft:in_square"
@@ -16,7 +16,7 @@
           "absolute": 512
         },
         "min_inclusive": {
-          "absolute": 0
+          "absolute": 409
         }
       }
     },

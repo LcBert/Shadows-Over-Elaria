@@ -1,5 +1,5 @@
 {
-  "feature": "shadows_things:deep_cave/stone_decoration/granite",
+  "feature": "shadows_things:deep_cave/stone_decoration/layer4/basalt",
   "placement": [
     {
       "type": "minecraft:count",
@@ -13,10 +13,10 @@
       "height": {
         "type": "minecraft:uniform",
         "max_inclusive": {
-          "absolute": 512
+          "absolute": 204
         },
         "min_inclusive": {
-          "absolute": 0
+          "absolute": 103
         }
       }
     },

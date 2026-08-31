@@ -37,7 +37,7 @@
         },
         "target": {
           "predicate_type": "minecraft:block_match",
-          "block": "minecraft:basalt"
+          "block": "minecraft:blackstone"
         }
       },
       {
@@ -46,7 +46,7 @@
         },
         "target": {
           "predicate_type": "minecraft:block_match",
-          "block": "minecraft:blackstone"
+          "block": "minecraft:netherrack"
         }
       }
     ]

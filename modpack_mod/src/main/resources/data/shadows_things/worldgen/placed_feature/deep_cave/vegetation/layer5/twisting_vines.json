@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:cave_vine",
+  "feature": "shadows_things:deep_cave/vegetation/layer5/twisting_vines",
   "placement": [
     {
       "type": "minecraft:count",
@@ -13,10 +13,10 @@
       "height": {
         "type": "minecraft:uniform",
         "max_inclusive": {
-          "absolute": 512
+          "absolute": 102
         },
         "min_inclusive": {
-          "above_bottom": 0
+          "absolute": 0
         }
       }
     },
@@ -26,17 +26,17 @@
         "type": "minecraft:matching_blocks",
         "blocks": "minecraft:air"
       },
-      "direction_of_search": "up",
+      "direction_of_search": "down",
       "max_steps": 12,
       "target_condition": {
         "type": "minecraft:has_sturdy_face",
-        "direction": "down"
+        "direction": "up"
       }
     },
     {
       "type": "minecraft:random_offset",
       "xz_spread": 0,
-      "y_spread": -1
+      "y_spread": 1
     },
     {
       "type": "minecraft:biome"

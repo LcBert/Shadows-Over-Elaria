@@ -2,15 +2,15 @@
   "type": "minecraft:ore",
   "config": {
     "discard_chance_on_air_exposure": 0.0,
-    "size": 33,
+    "size": 64,
     "targets": [
       {
         "state": {
-          "Name": "shadows_things:underground_roots"
+          "Name": "minecraft:magma_block"
         },
         "target": {
-          "predicate_type": "minecraft:tag_match",
-          "tag": "minecraft:base_stone_overworld"
+          "predicate_type": "minecraft:block_match",
+          "block": "minecraft:blackstone"
         }
       }
     ]

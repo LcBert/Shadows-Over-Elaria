@@ -1,0 +1,27 @@
+{
+  "feature": "shadows_things:deep_cave/stone_decoration/layer3/dripstone_block",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 2
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "max_inclusive": {
+          "absolute": 306
+        },
+        "min_inclusive": {
+          "absolute": 205
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

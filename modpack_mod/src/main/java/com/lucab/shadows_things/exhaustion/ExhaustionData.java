@@ -9,7 +9,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import java.util.function.Supplier;
 
 public class ExhaustionData implements INBTSerializable<CompoundTag> {
-    public static final int EXHAUSTION_DELAY_INTERVAL = 200;
+    public static final int EXHAUSTION_DELAY_INTERVAL = 6000;
 
     private int exhaustionTick = EXHAUSTION_DELAY_INTERVAL;
     private int foodValue = 20;

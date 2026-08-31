@@ -1,0 +1,31 @@
+{
+  "entity": "minecraft:creeper",
+  "count": {
+    "min": 1,
+    "max": 5
+  },
+  "light": {
+    "min": 0,
+    "max": 15
+  },
+  "spawn_properties": {
+    "spawn_on_peaceful": false,
+    "spawn_only_on_night": false,
+    "spawn_cap": 64,
+    "spawn_chance": 0.3,
+    "spawn_radius": 64,
+    "safe_radius": 8,
+    "spawn_height": {
+      "min": -20,
+      "max": 20
+    },
+    "spawn_y": {
+      "max": 198,
+      "min": 102
+    }
+  },
+  "dimensions": [
+    "shadows_things:deep_cave"
+  ],
+  "biomes": []
+}

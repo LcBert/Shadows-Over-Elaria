@@ -11,6 +11,7 @@ import com.lucab.shadows_things.rpg.gems.GemDataReader;
 import com.lucab.shadows_things.rpg.gems.SocketRegistries;
 import com.lucab.shadows_things.rpg.professions.ProfessionAttachments;
 import com.lucab.shadows_things.rpg.professions.ProfessionCommand;
+import com.lucab.shadows_things.spawns.SpawnsDataReader;
 import com.lucab.shadows_things.toast.ToastCommand;
 import com.lucab.shadows_things.toast.ToastPacket;
 import com.lucab.shadows_things.worldgen.deep_cave.DeepCaveDimension;
@@ -53,6 +54,7 @@ public class ShadowsThings {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final ClassDataReader CLASS_READER = new ClassDataReader();
+    public static final SpawnsDataReader SPAWNS_READER = new SpawnsDataReader();
     public static final GemDataReader GEM_READER = new GemDataReader();
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
@@ -163,6 +165,7 @@ public class ShadowsThings {
     @SubscribeEvent
     public void onAddReloadListener(AddReloadListenerEvent event) {
         event.addListener(CLASS_READER);
+        event.addListener(SPAWNS_READER);
         event.addListener(GEM_READER);
     }
 }

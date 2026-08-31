@@ -22,6 +22,9 @@ public class ClassExperienceBarOverlay implements LayeredDraw.Layer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.options.hideGui) return;
 
+        if (mc.player.isPassenger()) return;
+        if (mc.player.isCreative() || mc.player.isSpectator()) return;
+
         int screenWidth = guiGraphics.guiWidth();
         int screenHeight = guiGraphics.guiHeight();
 

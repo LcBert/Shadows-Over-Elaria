@@ -25,7 +25,7 @@ public class DamageHoeHarvest {
             if (mainHand.is(ItemTags.HOES) && crop.isMaxAge(event.getState())) {
                 int farmerLevel = ProfessionHelper.getLevel(player, ProfessionHelper.Professions.FARMER);
 
-                double saveToolChance = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.save_tool, farmerLevel);
+                double saveToolChance = ProfessionHelper.FARMER_CHANCE.saveTool.getPol(farmerLevel);
 
                 if (player.level().random.nextDouble() >= saveToolChance)
                     mainHand.hurtAndBreak(event.getPlayer().isCreative() ? 0 : 1, event.getPlayer(), EquipmentSlot.MAINHAND);

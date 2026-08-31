@@ -9,7 +9,10 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record ToastPacket(String text, String color, int duration) implements CustomPacketPayload {
+import java.util.Optional;
+
+public record ToastPacket(String text, String color, int duration,
+                          Optional<ResourceLocation> soundId) implements CustomPacketPayload {
     private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "toast_packet");
     public static final Type<ToastPacket> TYPE = new Type<>(ID);
 
@@ -20,6 +23,8 @@ public record ToastPacket(String text, String color, int duration) implements Cu
             ToastPacket::color,
             ByteBufCodecs.INT,
             ToastPacket::duration,
+            ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
+            ToastPacket::soundId,
             ToastPacket::new
     );
 
@@ -32,7 +37,7 @@ public record ToastPacket(String text, String color, int duration) implements Cu
         context.enqueueWork(() -> {
             ChatFormatting color = ChatFormatting.getByName(packet.color());
             if (color == null) color = ChatFormatting.WHITE;
-            ToastClientHelper.addToast(packet.text, color, packet.duration);
+            ToastClientHelper.addToast(packet.text(), color, packet.duration(), packet.soundId());
         });
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -17,8 +18,20 @@ public class ProfessionDetailsPanel {
             ShadowsThings.MODID, "textures/gui/screen/profession/profession_details_gui.png"
     );
 
+    private static final ResourceLocation XP_BAR_BG = ResourceLocation.fromNamespaceAndPath(
+            ShadowsThings.MODID, "textures/gui/screen/profession/xp_progress_background.png"
+    );
+    private static final ResourceLocation XP_BAR_FILL = ResourceLocation.fromNamespaceAndPath(
+            ShadowsThings.MODID, "textures/gui/screen/profession/xp_progress_filled.png"
+    );
+
     public static final int PANEL_WIDTH = 144;
     public static final int PANEL_HEIGHT = 180;
+
+    private static final int BAR_WIDTH = 131;
+    private static final int BAR_HEIGHT = 5;
+    private static final int BAR_OFFSET_Y = 30;
+    private static final int XP_TEXT_OFFSET_Y = 20;
 
     private static final int ICON_OFFSET = 3;
 
@@ -70,30 +83,56 @@ public class ProfessionDetailsPanel {
         int titleWidth = font.width(title);
         guiGraphics.drawString(font, title, this.leftPos - (titleWidth / 2) + (PANEL_WIDTH / 2), this.topPos + 6, 0x000000, false);
 
+        // Xp Bar
+        renderXpBar(guiGraphics);
+
         // Profession Level
         int currentLevel = ProfessionHelper.getLevel(mc.player, profession);
         String levelString = Component.translatable("gui.shadows_things.profession.level", currentLevel, ProfessionHelper.MAX_PROFESSION_LEVEL).getString();
         int levelStringWidth = font.width(levelString);
-        guiGraphics.drawString(font, levelString, this.leftPos - (levelStringWidth / 2) + (PANEL_WIDTH / 2), this.topPos + 20, 0x000000, false);
+        guiGraphics.drawString(font, levelString, this.leftPos - (levelStringWidth / 2) + (PANEL_WIDTH / 2), this.topPos + 40, 0x000000, false);
 
         // Render chances/perks dynamically based on profession
         renderPerkStats(guiGraphics, font, profession, currentLevel);
     }
 
+    private void renderXpBar(GuiGraphics guiGraphics) {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        ProfessionHelper.Professions profession = this.boundCard.getProfession();
+
+        int experience = ProfessionHelper.getExperience(player, profession);
+        int requiredExperience = ProfessionHelper.getRequiredExperience(player, profession);
+
+        float progress = (requiredExperience > 0) ? (float) experience / requiredExperience : 0;
+        progress = Math.min(progress, 1.0f);
+        int progressWidth = (int) (progress * BAR_WIDTH);
+
+        guiGraphics.blit(XP_BAR_BG, this.leftPos + (PANEL_WIDTH / 2) - (BAR_WIDTH / 2), this.topPos + BAR_OFFSET_Y, 0, 0, BAR_WIDTH, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
+
+        if (progressWidth > 0) {
+            guiGraphics.blit(XP_BAR_FILL, this.leftPos + (PANEL_WIDTH / 2) - (BAR_WIDTH / 2), this.topPos + BAR_OFFSET_Y, 0, 0, progressWidth, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
+        }
+
+        String progressText = experience + " / " + requiredExperience;
+        int textWidth = mc.font.width(progressText);
+        guiGraphics.drawString(mc.font, progressText, this.leftPos + (PANEL_WIDTH / 2) - (textWidth / 2), this.topPos + XP_TEXT_OFFSET_Y, 0x000000, false);
+    }
+
     private void renderPerkStats(GuiGraphics guiGraphics, Font font, ProfessionHelper.Professions profession, int level) {
-        int yOffset = this.topPos + 50;
+        int yOffset = this.topPos + 60;
 
         switch (profession) {
             case BLACKSMITH -> {
-                float efficiency = ProfessionHelper.getPol(ProfessionHelper.BLACKSMITH_CHANCE.repair_efficiency, level) * 100;
-                float saveKit = ProfessionHelper.getPol(ProfessionHelper.BLACKSMITH_CHANCE.save_kit, level) * 100;
+                float efficiency = ProfessionHelper.BLACKSMITH_CHANCE.repairEfficiency.getPol(level) * 100;
+                float saveKit = ProfessionHelper.BLACKSMITH_CHANCE.saveKit.getPol(level);
 
                 guiGraphics.drawString(font, String.format("Repair Efficiency: +%.1f%%", efficiency), this.leftPos + 12, yOffset, 0x44FF44, false);
                 guiGraphics.drawString(font, String.format("Save Kit Chance: %.1f%%", saveKit), this.leftPos + 12, yOffset + 14, 0x44FF44, false);
             }
             case FARMER -> {
-                float extraCrop = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.extra_crop_drop, level) * 100;
-                float saveTool = ProfessionHelper.getPol(ProfessionHelper.FARMER_CHANCE.save_tool, level) * 100;
+                float extraCrop = ProfessionHelper.FARMER_CHANCE.extraCropDrop.getPol(level);
+                float saveTool = ProfessionHelper.FARMER_CHANCE.saveTool.getPol(level);
 
                 guiGraphics.drawString(font, String.format("Double Drop: %.1f%%", extraCrop), this.leftPos + 12, yOffset, 0x44FF44, false);
                 guiGraphics.drawString(font, String.format("Save Tool: %.1f%%", saveTool), this.leftPos + 12, yOffset + 14, 0x44FF44, false);

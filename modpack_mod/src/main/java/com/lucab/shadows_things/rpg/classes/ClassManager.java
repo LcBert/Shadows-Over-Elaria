@@ -173,7 +173,7 @@ public class ClassManager {
         if (actionType == 0) {
             if (!classPlayerData.canUsePrimary(cooldown, level.getGameTime())) {
                 player.displayClientMessage(
-                        Component.translatable("message.shadows_thibgs.class.primary_action.on_cooldown").withStyle(ChatFormatting.RED),
+                        Component.translatable("message.shadows_things.class.primary_action.on_cooldown").withStyle(ChatFormatting.RED),
                         true
                 );
                 return;
@@ -181,7 +181,7 @@ public class ClassManager {
         } else {
             if (!classPlayerData.canUseSecondary(cooldown, level.getGameTime())) {
                 player.displayClientMessage(
-                        Component.translatable("message.shadows_thibgs.class.secondary_action.on_cooldown").withStyle(ChatFormatting.RED),
+                        Component.translatable("message.shadows_things.class.secondary_action.on_cooldown").withStyle(ChatFormatting.RED),
                         true
                 );
                 return;

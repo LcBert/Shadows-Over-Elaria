@@ -12,10 +12,14 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,8 +45,11 @@ public class ToastCommand {
                                                 .then(Commands.argument("text", StringArgumentType.string())
                                                         .then(Commands.argument("color", StringArgumentType.string())
                                                                 .suggests(ToastCommand::suggestColors)
-                                                                .then(Commands.argument("duration", IntegerArgumentType.integer())
-                                                                        .executes(ToastCommand::addToast))
+                                                                .then(Commands.argument("duration", IntegerArgumentType.integer(1))
+                                                                        .executes(ctx -> executeAddToast(ctx, null))
+                                                                        .then(Commands.argument("sound", ResourceLocationArgument.id())
+                                                                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.SOUND_EVENT.keySet(), builder))
+                                                                                .executes(ctx -> executeAddToast(ctx, ResourceLocationArgument.getId(ctx, "sound")))))
                                                         )
                                                 )
                                         )
@@ -60,9 +67,9 @@ public class ToastCommand {
         return SharedSuggestionProvider.suggest(validColors, builder);
     }
 
-    private static int addToast(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executeAddToast(CommandContext<CommandSourceStack> context, @Nullable ResourceLocation soundId) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
-        Player player = EntityArgument.getPlayer(context, "player");
+        ServerPlayer player = EntityArgument.getPlayer(context, "player");
         String text = StringArgumentType.getString(context, "text");
         String colorName = StringArgumentType.getString(context, "color");
         int duration = IntegerArgumentType.getInteger(context, "duration");
@@ -73,9 +80,12 @@ public class ToastCommand {
             return 0;
         }
 
-        if (player instanceof ServerPlayer serverPlayer) {
-            ToastHelper.addToast(serverPlayer, text, color.getName(), duration);
+        if (soundId != null && !BuiltInRegistries.SOUND_EVENT.containsKey(soundId)) {
+            source.sendFailure(Component.literal("Sound event not registered: " + soundId));
+            return 0;
         }
+
+        ToastHelper.addToast(player, text, color.getName(), duration, soundId);
         return 1;
     }
 }

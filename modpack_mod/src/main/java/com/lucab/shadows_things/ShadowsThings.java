@@ -5,7 +5,6 @@ import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
 import com.lucab.shadows_things.exhaustion.ExhaustionData;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.rpg.classes.*;
-import com.lucab.shadows_things.rpg.professions.UpgradeProfessionPacket;
 import com.lucab.shadows_things.recipe.RecipesRegistries;
 import com.lucab.shadows_things.rpg.gems.GemDataReader;
 import com.lucab.shadows_things.rpg.gems.SocketRegistries;
@@ -146,12 +145,6 @@ public class ShadowsThings {
                 ClassActionExecutePacket.TYPE,
                 ClassActionExecutePacket.STREAM_CODEC,
                 ClassActionExecutePacket::handle
-        );
-
-        registrar.playToServer(
-                UpgradeProfessionPacket.TYPE,
-                UpgradeProfessionPacket.STREAM_CODEC,
-                UpgradeProfessionPacket::handle
         );
 
         // Toast

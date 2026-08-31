@@ -1,14 +1,18 @@
 package com.lucab.shadows_things.rpg.professions;
 
-import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.toast.ToastHelper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.Map;
+
 public class ProfessionHelper {
     public enum Professions {
+        MINER("minecraft:iron_pickaxe"),
         COOK("minecraft:cooked_beef"),
         BLACKSMITH("minecraft:anvil"),
         FARMER("minecraft:iron_hoe");
@@ -25,139 +29,160 @@ public class ProfessionHelper {
     }
 
     public static final int MAX_PROFESSION_LEVEL = 10;
-    public static final int MAX_POINTS = 30;
+
+    public record Range(float min, float max) {
+        public float getPol(int level) {
+            if (level <= 0) return min;
+            if (level >= MAX_PROFESSION_LEVEL) return max;
+            return min + (max - min) * ((float) (level) / (MAX_PROFESSION_LEVEL));
+        }
+    }
+
+    public static class MINER_CHANCE {
+        public static final Range saveTool = new Range(0.0f, 0.80f);
+        public static final Range oreXp = new Range(10.0f, 100.0f);
+    }
 
     public static class BLACKSMITH_CHANCE {
-        public static final float[] repair_efficiency = new float[]{0.0f, 0.25f};
-        public static final float[] save_kit = new float[]{0.0f, 0.65f};
-        public static final float[] repair_xp = new float[]{10.0f, 100.0f};
+        public static final Range repairEfficiency = new Range(0.0f, 0.25f);
+        public static final Range saveKit = new Range(0.0f, 0.65f);
+        public static final Range repairXp = new Range(10.0f, 100.0f);
     }
 
     public static class FARMER_CHANCE {
-        public static final float[] save_tool = new float[]{0.0f, 0.80f};
-        public static final float[] extra_crop_drop = new float[]{0.0f, 0.80f};
-        public static final float[] crop_xp = new float[]{10.0f, 100.0f};
-        public static final float[] roots_xp = new float[]{5.0f, 60.0f};
+        public static final Range saveTool = new Range(0.0f, 0.80f);
+        public static final Range extraCropDrop = new Range(0.0f, 0.80f);
+        public static final Range cropXp = new Range(10.0f, 100.0f);
+        public static final Range rootsXp = new Range(5.0f, 60.0f);
     }
 
-    private static void sync(Player player) {
-        player.setData(ProfessionAttachments.PROFESSION.get(), getProfessionData(player));
+
+    // =====================
+    // SYNC & DATA RETRIEVAL
+    // =====================
+    public static void sync(Player player) {
+        ProfessionAttachments.sync(player);
     }
 
-    private static ProfessionAttachments getProfessionData(Player player) {
-        return player.getData(ProfessionAttachments.PROFESSION.get());
+    public static ProfessionAttachments getData(Player player) {
+        return ProfessionAttachments.get(player);
     }
 
-    public static void setLevel(Player player, Professions professions, int level) {
-        getProfessionData(player).professionLevels.put(professions, Math.clamp(level, 0, MAX_PROFESSION_LEVEL));
+    // =======
+    // GETTERS
+    // =======
+    public static int getLevel(Player player, ProfessionHelper.Professions profession) {
+        return getData(player).getLevel(profession);
+    }
+
+    public static int getExperience(Player player, Professions profession) {
+        return getData(player).getExperience(profession);
+    }
+
+    public static ProfessionAttachments.Progress getProgress(Player player, Professions profession) {
+        return getData(player).getProgress(profession);
+    }
+
+    public static boolean isMaxLevel(Player player, Professions profession) {
+        return getData(player).isMaxLevel(profession);
+    }
+
+    public static float getExperienceProgress(Player player, Professions profession) {
+        return getData(player).getExperienceProgress(profession);
+    }
+
+    public static int getRequiredExperience(Player player, Professions profession) {
+        return ProfessionAttachments.getRequiredExpForLevel(getLevel(player, profession));
+    }
+
+    public static Map<Professions, ProfessionAttachments.Progress> getAllProfessions(Player player) {
+        return getData(player).getProfessionsMap();
+    }
+
+    // =============================
+    // MUTATORS (EXPERIENCE & LEVEL)
+    // =============================
+    public static void addExperience(Player player, Professions profession, int amount) {
+        if (amount <= 0 || isMaxLevel(player, profession)) {
+            return;
+        }
+
+        ProfessionAttachments data = getData(player);
+        int oldLevel = data.getLevel(profession);
+
+        data.addExperience(profession, amount);
+        int newLevel = data.getLevel(profession);
+
+        if (newLevel > oldLevel) {
+            onLevelUp(player, profession, newLevel);
+        }
+
         sync(player);
     }
 
-    public static boolean incrementLevel(Player player, Professions profession) {
-        int currentLevel = getLevel(player, profession);
-        if (currentLevel >= MAX_PROFESSION_LEVEL) return false;
-        setLevel(player, profession, currentLevel + 1);
-        removePoints(player, 1);
-        return true;
+    public static void removeExperience(Player player, Professions profession, int amount) {
+        if (amount <= 0) return;
+        getData(player).removeExperience(profession, amount);
+        sync(player);
+    }
+
+    public static void setLevel(Player player, Professions profession, int level) {
+        getData(player).setLevel(profession, level);
+        sync(player);
+    }
+
+    public static void setExperience(Player player, Professions profession, int experience) {
+        getData(player).setExperience(profession, experience);
+        sync(player);
+    }
+
+    public static void setProgress(Player player, Professions profession, int level, int experience) {
+        getData(player).setProgress(profession, level, experience);
+        sync(player);
+    }
+
+    public static void addLevel(Player player, Professions profession, int levels) {
+        if (levels <= 0) return;
+        ProfessionAttachments data = getData(player);
+        int oldLevel = data.getLevel(profession);
+
+        data.addLevel(profession, levels);
+        int newLevel = data.getLevel(profession);
+
+        if (newLevel > oldLevel) {
+            onLevelUp(player, profession, newLevel);
+        }
+
+        sync(player);
+    }
+
+    public static void removeLevel(Player player, Professions profession, int levels) {
+        if (levels <= 0) return;
+        getData(player).removeLevel(profession, levels);
+        sync(player);
+    }
+
+    public static void resetProfession(Player player, Professions profession) {
+        getData(player).resetProfession(profession);
+        sync(player);
     }
 
     public static void resetAll(Player player) {
-        resetLevel(player);
-        setPoints(player, 0);
-        setExperience(player, 0);
-    }
-
-    public static void resetLevel(Player player) {
-        for (Professions professions : Professions.values()) {
-            setLevel(player, professions, 0);
-        }
-    }
-
-    public static void resetLevel(Player player, Professions profession) {
-        setLevel(player, profession, 0);
-    }
-
-    public static int getLevel(Player player, Professions profession) {
-        return getProfessionData(player).professionLevels.getOrDefault(profession, 0);
-    }
-
-    // Consume experience to add 1 point
-    public static boolean tryLevelUp(Player player, boolean notify) {
-        int currentXp = getExperience(player);
-        int requiredXp = getExperienceRequired(player);
-
-        if (currentXp >= requiredXp) {
-            removeExperience(player, requiredXp);
-            addPoints(player, 1);
-            if (notify) {
-                player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
-                ToastHelper.addToast(player, "New point available", ChatFormatting.YELLOW.getName(), 100);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean canUpgradeProfession(Player player, Professions profession) {
-        int currentLevel = getLevel(player, profession);
-        return currentLevel < MAX_PROFESSION_LEVEL && getPoints(player) > 0;
-    }
-
-    public static void setExperience(Player player, int xp) {
-        getProfessionData(player).experience = Math.max(0, xp);
+        getData(player).resetAll();
         sync(player);
     }
 
-    public static void addExperience(Player player, int xp) {
-        setExperience(player, getExperience(player) + xp);
-    }
+    // =========================
+    // LEVEL-UP LOGIC & FEEDBACK
+    // =========================
+    private static void onLevelUp(Player player, Professions profession, int newLevel) {
+        if (player.level().isClientSide()) return;
 
-    public static void removeExperience(Player player, int xp) {
-        setExperience(player, getExperience(player) - xp);
-    }
+        if (player instanceof ServerPlayer serverPlayer) {
+            String professionName = Component.translatable("gui.shadows_things.profession.name." + profession.name().toLowerCase()).getString();
+            Component title = Component.translatable("toast.shadows_things.profession.levelup.title", professionName, newLevel);
 
-    public static int getExperience(Player player) {
-        return getProfessionData(player).experience;
-    }
-
-    public static int getExperienceRequired(Player player) {
-        int totalPoints = getTotalPoints(player);
-        return (int) (500 * Math.pow(1.2, totalPoints));
-    }
-
-    public static void setPoints(Player player, int points) {
-        int maxLibero = MAX_POINTS - getUsedPoints(player);
-        getProfessionData(player).points = Math.clamp(maxLibero, 0, points);
-        sync(player);
-    }
-
-    public static void addPoints(Player player, int points) {
-        setPoints(player, getPoints(player) + points);
-    }
-
-    public static void removePoints(Player player, int points) {
-        setPoints(player, getPoints(player) - points);
-    }
-
-    public static int getPoints(Player player) {
-        return getProfessionData(player).points;
-    }
-
-    public static int getUsedPoints(Player player) {
-        int used = 0;
-        for (Professions profession : Professions.values()) used += getLevel(player, profession);
-        return used;
-    }
-
-    public static int getTotalPoints(Player player) {
-        return getPoints(player) + getUsedPoints(player);
-    }
-
-    public static float getPol(float[] range, int level) {
-        if (level <= 0) return range[0];
-        if (level >= MAX_PROFESSION_LEVEL) return range[1];
-        float value = range[0] + (range[1] - range[0]) * ((float) (level) / (MAX_PROFESSION_LEVEL));
-        ShadowsThings.LOGGER.info("Pol: {}", value);
-        return value;
+            ToastHelper.addToast(serverPlayer, title.getString(), ChatFormatting.GREEN.getName(), 200, SoundEvents.PLAYER_LEVELUP);
+        }
     }
 }

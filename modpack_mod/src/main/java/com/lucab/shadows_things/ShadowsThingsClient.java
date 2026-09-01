@@ -9,6 +9,8 @@ import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
 import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegistry;
 import com.lucab.shadows_things.content.block.resonant.resonant_pedestal.ResonantPedestalRegistry;
+import com.lucab.shadows_things.entity.carcas_entity.CarcassEntity;
+import com.lucab.shadows_things.entity.carcas_entity.CarcassEntityRegistry;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.toast.ToastOverlay;
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +43,8 @@ public class ShadowsThingsClient {
         event.registerBlockEntityRenderer(DryingRackRegister.DRYING_RACK_BLOCK_ENTITY.get(), DryingRackRenderer::new);
         event.registerBlockEntityRenderer(ResonantPedestalRegistry.RESONANT_PEDESTAL_ENTITY.get(), ResonantPedestalRenderer::new);
         event.registerBlockEntityRenderer(ResonantAltarRegistry.RESONANT_ALTAR_ENTITY.get(), ResonantAltarRenderer::new);
+
+        event.registerEntityRenderer(CarcassEntityRegistry.CARCASS_ENTITY.get(), CarcassEntityRender::new);
     }
 
     @SubscribeEvent

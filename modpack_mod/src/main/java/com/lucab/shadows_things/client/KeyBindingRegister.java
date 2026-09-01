@@ -7,6 +7,7 @@ import com.lucab.shadows_things.rpg.classes.ClassActionExecutePacket;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
@@ -15,7 +16,7 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = ShadowsThings.MODID)
+@EventBusSubscriber(modid = ShadowsThings.MODID, value = Dist.CLIENT)
 public class KeyBindingRegister {
     public static final KeyMapping OPEN_CLASS_SCREEN = new KeyMapping(
             "key.shadows_things.open_class_screen",

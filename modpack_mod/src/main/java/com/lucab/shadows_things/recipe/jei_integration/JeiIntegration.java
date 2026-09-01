@@ -42,6 +42,7 @@ public class JeiIntegration implements IModPlugin {
         registration.addRecipeCategories(new CauldronRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ResonantAltarRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new DryingRackRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new CarcassRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -75,11 +76,17 @@ public class JeiIntegration implements IModPlugin {
                     .map(RecipeHolder::value)
                     .toList();
 
+            List<CarcassCuttingRecipe> carcassRecipes = recipeManager.getAllRecipesFor(RecipesRegistries.CARCASS_CUTTING_TYPE.get())
+                    .stream()
+                    .map(RecipeHolder::value)
+                    .toList();
+
             registration.addRecipes(OvenRecipeCategory.TYPE, ovenRecipes);
             registration.addRecipes(SmelteryRecipeCategory.TYPE, smelteryRecipes);
             registration.addRecipes(CauldronRecipeCategory.TYPE, cauldronRecipes);
             registration.addRecipes(ResonantAltarRecipeCategory.TYPE, resonantAltarRecipes);
             registration.addRecipes(DryingRackRecipeCategory.TYPE, dryingRackRecipes);
+            registration.addRecipes(CarcassRecipeCategory.TYPE, carcassRecipes);
         }
     }
 

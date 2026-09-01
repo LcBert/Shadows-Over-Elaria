@@ -42,6 +42,7 @@ public class ContentRegister {
         Rods.register();
         GemSetRegistry.register();
         EscapeRope.register();
+        CarcassItem.register();
         ItemVarious.register();
 
         SilverSet.register();

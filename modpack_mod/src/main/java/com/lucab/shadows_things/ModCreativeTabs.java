@@ -59,6 +59,7 @@ public class ModCreativeTabs {
                         output.acceptAll(RepairKits.getItems());
                         output.acceptAll(Rods.getItems());
                         output.acceptAll(Hilts.getItems());
+                        output.acceptAll(CarcassItem.getItems());
                     })
                     .build());
 

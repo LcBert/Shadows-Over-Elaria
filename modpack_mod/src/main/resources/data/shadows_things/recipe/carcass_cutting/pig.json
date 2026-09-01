@@ -1,0 +1,18 @@
+{
+  "type": "shadows_things:carcass_cutting",
+  "entity_type": "minecraft:pig",
+  "max_interactions": 3,
+  "steps": [
+    {
+      "tool": {
+        "tag": "minecraft:swords"
+      },
+      "drop": {
+        "id": "minecraft:porkchop",
+        "count": 1
+      },
+      "min_step": 1,
+      "max_step": 3
+    }
+  ]
+}

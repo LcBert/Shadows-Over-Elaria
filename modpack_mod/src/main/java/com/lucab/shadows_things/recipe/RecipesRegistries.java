@@ -51,6 +51,13 @@ public class RecipesRegistries {
     public static final DeferredHolder<RecipeType<?>, RecipeType<DryingRackRecipe>> DRYING_RACK_TYPE =
             TYPES.register("drying_rack", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "drying_rack")));
 
+    //Carcass Cutting
+    public static final DeferredHolder<RecipeSerializer<?>, CarcassCuttingRecipe.Serializer> CARCASS_CUTTING_SERIALIZER =
+            SERIALIZERS.register("carcass_cutting", CarcassCuttingRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<CarcassCuttingRecipe>> CARCASS_CUTTING_TYPE =
+            TYPES.register("carcass_cutting", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "carcass_cutting")));
+
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);
         TYPES.register(eventBus);

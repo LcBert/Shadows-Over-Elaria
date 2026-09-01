@@ -2,6 +2,7 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
+import com.lucab.shadows_things.entity.carcas_entity.CarcassEntityRegistry;
 import com.lucab.shadows_things.exhaustion.ExhaustionData;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.rpg.classes.*;
@@ -22,6 +23,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -62,6 +64,9 @@ public class ShadowsThings {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, MODID);
 
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(
+            BuiltInRegistries.ENTITY_TYPE, MODID);
+
     // Data Components
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MODID);
 
@@ -84,6 +89,10 @@ public class ShadowsThings {
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         ContentRegister.register();
+
+        // Entity Register
+        ENTITIES.register(modEventBus);
+        CarcassEntityRegistry.register();
 
         // Data Components Register
         DATA_COMPONENTS.register(modEventBus);

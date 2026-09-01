@@ -1,0 +1,29 @@
+{
+  "type": "shadows_things:carcass_cutting",
+  "entity_type": "minecraft:chicken",
+  "max_interactions": 6,
+  "steps": [
+    {
+      "tool": {
+        "tag": "c:tools/shear"
+      },
+      "drop": {
+        "id": "minecraft:feather",
+        "count": 1
+      },
+      "min_step": 1,
+      "max_step": 3
+    },
+    {
+      "tool": {
+        "tag": "minecraft:swords"
+      },
+      "drop": {
+        "id": "minecraft:chicken",
+        "count": 1
+      },
+      "min_step": 4,
+      "max_step": 6
+    }
+  ]
+}

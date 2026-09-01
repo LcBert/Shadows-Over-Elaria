@@ -56,12 +56,6 @@ public class SpawnsHandler {
             int safeRadius = Math.min(props.safeRadius(), spawnRadius - 1);
 
             for (int tries = 1; tries <= 20; tries++) {
-                double angle = ThreadLocalRandom.current().nextDouble(0, Math.PI * 2);
-                double dist = Math.sqrt(ThreadLocalRandom.current().nextDouble(
-                        safeRadius * safeRadius,
-                        spawnRadius * spawnRadius
-                ));
-
                 int spawnX = ThreadLocalRandom.current().nextInt(-spawnRadius, spawnRadius + 1) + playerX;
                 int spawnZ = ThreadLocalRandom.current().nextInt(-spawnRadius, spawnRadius + 1) + playerZ;
 

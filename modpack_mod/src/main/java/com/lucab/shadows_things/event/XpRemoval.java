@@ -22,6 +22,9 @@ public class XpRemoval {
 
     @SubscribeEvent
     public static void xpSpawn(EntityJoinLevelEvent event) {
-        if (event.getEntity() instanceof ExperienceOrb) event.setCanceled(true);
+        if (event.getEntity() instanceof ExperienceOrb) {
+            event.getEntity().discard();
+            event.setCanceled(true);
+        }
     }
 }

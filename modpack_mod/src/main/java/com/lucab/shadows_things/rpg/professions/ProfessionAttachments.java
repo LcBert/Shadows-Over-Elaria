@@ -190,7 +190,15 @@ public class ProfessionAttachments implements INBTSerializable<CompoundTag> {
     }
 
     public static int getRequiredExpForLevel(int level) {
-        return 100 + (level * 50);
+        if (level < 0) return 0;
+        if (level >= ProfessionHelper.MAX_PROFESSION_LEVEL) return 0;
+
+        // Configurable parameters
+        final int baseExp = 100;
+        final double exponent = 2.0D; // Modifiable: 1.2 (gentle), 1.5 (standard RPG), 2.0 (quadratic/steep)
+
+        // Formula: baseExp * (level + 1)^exponent
+        return (int) Math.round(baseExp * Math.pow(level + 1, exponent));
     }
 
     @Override

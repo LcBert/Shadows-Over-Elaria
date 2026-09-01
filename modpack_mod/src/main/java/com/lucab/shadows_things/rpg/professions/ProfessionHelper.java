@@ -182,7 +182,7 @@ public class ProfessionHelper {
             String professionName = Component.translatable("gui.shadows_things.profession.name." + profession.name().toLowerCase()).getString();
             Component title = Component.translatable("toast.shadows_things.profession.levelup.title", professionName, newLevel);
 
-            ToastHelper.addToast(serverPlayer, title.getString(), ChatFormatting.GREEN.getName(), 200, SoundEvents.PLAYER_LEVELUP);
+            ToastHelper.addToast(serverPlayer, title.getString(), ChatFormatting.GREEN.getName(), 60, SoundEvents.PLAYER_LEVELUP);
         }
     }
 }

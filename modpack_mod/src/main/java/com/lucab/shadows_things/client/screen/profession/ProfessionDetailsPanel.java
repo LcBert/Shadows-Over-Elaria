@@ -86,14 +86,8 @@ public class ProfessionDetailsPanel {
         // Xp Bar
         renderXpBar(guiGraphics);
 
-        // Profession Level
-        int currentLevel = ProfessionHelper.getLevel(mc.player, profession);
-        String levelString = Component.translatable("gui.shadows_things.profession.level", currentLevel, ProfessionHelper.MAX_PROFESSION_LEVEL).getString();
-        int levelStringWidth = font.width(levelString);
-        guiGraphics.drawString(font, levelString, this.leftPos - (levelStringWidth / 2) + (PANEL_WIDTH / 2), this.topPos + 40, 0x000000, false);
-
         // Render chances/perks dynamically based on profession
-        renderPerkStats(guiGraphics, font, profession, currentLevel);
+        renderPerkStats(guiGraphics, font, profession);
     }
 
     private void renderXpBar(GuiGraphics guiGraphics) {
@@ -104,7 +98,7 @@ public class ProfessionDetailsPanel {
         int experience = ProfessionHelper.getExperience(player, profession);
         int requiredExperience = ProfessionHelper.getRequiredExperience(player, profession);
 
-        float progress = (requiredExperience > 0) ? (float) experience / requiredExperience : 0;
+        float progress = ProfessionHelper.getExperienceProgress(player, profession);
         progress = Math.min(progress, 1.0f);
         int progressWidth = (int) (progress * BAR_WIDTH);
 
@@ -114,13 +108,17 @@ public class ProfessionDetailsPanel {
             guiGraphics.blit(XP_BAR_FILL, this.leftPos + (PANEL_WIDTH / 2) - (BAR_WIDTH / 2), this.topPos + BAR_OFFSET_Y, 0, 0, progressWidth, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
         }
 
-        String progressText = experience + " / " + requiredExperience;
-        int textWidth = mc.font.width(progressText);
-        guiGraphics.drawString(mc.font, progressText, this.leftPos + (PANEL_WIDTH / 2) - (textWidth / 2), this.topPos + XP_TEXT_OFFSET_Y, 0x000000, false);
+        // Profession Level
+        int currentLevel = ProfessionHelper.getLevel(mc.player, profession);
+        String levelString = Component.translatable("gui.shadows_things.profession.level", currentLevel, ProfessionHelper.MAX_PROFESSION_LEVEL).getString();
+        int textWidth = mc.font.width(levelString);
+        guiGraphics.drawString(mc.font, levelString, this.leftPos + (PANEL_WIDTH / 2) - (textWidth / 2), this.topPos + XP_TEXT_OFFSET_Y, 0x000000, false);
     }
 
-    private void renderPerkStats(GuiGraphics guiGraphics, Font font, ProfessionHelper.Professions profession, int level) {
+    private void renderPerkStats(GuiGraphics guiGraphics, Font font, ProfessionHelper.Professions profession) {
         int yOffset = this.topPos + 60;
+
+        int level = ProfessionHelper.getLevel(Minecraft.getInstance().player, profession);
 
         switch (profession) {
             case BLACKSMITH -> {

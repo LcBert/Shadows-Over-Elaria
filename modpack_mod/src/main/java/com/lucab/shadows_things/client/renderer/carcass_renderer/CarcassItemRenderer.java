@@ -1,6 +1,8 @@
-package com.lucab.shadows_things.client.renderer;
+package com.lucab.shadows_things.client.renderer.carcass_renderer;
 
 import com.lucab.shadows_things.content.item.CarcassItem;
+import com.lucab.shadows_things.entity.carcas_entity.CarcassEntity;
+import com.lucab.shadows_things.recipe.CarcassCuttingRecipe;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -9,6 +11,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -52,8 +55,43 @@ public class CarcassItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (entity == null) return;
 
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        EntityRenderer<? super LivingEntity> renderer = (EntityRenderer<? super LivingEntity>) dispatcher.getRenderer(entity);
-        if (renderer == null) return;
+        EntityRenderer<? super LivingEntity> renderer = dispatcher.getRenderer(entity);
+
+        // Calculate harvesting progress
+        int currentStep = CarcassItem.getInteractions(stack);
+        int maxSteps = Math.max(1, CarcassCuttingRecipe.getMaxInteractions(level, type));
+        float stepProgress = Mth.clamp((float) currentStep / (float) maxSteps, 0.0F, 1.0F);
+
+        // Calculate rot/decay progress
+        long spawnTick = CarcassItem.getSpawnTick(stack);
+        float decayProgress = 0.0F;
+
+        if (spawnTick > 0L) {
+            long currentTick = level.getGameTime();
+            long pastTick = Math.max(0L, currentTick - spawnTick);
+            decayProgress = Mth.clamp((float) pastTick / CarcassEntity.MAX_DECAY_TICK, 0.0F, 1.0F);
+        }
+
+        // Calculate RGB tint factors identical to entity renderer
+        float harvestR = 1.0F - (0.3F * stepProgress);
+        float harvestG = 1.0F - (0.75F * stepProgress);
+        float harvestB = 1.0F - (0.75F * stepProgress);
+
+        float rotR = 0.4F;
+        float rotG = 0.85F;
+        float rotB = 0.3F;
+
+        float rTint = Mth.clamp(Mth.lerp(decayProgress, harvestR, harvestR * rotR), 0.0F, 1.0F);
+        float gTint = Mth.clamp(Mth.lerp(decayProgress, harvestG, harvestG * rotG), 0.0F, 1.0F);
+        float bTint = Mth.clamp(Mth.lerp(decayProgress, harvestB, harvestB * rotB), 0.0F, 1.0F);
+
+        MultiBufferSource tintedBufferSource = renderType -> new TintedVertexConsumer(
+                bufferSource.getBuffer(renderType),
+                rTint,
+                gTint,
+                bTint,
+                1.0F
+        );
 
         poseStack.pushPose();
 
@@ -78,7 +116,7 @@ public class CarcassItemRenderer extends BlockEntityWithoutLevelRenderer {
                 0.0F,
                 1.0F,
                 poseStack,
-                bufferSource,
+                tintedBufferSource,
                 packedLight
         );
 
@@ -106,9 +144,8 @@ public class CarcassItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.translate(0.0D, -(height * 0.5D), 0.0D);
             }
             case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND -> {
-                poseStack.translate(0.5D, 0.2D, 0.5D);
+                poseStack.translate(0.5D, 0.5D, 0.3D);
                 poseStack.scale(scale * 0.7F, scale * 0.7F, scale * 0.7F);
-                poseStack.mulPose(Axis.YP.rotationDegrees(135.0F));
                 poseStack.translate(0.0D, -(height * 0.5D), 0.0D);
             }
             case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> {
@@ -118,7 +155,7 @@ public class CarcassItemRenderer extends BlockEntityWithoutLevelRenderer {
                 poseStack.translate(0.0D, -(height * 0.5D), 0.0D);
             }
             case GROUND -> {
-                poseStack.translate(0.5D, 0.0D, 0.5D);
+                poseStack.translate(0.5D, 0.3D, 0.5D);
                 poseStack.scale(scale * 0.75F, scale * 0.75F, scale * 0.75F);
                 poseStack.mulPose(Axis.YP.rotationDegrees(45.0F));
             }

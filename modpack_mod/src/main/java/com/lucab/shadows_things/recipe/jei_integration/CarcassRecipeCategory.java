@@ -94,7 +94,7 @@ public class CarcassRecipeCategory implements IRecipeCategory<CarcassCuttingReci
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CarcassCuttingRecipe recipe, IFocusGroup focuses) {
         EntityType<?> resolvedType = recipe.getResolvedEntityType();
-        ItemStack inputCarcass = (resolvedType != null) ? CarcassItem.createForType(resolvedType, 0) : ItemStack.EMPTY;
+        ItemStack inputCarcass = (resolvedType != null) ? CarcassItem.createForType(resolvedType, null) : ItemStack.EMPTY;
 
         // Input Carcass Slot
         builder.addSlot(RecipeIngredientRole.INPUT, 7, HEADER_HEIGHT + 1)

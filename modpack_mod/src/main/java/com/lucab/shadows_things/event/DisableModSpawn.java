@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 public class DisableModSpawn {
     @SubscribeEvent
     public static void onEntitySpawn(MobSpawnEvent.PositionCheck event) {
-        if (event.getSpawnType() == MobSpawnType.NATURAL) {
+        if (event.getSpawnType() == MobSpawnType.NATURAL || event.getSpawnType() == MobSpawnType.CHUNK_GENERATION) {
             event.setResult(MobSpawnEvent.PositionCheck.Result.FAIL);
         }
     }

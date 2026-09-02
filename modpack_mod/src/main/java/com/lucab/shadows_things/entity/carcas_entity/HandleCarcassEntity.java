@@ -27,6 +27,7 @@ public class HandleCarcassEntity {
             CarcassEntity carcass = CarcassEntityRegistry.CARCASS_ENTITY.get().create(level);
             if (carcass != null) {
                 carcass.setCopiedEntityType(living.getType());
+                carcass.setSpawnTick(level.getGameTime());
 
                 float bodyYaw = living.yBodyRot;
                 carcass.moveTo(living.getX(), living.getY(), living.getZ(), bodyYaw, 0.0F);

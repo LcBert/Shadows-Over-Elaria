@@ -22,6 +22,8 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class MiningEvent {
     private static final TagKey<Block> ORE_1 = BlockTags.create(ResourceLocation.parse("shadows_things:ore_tier/1"));
@@ -92,7 +94,7 @@ public class MiningEvent {
             level.removeBlock(event.getPos(), false);
 
             Item treeBarkItem = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("farmersdelight", "tree_bark"));
-            Block.popResource(level, event.getPos(), treeBarkItem.getDefaultInstance());
+            Block.popResource(level, event.getPos(), treeBarkItem.getDefaultInstance().copyWithCount(ThreadLocalRandom.current().nextInt(1, 5)));
 
             event.getPlayer().getMainHandItem().hurtAndBreak(1, event.getPlayer(), EquipmentSlot.MAINHAND);
         }

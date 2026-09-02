@@ -1,8 +1,19 @@
 {
   "type": "shadows_things:carcass_cutting",
   "entity_type": "minecraft:sheep",
-  "max_interactions": 3,
+  "max_interactions": 6,
   "steps": [
+    {
+      "tool": {
+        "tag": "c:tools/shear"
+      },
+      "drop": {
+        "id": "minecraft:white_wool",
+        "count": 1
+      },
+      "min_step": 1,
+      "max_step": 3
+    },
     {
       "tool": {
         "tag": "minecraft:swords"
@@ -11,8 +22,8 @@
         "id": "minecraft:mutton",
         "count": 1
       },
-      "min_step": 1,
-      "max_step": 3
+      "min_step": 4,
+      "max_step": 6
     }
   ]
 }

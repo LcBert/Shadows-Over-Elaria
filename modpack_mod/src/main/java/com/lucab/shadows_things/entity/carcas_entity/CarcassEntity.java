@@ -2,7 +2,9 @@ package com.lucab.shadows_things.entity.carcas_entity;
 
 import com.lucab.shadows_things.content.item.CarcassItem;
 import com.lucab.shadows_things.recipe.CarcassCuttingRecipe;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
@@ -24,18 +27,27 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
 public class CarcassEntity extends Entity {
-    private static final EntityDataAccessor<String> COPY_ENTITY_TYPE = SynchedEntityData.defineId(
+    public static final long MAX_DECAY_TICK = 6000;
+    private static final float DECAY_PARTICLE_TICK = 0.8F;
+
+    private static final DustParticleOptions DECAY_PARTICLES = new DustParticleOptions(new Vector3f(0.0f, 1.0f, 0.0f), 0.5f);
+
+    public static final EntityDataAccessor<String> COPY_ENTITY_TYPE = SynchedEntityData.defineId(
             CarcassEntity.class, EntityDataSerializers.STRING
     );
-    private static final EntityDataAccessor<Integer> CURRENT_INTERACTION_COUNT = SynchedEntityData.defineId(
+    public static final EntityDataAccessor<Integer> CURRENT_INTERACTION_COUNT = SynchedEntityData.defineId(
             CarcassEntity.class, EntityDataSerializers.INT
     );
-    private static final EntityDataAccessor<Integer> MAX_INTERACTION_COUNT = SynchedEntityData.defineId(
+    public static final EntityDataAccessor<Integer> MAX_INTERACTION_COUNT = SynchedEntityData.defineId(
             CarcassEntity.class, EntityDataSerializers.INT
+    );
+    public static final EntityDataAccessor<Long> SPAWN_TICK = SynchedEntityData.defineId(
+            CarcassEntity.class, EntityDataSerializers.LONG
     );
 
     @Nullable
@@ -52,6 +64,20 @@ public class CarcassEntity extends Entity {
 
         if (!this.isNoGravity()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+        }
+
+        // Handle decay
+        if (!this.level().isClientSide) {
+            if (this.isDecayed(level())) {
+                this.discard();
+                return;
+            }
+        }
+
+        if (this.level().isClientSide && level() instanceof ClientLevel clientLevel) {
+            if (this.getTickProgress() >= DECAY_PARTICLE_TICK) {
+                this.spawnClientDecayParticles();
+            }
         }
 
         this.move(MoverType.SELF, this.getDeltaMovement());
@@ -83,7 +109,7 @@ public class CarcassEntity extends Entity {
             if (!this.level().isClientSide) {
                 EntityType<?> type = this.getCopiedEntityType();
                 if (type != null) {
-                    ItemStack carcassStack = CarcassItem.createForType(type, this.getCurrentInteractions());
+                    ItemStack carcassStack = CarcassItem.createForType(type, this.getEntityData());
                     if (!player.addItem(carcassStack)) {
                         player.drop(carcassStack, false);
                     }
@@ -158,6 +184,31 @@ public class CarcassEntity extends Entity {
                 : ParticleTypes.DAMAGE_INDICATOR;
     }
 
+    private void spawnClientDecayParticles() {
+        float halfWidth = this.getBbWidth() * 0.5F;
+        float height = this.getBbHeight();
+
+        for (int i = 0; i < 10; i++) {
+            double offsetX = (this.random.nextDouble() * 2.0D - 1.0D) * halfWidth;
+            double offsetY = this.random.nextDouble() * height;
+            double offsetZ = (this.random.nextDouble() * 2.0D - 1.0D) * halfWidth;
+
+            double speedX = (this.random.nextDouble() - 0.5D) * 0.02D;
+            double speedY = this.random.nextDouble() * 0.02D + 0.01D;
+            double speedZ = (this.random.nextDouble() - 0.5D) * 0.02D;
+
+            this.level().addParticle(
+                    DECAY_PARTICLES,
+                    this.getX() + offsetX,
+                    this.getY() + offsetY,
+                    this.getZ() + offsetZ,
+                    speedX,
+                    speedY,
+                    speedZ
+            );
+        }
+    }
+
     @Override
     public boolean isPickable() {
         return !this.isRemoved();
@@ -168,6 +219,7 @@ public class CarcassEntity extends Entity {
         builder.define(COPY_ENTITY_TYPE, "");
         builder.define(CURRENT_INTERACTION_COUNT, 0);
         builder.define(MAX_INTERACTION_COUNT, 0);
+        builder.define(SPAWN_TICK, 0L);
     }
 
     @Override
@@ -213,6 +265,30 @@ public class CarcassEntity extends Entity {
         return this.entityData.get(MAX_INTERACTION_COUNT);
     }
 
+    public float getStepProgress() {
+        int currentStep = getCurrentInteractions();
+        int maxSteps = Math.max(1, this.getMaxSteps());
+        return (float) currentStep / (float) maxSteps;
+    }
+
+    public void setSpawnTick(long spawnTick) {
+        this.entityData.set(SPAWN_TICK, spawnTick);
+    }
+
+    public long getSpawnTick() {
+        return this.entityData.get(SPAWN_TICK);
+    }
+
+    public float getTickProgress() {
+        long pastTick = level().getGameTime() - this.getSpawnTick();
+        return Mth.clamp((float) pastTick / CarcassEntity.MAX_DECAY_TICK, 0.0F, 1.0F);
+    }
+
+    public boolean isDecayed(Level level) {
+        long pastTick = Math.max(0L, level.getGameTime() - this.getSpawnTick());
+        return pastTick > CarcassEntity.MAX_DECAY_TICK;
+    }
+
     @Nullable
     public LivingEntity getOrCreateClientEntity() {
         if (!this.level().isClientSide) return null;
@@ -256,6 +332,9 @@ public class CarcassEntity extends Entity {
         if (tag.contains("MaxInteractions")) {
             this.setMaxSteps(tag.getInt("MaxInteractions"));
         }
+        if (tag.contains("SpawnTick")) {
+            this.setSpawnTick(tag.getLong("SpawnTick"));
+        }
     }
 
     @Override
@@ -263,5 +342,6 @@ public class CarcassEntity extends Entity {
         tag.putString("CopiedType", this.entityData.get(COPY_ENTITY_TYPE));
         tag.putInt("CurrentInteractions", this.getCurrentInteractions());
         tag.putInt("MaxInteractions", this.getMaxSteps());
+        tag.putLong("SpawnTick", this.getSpawnTick());
     }
 }

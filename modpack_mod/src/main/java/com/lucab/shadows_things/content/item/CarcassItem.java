@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.content.item;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.client.renderer.CarcassItemRenderer;
+import com.lucab.shadows_things.client.renderer.carcass_renderer.CarcassItemRenderer;
 import com.lucab.shadows_things.entity.carcas_entity.CarcassEntity;
 import com.lucab.shadows_things.entity.carcas_entity.CarcassEntityRegistry;
 import com.lucab.shadows_things.recipe.CarcassCuttingRecipe;
@@ -16,6 +16,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -47,17 +48,27 @@ public class CarcassItem extends Item {
                             .networkSynchronized(ByteBufCodecs.VAR_INT)
                             .build());
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> CARCASS_SPAWN_TICK =
+            ShadowsThings.DATA_COMPONENTS.register("carcass_spawn_tick", () ->
+                    DataComponentType.<Long>builder()
+                            .persistent(Codec.LONG)
+                            .networkSynchronized(ByteBufCodecs.VAR_LONG)
+                            .build());
+
     public static final DeferredItem<CarcassItem> CARCASS_ITEM = ShadowsThings.ITEMS.register("carcass_item", CarcassItem::new);
 
     public CarcassItem() {
-        super(new Item.Properties());
+        super(new Item.Properties().stacksTo(1));
     }
 
-    public static ItemStack createForType(EntityType<?> entityType, int interactions) {
+    public static ItemStack createForType(EntityType<?> entityType, @Nullable SynchedEntityData entityData) {
         ItemStack stack = new ItemStack(CARCASS_ITEM.get());
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
         stack.set(CARCASS_ENTITY_TYPE.get(), id.toString());
-        stack.set(CARCASS_INTERACTIONS.get(), interactions);
+        if (entityData != null) {
+            stack.set(CARCASS_INTERACTIONS.get(), entityData.get(CarcassEntity.CURRENT_INTERACTION_COUNT));
+            stack.set(CARCASS_SPAWN_TICK.get(), entityData.get(CarcassEntity.SPAWN_TICK));
+        }
         return stack;
     }
 
@@ -66,7 +77,7 @@ public class CarcassItem extends Item {
         if (entityKey == null) return ItemStack.EMPTY;
 
         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(entityKey);
-        return createForType(type, 0);
+        return createForType(type, null);
     }
 
     @Nullable
@@ -80,6 +91,11 @@ public class CarcassItem extends Item {
     public static int getInteractions(ItemStack stack) {
         Integer interactions = stack.get(CARCASS_INTERACTIONS.get());
         return interactions != null ? interactions : 0;
+    }
+
+    public static long getSpawnTick(ItemStack stack) {
+        Long spawnTick = stack.get(CARCASS_SPAWN_TICK.get());
+        return spawnTick != null ? spawnTick : 0;
     }
 
     @Override
@@ -103,6 +119,10 @@ public class CarcassItem extends Item {
         if (carcass != null) {
             carcass.setCopiedEntityType(targetType);
             carcass.setCurrentInteractions(getInteractions(stack));
+
+            long spawnTick = getSpawnTick(stack);
+            if (spawnTick > 0) carcass.setSpawnTick(getSpawnTick(stack));
+            else carcass.setSpawnTick(level.getGameTime());
 
             float yaw = context.getPlayer() != null ? context.getPlayer().getYRot() : 0.0F;
             carcass.moveTo(
@@ -156,7 +176,7 @@ public class CarcassItem extends Item {
                         CarcassCuttingRecipe recipe = recipeHolder.value();
                         EntityType<?> type = recipe.getResolvedEntityType();
                         if (type != null) {
-                            carcassItems.add(createForType(type, 0));
+                            carcassItems.add(createForType(type, null));
                         }
                     });
         }

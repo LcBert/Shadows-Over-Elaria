@@ -1,7 +1,6 @@
 package com.lucab.shadows_things.content.block.resonant.resonant_altar;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.content.block.resonant.resonant_pedestal.ResonantPedestalBlockEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +11,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.List;
 
-public class ResonantAltarRegistry {
+public class ResonantAltarRegister {
     public static final DeferredBlock<ResonantAltarBlock> RESONANT_ALTAR = ShadowsThings.BLOCKS.register(
             "resonant_altar", () -> new ResonantAltarBlock());
 

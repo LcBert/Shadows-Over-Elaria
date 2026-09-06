@@ -1,12 +1,12 @@
 {
-  "name": "shadows_things:dungeons/jungle/end",
+  "name": "shadows_things:dungeons/jungle/start_pool",
   "fallback": "minecraft:empty",
   "elements": [
     {
       "weight": 1,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "shadows_things:dungeons/jungle/ends/1",
+        "location": "shadows_things:dungeons/jungle/entrances/1",
         "processors": "minecraft:empty",
         "projection": "rigid"
       }

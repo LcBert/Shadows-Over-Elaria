@@ -27,7 +27,7 @@ public class ResonantPedestalBlockEntity extends BlockEntity {
     };
 
     public ResonantPedestalBlockEntity(BlockPos pos, BlockState state) {
-        super(ResonantPedestalRegistry.RESONANT_PEDESTAL_ENTITY.get(), pos, state);
+        super(ResonantPedestalRegister.RESONANT_PEDESTAL_ENTITY.get(), pos, state);
     }
 
     public void notifyAltars() {

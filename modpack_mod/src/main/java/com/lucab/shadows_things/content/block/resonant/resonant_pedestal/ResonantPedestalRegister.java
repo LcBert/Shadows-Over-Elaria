@@ -11,7 +11,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.List;
 
-public class ResonantPedestalRegistry {
+public class ResonantPedestalRegister {
     public static final DeferredBlock<ResonantPedestalBlock> RESONANT_PEDESTAL = ShadowsThings.BLOCKS.register(
             "resonant_pedestal", () -> new ResonantPedestalBlock());
 

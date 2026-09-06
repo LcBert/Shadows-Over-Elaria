@@ -47,7 +47,7 @@ public class ResonantAltarBlockEntity extends BlockEntity {
     private ResonantAltarRecipe activeRecipe = null;
 
     public ResonantAltarBlockEntity(BlockPos pos, BlockState state) {
-        super(ResonantAltarRegistry.RESONANT_ALTAR_ENTITY.get(), pos, state);
+        super(ResonantAltarRegister.RESONANT_ALTAR_ENTITY.get(), pos, state);
     }
 
     // ==========================================

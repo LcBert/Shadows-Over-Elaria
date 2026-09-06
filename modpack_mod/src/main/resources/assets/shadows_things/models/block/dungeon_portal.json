@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_top",
+  "textures": {
+    "side": "shadows_things:block/dungeon_portal/dungeon_portal_side",
+    "top": "shadows_things:block/dungeon_portal/dungeon_portal_top"
+  }
+}

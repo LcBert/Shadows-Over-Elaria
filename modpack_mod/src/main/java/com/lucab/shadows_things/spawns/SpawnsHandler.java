@@ -10,6 +10,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
@@ -39,6 +40,7 @@ public class SpawnsHandler {
             SpawnsDataReader.SpawnProperties props = data.spawnProperties();
 
             if (!props.spawnOnPeaceful() && level.getDifficulty() == Difficulty.PEACEFUL) continue;
+            if (!level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) return;
             if (props.spawnOnlyOnNight() && !level.isNight()) continue;
             if (ThreadLocalRandom.current().nextFloat() > props.spawnChance()) continue;
             if (!checkDimension(level, data.dimensions())) continue;

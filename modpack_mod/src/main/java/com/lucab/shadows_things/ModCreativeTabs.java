@@ -1,5 +1,6 @@
 package com.lucab.shadows_things;
 
+import com.lucab.shadows_things.content.block.dungeon_portal_block.DungeonPortalRegister;
 import com.lucab.shadows_things.content.gem_set.GemCluster;
 import com.lucab.shadows_things.content.gem_set.GemItem;
 import com.lucab.shadows_things.content.SilverSet;
@@ -9,8 +10,8 @@ import com.lucab.shadows_things.content.block.deep_cave_portal_block.DeepCavePor
 import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.oven.OvenRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
-import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegistry;
-import com.lucab.shadows_things.content.block.resonant.resonant_pedestal.ResonantPedestalRegistry;
+import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegister;
+import com.lucab.shadows_things.content.block.resonant.resonant_pedestal.ResonantPedestalRegister;
 import com.lucab.shadows_things.content.block.sieve.SieveRegister;
 import com.lucab.shadows_things.content.block.smeltery.SmelteryRegister;
 import com.lucab.shadows_things.content.item.*;
@@ -39,9 +40,10 @@ public class ModCreativeTabs {
                         output.acceptAll(SmelteryRegister.getItems());
                         output.acceptAll(CauldronRegister.getItems());
                         output.acceptAll(GlassBottles.getItems());
-                        output.acceptAll(ResonantAltarRegistry.getItems());
-                        output.acceptAll(ResonantPedestalRegistry.getItems());
+                        output.acceptAll(ResonantAltarRegister.getItems());
+                        output.acceptAll(ResonantPedestalRegister.getItems());
                         output.acceptAll(DeepCavePortalRegister.getItems());
+                        output.acceptAll(DungeonPortalRegister.getItems());
                         output.accept(EscapeRope.getItem());
                         output.acceptAll(SieveRegister.getItems());
                         output.acceptAll(DryingRackRegister.getItems());

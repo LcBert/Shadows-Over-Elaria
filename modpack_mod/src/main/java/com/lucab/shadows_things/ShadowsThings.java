@@ -2,6 +2,7 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
+import com.lucab.shadows_things.dungeon.DungeonPlayerData;
 import com.lucab.shadows_things.entity.carcas_entity.CarcassEntityRegistry;
 import com.lucab.shadows_things.exhaustion.ExhaustionData;
 import com.lucab.shadows_things.menus.MenuRegistries;
@@ -109,6 +110,7 @@ public class ShadowsThings {
         ATTACHMENT_TYPES.register(modEventBus);
         ExhaustionData.register();
         DeepCavePlayerAttachment.register();
+        DungeonPlayerData.register();
         ClassPlayerData.register();
         ClassEntityData.register();
         ProfessionAttachments.register();

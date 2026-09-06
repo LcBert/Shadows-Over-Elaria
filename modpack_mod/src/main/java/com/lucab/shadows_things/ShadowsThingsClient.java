@@ -8,8 +8,8 @@ import com.lucab.shadows_things.client.screen.*;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.repair_table.RepairTableRegister;
-import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegistry;
-import com.lucab.shadows_things.content.block.resonant.resonant_pedestal.ResonantPedestalRegistry;
+import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegister;
+import com.lucab.shadows_things.content.block.resonant.resonant_pedestal.ResonantPedestalRegister;
 import com.lucab.shadows_things.entity.carcas_entity.CarcassEntityRegistry;
 import com.lucab.shadows_things.menus.MenuRegistries;
 import com.lucab.shadows_things.toast.ToastOverlay;
@@ -41,8 +41,8 @@ public class ShadowsThingsClient {
         event.registerBlockEntityRenderer(RepairTableRegister.REPAIR_TABLE_ENTITY.get(), RepairTableRenderer::new);
         event.registerBlockEntityRenderer(CauldronRegister.CAULDRON_BLOCK_ENTITY.get(), CauldronRenderer::new);
         event.registerBlockEntityRenderer(DryingRackRegister.DRYING_RACK_BLOCK_ENTITY.get(), DryingRackRenderer::new);
-        event.registerBlockEntityRenderer(ResonantPedestalRegistry.RESONANT_PEDESTAL_ENTITY.get(), ResonantPedestalRenderer::new);
-        event.registerBlockEntityRenderer(ResonantAltarRegistry.RESONANT_ALTAR_ENTITY.get(), ResonantAltarRenderer::new);
+        event.registerBlockEntityRenderer(ResonantPedestalRegister.RESONANT_PEDESTAL_ENTITY.get(), ResonantPedestalRenderer::new);
+        event.registerBlockEntityRenderer(ResonantAltarRegister.RESONANT_ALTAR_ENTITY.get(), ResonantAltarRenderer::new);
 
         event.registerEntityRenderer(CarcassEntityRegistry.CARCASS_ENTITY.get(), CarcassEntityRender::new);
     }

@@ -73,7 +73,7 @@ public class ResonantAltarBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return createTickerHelper(blockEntityType, ResonantAltarRegistry.RESONANT_ALTAR_ENTITY.get(), ResonantAltarBlockEntity::tick);
+        return createTickerHelper(blockEntityType, ResonantAltarRegister.RESONANT_ALTAR_ENTITY.get(), ResonantAltarBlockEntity::tick);
     }
 
     @Override

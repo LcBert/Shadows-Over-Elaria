@@ -8,7 +8,7 @@ import com.lucab.shadows_things.client.screen.SmelteryScreen;
 import com.lucab.shadows_things.content.block.cauldron.CauldronRegister;
 import com.lucab.shadows_things.content.block.drying_rack.DryingRackRegister;
 import com.lucab.shadows_things.content.block.oven.OvenRegister;
-import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegistry;
+import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegister;
 import com.lucab.shadows_things.content.block.smeltery.SmelteryRegister;
 import com.lucab.shadows_things.menus.*;
 import com.lucab.shadows_things.recipe.*;
@@ -100,7 +100,7 @@ public class JeiIntegration implements IModPlugin {
         });
         registration.addRecipeCatalyst(new ItemStack(CauldronRegister.CAULDRON.get()), CauldronRecipeCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(CauldronRegister.CAULDRON.get()), RecipeTypes.FUELING);
-        registration.addRecipeCatalyst(new ItemStack(ResonantAltarRegistry.RESONANT_ALTAR.get()), ResonantAltarRecipeCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ResonantAltarRegister.RESONANT_ALTAR.get()), ResonantAltarRecipeCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(DryingRackRegister.DRYING_RACK_BLOCK.get()), DryingRackRecipeCategory.TYPE);
     }
 

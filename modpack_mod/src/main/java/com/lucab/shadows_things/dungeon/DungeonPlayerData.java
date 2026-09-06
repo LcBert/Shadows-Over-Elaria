@@ -1,4 +1,4 @@
-package com.lucab.shadows_things.deep_cave;
+package com.lucab.shadows_things.dungeon;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.core.BlockPos;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.function.Supplier;
 
-public class DeepCavePlayerAttachment implements INBTSerializable<CompoundTag> {
+public class DungeonPlayerData implements INBTSerializable<CompoundTag> {
     private BlockPos portalPos;
     private Direction portalDir;
 
@@ -19,12 +19,12 @@ public class DeepCavePlayerAttachment implements INBTSerializable<CompoundTag> {
         this.portalPos = portalPos;
     }
 
-    public void setPortalDir(Direction portalDir) {
-        this.portalDir = portalDir;
-    }
-
     public BlockPos getPortalPos() {
         return portalPos;
+    }
+
+    public void setPortalDir(Direction portalDir) {
+        this.portalDir = portalDir;
     }
 
     public Direction getPortalDir() {
@@ -58,9 +58,9 @@ public class DeepCavePlayerAttachment implements INBTSerializable<CompoundTag> {
         }
     }
 
-    public static final Supplier<AttachmentType<DeepCavePlayerAttachment>> DEEP_CAVE_ATTACHMENT = ShadowsThings.ATTACHMENT_TYPES
-            .register("deep_cave_player_data", () -> AttachmentType
-                    .serializable(DeepCavePlayerAttachment::new)
+    public static final Supplier<AttachmentType<DungeonPlayerData>> DUNGEON_PLAYER_DATA = ShadowsThings.ATTACHMENT_TYPES
+            .register("dungeon_player_data", () -> AttachmentType
+                    .serializable(DungeonPlayerData::new)
                     .build()
             );
 

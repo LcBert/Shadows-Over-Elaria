@@ -26,8 +26,7 @@ public class DeepCavePortalRegister {
     }
 
     public static List<ItemStack> getItems() {
-        return List.of(
-                new ItemStack(DEEP_CAVE_PORTAL_ITEM.get())
+        return List.of(new ItemStack(DEEP_CAVE_PORTAL_ITEM.get())
         );
     }
 }

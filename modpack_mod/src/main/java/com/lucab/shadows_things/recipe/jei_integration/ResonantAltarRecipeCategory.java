@@ -1,7 +1,7 @@
 package com.lucab.shadows_things.recipe.jei_integration;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegistry;
+import com.lucab.shadows_things.content.block.resonant.resonant_altar.ResonantAltarRegister;
 import com.lucab.shadows_things.recipe.ResonantAltarRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -49,7 +49,7 @@ public class ResonantAltarRecipeCategory implements IRecipeCategory<ResonantAlta
     private final IDrawable slot;
 
     public ResonantAltarRecipeCategory(IGuiHelper helper) {
-        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ResonantAltarRegistry.RESONANT_ALTAR.get()));
+        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ResonantAltarRegister.RESONANT_ALTAR.get()));
         this.slot = helper.getSlotDrawable();
 
         // Calculate 4 inner diagonal reagents (45 deg)

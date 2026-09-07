@@ -21,6 +21,7 @@ import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DungeonPortalEntity extends BlockEntity {
     protected static final int ENTRANCE_RADIUS = 3;
@@ -29,7 +30,7 @@ public class DungeonPortalEntity extends BlockEntity {
     private static final int ENTRANCE_FIRST_MESSAGE_TICK = 50;
     private static final int ENTRANCE_SECOND_MESSAGE_TICK = 150;
 
-    private DungeonInstance dungeonInstance = null;
+    protected DungeonInstance dungeonInstance = null;
     private int tickCount = 0;
 
     private final Map<UUID, Long> playerExitTimes = new HashMap<>();
@@ -108,11 +109,14 @@ public class DungeonPortalEntity extends BlockEntity {
     public static void serverTick(Level level, BlockPos pos, BlockState state, DungeonPortalEntity portal) {
         if (level == null) return;
 
-        List<Player> nearbyPlayers = portal.getNearbyPlayers();
+        List<UUID> nearbyPlayers = portal.getNearbyPlayers().stream().map(Player::getUUID).toList();
 
         if (nearbyPlayers.isEmpty()) {
             portal.tickCount = 0;
-            portal.dungeonInstance = null;
+            if (portal.dungeonInstance != null) {
+                DungeonManager.removeDungeon(portal.dungeonInstance.getId());
+                portal.dungeonInstance = null;
+            }
             portal.playerExitTimes.clear();
             return;
         }
@@ -130,24 +134,30 @@ public class DungeonPortalEntity extends BlockEntity {
 
         // Add Effects
         if (portal.tickCount >= ENTRANCE_EFFECTS_TICK) {
-            nearbyPlayers.forEach(player -> {
+            for (UUID playerUuid : nearbyPlayers) {
+                Player player = level.getPlayerByUUID(playerUuid);
+                if (player == null) continue;
                 player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 1, false, false));
-            });
+            }
         }
 
         // Show messages
         if (portal.tickCount == ENTRANCE_FIRST_MESSAGE_TICK) {
-            nearbyPlayers.forEach(player -> {
+            for (UUID playerUuid : nearbyPlayers) {
+                Player player = level.getPlayerByUUID(playerUuid);
+                if (player == null) continue;
                 Utils.sendTitleMessage(player,
                         Component.literal("Allineamento al portale"),
                         Component.literal("La tua essenza si sta allineando al portale")
                 );
-            });
+            }
         }
 
         if (portal.tickCount == ENTRANCE_SECOND_MESSAGE_TICK) {
-            nearbyPlayers.forEach(player -> {
+            for (UUID playerUuid : nearbyPlayers) {
+                Player player = level.getPlayerByUUID(playerUuid);
+                if (player == null) continue;
                 if (!portal.isInDungeon()) {
                     Utils.sendTitleMessage(player,
                             Component.literal("Portale aperto"),
@@ -160,7 +170,7 @@ public class DungeonPortalEntity extends BlockEntity {
                     );
 
                 }
-            });
+            }
         }
 
         if (!portal.isInDungeon()) {
@@ -171,7 +181,6 @@ public class DungeonPortalEntity extends BlockEntity {
 
             if (portal.tickCount >= ENTRANCE_TICK) {
                 portal.dungeonInstance.teleportPlayers(
-                        level,
                         portal.getBlockPos(),
                         level.getBlockState(portal.getBlockPos()).getValue(DungeonPortalBlock.FACING)
                 );
@@ -182,16 +191,18 @@ public class DungeonPortalEntity extends BlockEntity {
 
             Set<UUID> nearbyPlayerUUIDs = new HashSet<>();
 
-            for (Player player : nearbyPlayers) {
-                UUID uuid = player.getUUID();
-                nearbyPlayerUUIDs.add(uuid);
+            for (UUID playerUuid : nearbyPlayers) {
+                Player player = level.getPlayerByUUID(playerUuid);
+                if (player == null) continue;
 
-                portal.playerExitTimes.putIfAbsent(uuid, currentGameTime);
+                nearbyPlayerUUIDs.add(playerUuid);
 
-                long startTick = portal.playerExitTimes.get(uuid);
+                portal.playerExitTimes.putIfAbsent(playerUuid, currentGameTime);
+
+                long startTick = portal.playerExitTimes.get(playerUuid);
                 if (currentGameTime - startTick >= ENTRANCE_TICK) {
-                    DungeonManager.exitPlayer(player);
-                    portal.playerExitTimes.remove(uuid);
+                    DungeonManager.exitPlayer(player.getUUID());
+                    portal.playerExitTimes.remove(playerUuid);
                 }
             }
 

@@ -2,6 +2,7 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
+import com.lucab.shadows_things.dungeon.DungeonCommand;
 import com.lucab.shadows_things.dungeon.DungeonPlayerData;
 import com.lucab.shadows_things.entity.carcas_entity.CarcassEntityRegistry;
 import com.lucab.shadows_things.exhaustion.ExhaustionData;
@@ -137,6 +138,7 @@ public class ShadowsThings {
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
+        DungeonCommand.register(event.getDispatcher());
         ToastCommand.register(event.getDispatcher());
         ClassCommand.register(event.getDispatcher());
         ProfessionCommand.register(event.getDispatcher());

@@ -1,5 +1,6 @@
 package com.lucab.shadows_things.content.block.dungeon_portal_block;
 
+import com.lucab.shadows_things.dungeon.DungeonManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,6 +65,19 @@ public class DungeonPortalBlock extends BaseEntityBlock {
             return createTickerHelper(blockEntityType, DungeonPortalRegister.DUNGEON_PORTAL_ENTITY.get(), DungeonPortalEntity::clientTick);
         else
             return createTickerHelper(blockEntityType, DungeonPortalRegister.DUNGEON_PORTAL_ENTITY.get(), DungeonPortalEntity::serverTick);
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            if (level.getBlockEntity(pos) instanceof DungeonPortalEntity portal) {
+                if (portal.dungeonInstance != null) {
+                    portal.dungeonInstance.remove();
+                    portal.dungeonInstance = null;
+                }
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

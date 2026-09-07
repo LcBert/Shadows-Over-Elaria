@@ -1,51 +1,41 @@
 package com.lucab.shadows_things.dungeon;
 
-import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.content.block.dungeon_portal_block.DungeonPortalEntity;
+import com.lucab.shadows_things.rpg.classes.ClassPlayerData;
 import net.minecraft.core.*;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.StructureManager;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import org.joml.Random;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class DungeonInstance {
+    private static final int CHECK_INTERVAL_TICKS = 20; // Check once every second
     private static final int EMPTY_TIMEOUT_TICKS = DungeonPortalEntity.ENTRANCE_TICK + 100;
 
     private final long id;
     private final BlockPos dungeonCenter;
     private final AABB boundingBox;
-    private final List<Player> players = new ArrayList<>();
+    private final Set<UUID> players = new HashSet<>();
+
+    private boolean isStarted = false;
     private int emptyTicks = 0;
+    private int checkCooldown = 0;
+    private boolean isCurrentlyOccupied = true;
 
     public DungeonInstance(long id, BlockPos dungeonCenter) {
         this.id = id;
         this.dungeonCenter = dungeonCenter;
 
-        int halfSize = DungeonManager.DUNGEON_SIZE / 2;
+        int dungeonSize = DungeonManager.DUNGEON_SIZE;
         this.boundingBox = new AABB(
-                dungeonCenter.getX() - halfSize, dungeonCenter.getY(), dungeonCenter.getZ() - halfSize,
-                dungeonCenter.getX() + halfSize, dungeonCenter.getY() + DungeonManager.DUNGEON_SIZE, dungeonCenter.getZ() + halfSize
+                dungeonCenter.getX() - dungeonSize, dungeonCenter.getY() - dungeonSize, dungeonCenter.getZ() - dungeonSize,
+                dungeonCenter.getX() + dungeonSize, dungeonCenter.getY() + dungeonSize, dungeonCenter.getZ() + dungeonSize
         );
     }
 
@@ -61,58 +51,137 @@ public class DungeonInstance {
         return boundingBox;
     }
 
-    public void addPlayer(Player player) {
+    public void addPlayer(UUID player) {
         if (!this.players.contains(player)) this.players.add(player);
     }
 
-    public void addPlayers(List<Player> players) {
-        for (Player player : players) this.addPlayer(player);
+    public void addPlayers(List<UUID> players) {
+        for (UUID player : players) this.addPlayer(player);
     }
 
-    public void removePlayer(Player player) {
+    public void removePlayer(UUID player) {
         this.players.remove(player);
     }
 
-    public List<Player> getPlayers() {
-        return this.players;
+    public void removePlayers(List<UUID> players) {
+        for (UUID player : players) this.removePlayer(player);
+    }
+
+    public Set<UUID> getPlayers() {
+        return players;
+    }
+
+    public int getPlayersCount() {
+        return this.players.size();
     }
 
     public boolean isEmpty() {
         return this.players.isEmpty();
     }
 
-    public boolean tickAndCheckExpiry(ServerLevel level) {
-        boolean hasPlayersInside = !level.getEntitiesOfClass(Player.class, boundingBox).isEmpty();
+    public int getAverageTier() {
+        if (this.getPlayersCount() == 0) return -1;
 
-        if (hasPlayersInside) {
-            this.emptyTicks = 0;
-            return false;
-        }
+        PlayerList playerList = DungeonManager.getServer().getPlayerList();
 
-        this.emptyTicks++;
-        return this.emptyTicks >= EMPTY_TIMEOUT_TICKS;
+        return (int) Math.round(
+                this.players.stream()
+                        .map(playerList::getPlayer)
+                        .filter(Objects::nonNull)
+                        .map(ClassPlayerData::getClassData)
+                        .mapToInt(ClassPlayerData::getClassTier)
+                        .average()
+                        .orElse(-1.0)
+        );
     }
 
-    public void teleportPlayers(Level level, BlockPos portalPos, Direction portalDir) {
-        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel(level);
+    public void setStarted(boolean started) {
+        isStarted = started;
+    }
+
+    public boolean isStarted() {
+        return isStarted;
+    }
+
+    public void tick() {
+        this.checkExpireAndCleanup();
+    }
+
+    private void checkExpireAndCleanup() {
+        if (!isStarted()) return;
+
+        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
         if (dungeonLevel == null) return;
 
-        for (Player player : players) {
-            DungeonPlayerData playerData = player.getData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
-            playerData.setPortalPos(portalPos);
-            playerData.setPortalDir(portalDir);
+        if (--this.checkCooldown <= 0) {
+            this.checkCooldown = CHECK_INTERVAL_TICKS;
+            this.isCurrentlyOccupied = evaluatePlayerPresence(dungeonLevel);
+        }
 
-            if (player instanceof ServerPlayer serverPlayer) {
-                DimensionTransition transition = new DimensionTransition(
-                        dungeonLevel,
-                        getDungeonCenter().getCenter(),
-                        Vec3.ZERO,
-                        serverPlayer.getYRot(),
-                        serverPlayer.getXRot(),
-                        DimensionTransition.DO_NOTHING
-                );
-                serverPlayer.changeDimension(transition);
+        if (this.isCurrentlyOccupied) {
+            this.emptyTicks = 0;
+        } else {
+            this.emptyTicks++;
+            if (this.emptyTicks >= EMPTY_TIMEOUT_TICKS) {
+                this.remove();
             }
         }
+    }
+
+    private boolean evaluatePlayerPresence(ServerLevel dungeonLevel) {
+        MinecraftServer server = dungeonLevel.getServer();
+        PlayerList playerList = server.getPlayerList();
+
+        for (UUID uuid : this.players) {
+            ServerPlayer player = playerList.getPlayer(uuid);
+
+            // Skip if offline or dead/removed
+            if (player == null || player.isRemoved() || !player.isAlive()) {
+                continue;
+            }
+
+            // Verify player is in this dungeon dimension and within the instance bounding box
+            if (player.level() == dungeonLevel && this.boundingBox.contains(player.position())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void teleportPlayers(@Nullable BlockPos portalPos, @Nullable Direction portalDir) {
+        MinecraftServer server = DungeonManager.getServer();
+        if (server == null) return;
+
+        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
+        if (dungeonLevel == null) return;
+
+        for (UUID playerUuid : players) {
+            ServerPlayer player = server.getPlayerList().getPlayer(playerUuid);
+            if (player == null) continue;
+
+            DungeonPlayerData playerData = player.getData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
+
+            playerData.setPortalPos(portalPos != null ? portalPos : player.getOnPos());
+            playerData.setPortalDir(portalDir);
+
+            DimensionTransition transition = new DimensionTransition(
+                    dungeonLevel,
+                    getDungeonCenter().getCenter(),
+                    Vec3.ZERO,
+                    player.getYRot(),
+                    player.getXRot(),
+                    DimensionTransition.DO_NOTHING
+            );
+            player.changeDimension(transition);
+        }
+
+        setStarted(true);
+        this.emptyTicks = 0;
+        this.isCurrentlyOccupied = true;
+    }
+
+    public void remove() {
+        DungeonManager.removeDungeon(this.getId());
     }
 }

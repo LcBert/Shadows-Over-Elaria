@@ -1,52 +1,46 @@
 package com.lucab.shadows_things.dungeon;
 
 import com.lucab.shadows_things.ShadowsThings;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class DungeonHandler {
     @SubscribeEvent
-    public static void onDungeonLevelTick(LevelTickEvent.Post event) {
-        Level level = event.getLevel();
-        if (level.isClientSide || !level.dimension().equals(DungeonManager.DUNGEON_LEVEL_KEY)) return;
-
-        MinecraftServer server = level.getServer();
-        if (server == null) return;
-
-        ServerLevel dungeonLevel = server.getLevel(DungeonManager.DUNGEON_LEVEL_KEY);
-        if (dungeonLevel == null) return;
-
-        DungeonManager.getInternalMap().values().removeIf(instance -> instance.tickAndCheckExpiry(dungeonLevel));
+    public static void onServerStart(ServerStartedEvent event) {
+        DungeonManager.initializeServer(event.getServer());
     }
 
     @SubscribeEvent
-    public static void asd(PlayerInteractEvent.RightClickItem event) {
-        if (event.getLevel().isClientSide || !(event.getLevel() instanceof ServerLevel serverLevel)) return;
+    public static void onServerStop(ServerStoppedEvent event) {
+        DungeonManager.clearServer();
+    }
 
-        if (event.getItemStack().is(Items.STICK)) {
-            DungeonInstance dungeonInstance = DungeonManager.createDungeonInstance();
-            dungeonInstance.addPlayer(event.getEntity());
-            dungeonInstance.teleportPlayers(serverLevel, event.getEntity().getOnPos(), Direction.NORTH);
-//            DungeonManager.removeDungeon(dungeonInstance.getId());
-        } else if (event.getItemStack().is(Items.DIAMOND)) {
-            event.getEntity().displayClientMessage(Component.literal(String.valueOf(DungeonManager.getDungeonInstances().size())), false);
+    @SubscribeEvent
+    public static void onDungeonLevelTick(LevelTickEvent.Post event) {
+        if (event.getLevel().isClientSide() || !event.getLevel().dimension().equals(DungeonManager.DUNGEON_LEVEL_KEY)) {
+            return;
         }
+
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            List<DungeonInstance> instances = new ArrayList<>(DungeonManager.getDungeonInstances().values());
+            for (DungeonInstance instance : instances) {
+                instance.tick();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (DungeonManager.isPlayerInDungeon(event.getEntity()))
+            DungeonManager.exitPlayer(event.getEntity().getUUID());
     }
 }

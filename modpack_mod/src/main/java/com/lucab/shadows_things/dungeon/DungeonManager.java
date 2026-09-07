@@ -1,7 +1,6 @@
 package com.lucab.shadows_things.dungeon;
 
 import com.lucab.shadows_things.ShadowsThings;
-import com.lucab.shadows_things.content.block.dungeon_portal_block.DungeonPortalEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -14,12 +13,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DungeonManager {
-    protected static final int DUNGEON_SIZE = 250;
+    protected static final int DUNGEON_SIZE = 200;
     private static final int DUNGEON_OFFSET = 512;
 
     public static final ResourceKey<Level> DUNGEON_LEVEL_KEY = ResourceKey.create(
@@ -27,16 +27,31 @@ public class DungeonManager {
             ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "dungeon")
     );
 
+    private static MinecraftServer server;
     private static final Map<Long, DungeonInstance> DUNGEON_INSTANCES = new HashMap<>();
 
-    public static ServerLevel getDungeonLevel(Level level) {
-        if (level == null || level.isClientSide()) return null;
-        MinecraftServer server = level.getServer();
+    public static void initializeServer(MinecraftServer server) {
+        DungeonManager.server = server;
+    }
+
+    public static void clearServer() {
+        DUNGEON_INSTANCES.clear();
+        server = null;
+    }
+
+    public static MinecraftServer getServer() {
+        return server;
+    }
+
+    public static ServerLevel getDungeonLevel() {
         if (server == null) return null;
         return server.getLevel(DUNGEON_LEVEL_KEY);
     }
 
     public static DungeonInstance createDungeonInstance() {
+        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
+        if (dungeonLevel == null) return null;
+
         BlockPos spawnPos;
         ThreadLocalRandom random = ThreadLocalRandom.current();
         long id;
@@ -70,27 +85,35 @@ public class DungeonManager {
 
     public static DungeonInstance getInstanceForPlayer(Player player) {
         for (DungeonInstance instance : DUNGEON_INSTANCES.values()) {
-            if (instance.getPlayers().contains(player)) {
+            if (instance.getPlayers().contains(player.getUUID())) {
                 return instance;
             }
         }
         return null;
     }
 
-    public static void exitPlayers(List<Player> players) {
-        for (Player player : players) {
-            exitPlayer(player);
-        }
+    public static boolean isPlayerInDungeon(Player player) {
+        return getInstanceForPlayer(player) != null;
     }
 
-    public static void exitPlayer(Player player) {
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
+    public static List<Boolean> exitPlayers(List<UUID> players) {
+        List<Boolean> result = new ArrayList<>();
+        for (UUID player : players) {
+            result.add(exitPlayer(player));
+        }
+        return  result;
+    }
 
-        MinecraftServer server = serverPlayer.getServer();
-        if (server == null) return;
-
+    public static boolean exitPlayer(UUID playerUuid) {
         ServerLevel overworld = server.getLevel(Level.OVERWORLD);
-        if (overworld == null) return;
+        if (overworld == null) return false;
+
+        ServerPlayer player = server.getPlayerList().getPlayer(playerUuid);
+        if (player == null) return false;
+
+        if (!isPlayerInDungeon(player)) return false;
+
+        if (DungeonManager.getInstanceForPlayer(player) == null) return false;
 
         DungeonPlayerData playerData = player.getData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
 
@@ -100,18 +123,24 @@ public class DungeonManager {
 
         Direction portalDir = playerData.getPortalDir();
 
-        BlockPos exitPos = portalPos.relative(portalDir, 8);
+        BlockPos exitPos = portalPos;
+        if (portalDir != null) exitPos = portalPos.relative(portalDir, 8);
 
-        float xRot = portalDir.toYRot();
-        float yRot = 0.0F;
+
+        float yaw = portalDir != null ? portalDir.toYRot() : player.getYRot();
+        float pitch = 0.0F;
 
         DimensionTransition transition = new DimensionTransition(
                 overworld,
                 exitPos.getCenter(),
                 Vec3.ZERO,
-                xRot, yRot,
+                yaw, pitch,
                 DimensionTransition.DO_NOTHING
         );
-        serverPlayer.changeDimension(transition);
+        player.changeDimension(transition);
+        getInstanceForPlayer(player).removePlayer(playerUuid);
+        player.removeData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
+
+        return true;
     }
 }

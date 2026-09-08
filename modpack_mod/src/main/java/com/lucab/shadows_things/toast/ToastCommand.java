@@ -85,7 +85,7 @@ public class ToastCommand {
             return 0;
         }
 
-        ToastHelper.addToast(player, text, color.getName(), duration, soundId);
+        ToastHelper.addToast(player, text, color, duration, soundId);
         return 1;
     }
 }

@@ -3,30 +3,33 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 1,
+      "weight": 5,
       "element": {
-        "element_type": "minecraft:single_pool_element",
-        "location": "shadows_things:dungeons/jungle/rooms/1",
-        "processors": "minecraft:empty",
-        "projection": "rigid"
+        "element_type": "minecraft:list_pool_element",
+        "projection": "rigid",
+        "elements": [
+          {
+            "element_type": "minecraft:single_pool_element",
+            "location": "shadows_things:dungeons/jungle/rooms/1",
+            "processors": "minecraft:empty",
+            "projection": "rigid"
+          }
+        ]
       }
     },
     {
       "weight": 3,
       "element": {
-        "element_type": "minecraft:single_pool_element",
-        "location": "shadows_things:dungeons/jungle/rooms/1",
-        "processors": "minecraft:empty",
-        "projection": "rigid"
-      }
-    },
-    {
-      "weight": 3,
-      "element": {
-        "element_type": "minecraft:single_pool_element",
-        "location": "shadows_things:dungeons/jungle/stairs/1",
-        "processors": "minecraft:empty",
-        "projection": "rigid"
+        "element_type": "minecraft:list_pool_element",
+        "projection": "rigid",
+        "elements": [
+          {
+            "element_type": "minecraft:single_pool_element",
+            "location": "shadows_things:dungeons/jungle/stairs/1",
+            "processors": "minecraft:empty",
+            "projection": "rigid"
+          }
+        ]
       }
     }
   ]

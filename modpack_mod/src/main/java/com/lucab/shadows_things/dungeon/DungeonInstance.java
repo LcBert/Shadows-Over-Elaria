@@ -1,28 +1,52 @@
 package com.lucab.shadows_things.dungeon;
 
+import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.content.block.dungeon_portal_block.DungeonPortalEntity;
 import com.lucab.shadows_things.rpg.classes.ClassPlayerData;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.structure.*;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class DungeonInstance {
+    private static final TicketType<ChunkPos> DUNGEON_LOAD_TICKET = TicketType.create(
+            "dungeon_loader",
+            Comparator.comparingLong(ChunkPos::toLong),
+            600
+    );
+
     private static final int CHECK_INTERVAL_TICKS = 20; // Check once every second
     private static final int EMPTY_TIMEOUT_TICKS = DungeonPortalEntity.ENTRANCE_TICK + 100;
+    private static final int CHUNK_RADIUS = 3;
 
     private final long id;
     private final BlockPos dungeonCenter;
     private final AABB boundingBox;
     private final Set<UUID> players = new HashSet<>();
+    private DungeonManager.DungeonType dungeonType;
 
+    private final Map<Vec3i, DungeonRoom> roomGrid = new HashMap<>();
+    private final List<DungeonRoom> rooms = new ArrayList<>();
+    private final Set<ChunkPos> loadedTickets = new HashSet<>();
+
+    private CompletableFuture<Void> preparationFuture = null;
+    private boolean isGeneratedAndReady = false;
     private boolean isStarted = false;
     private int emptyTicks = 0;
     private int checkCooldown = 0;
@@ -52,7 +76,7 @@ public class DungeonInstance {
     }
 
     public void addPlayer(UUID player) {
-        if (!this.players.contains(player)) this.players.add(player);
+        this.players.add(player);
     }
 
     public void addPlayers(List<UUID> players) {
@@ -95,6 +119,31 @@ public class DungeonInstance {
         );
     }
 
+    public DungeonManager.DungeonType getDungeonType() {
+        return dungeonType;
+    }
+
+    public List<DungeonRoom> getRooms() {
+        return rooms;
+    }
+
+    @Nullable
+    public DungeonRoom getRoomAtWorld(BlockPos pos) {
+        if (!this.boundingBox.contains(pos.getX(), pos.getY(), pos.getZ())) return null;
+
+        Vec3i gridPos = worldToGridPos(pos);
+        DungeonRoom room = this.roomGrid.get(gridPos);
+
+        if (room != null && room.getBoundingBox().contains(pos.getX(), pos.getY(), pos.getZ())) return room;
+
+        return null;
+    }
+
+    @Nullable
+    public DungeonRoom getRoomAtWorld(ServerPlayer player) {
+        return getRoomAtWorld(player.blockPosition());
+    }
+
     public void setStarted(boolean started) {
         isStarted = started;
     }
@@ -103,8 +152,135 @@ public class DungeonInstance {
         return isStarted;
     }
 
+    public boolean isGeneratedAndReady() {
+        return isGeneratedAndReady;
+    }
+
     public void tick() {
         this.checkExpireAndCleanup();
+
+        for (DungeonRoom room : this.rooms) {
+            room.tick();
+        }
+    }
+
+    public CompletableFuture<Void> prepareAndTeleportPlayers(@Nullable BlockPos portalPos, @Nullable Direction portalDir) {
+        MinecraftServer server = DungeonManager.getServer();
+        return this.prepareStructure().thenRunAsync(() -> {
+            this.teleportPlayers(portalPos, portalDir);
+        }, server != null ? server : Runnable::run);
+    }
+
+    public CompletableFuture<Void> prepareStructure() {
+        if (isGeneratedAndReady()) return CompletableFuture.completedFuture(null);
+
+        if (this.preparationFuture != null) return this.preparationFuture;
+
+        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
+        if (dungeonLevel == null) {
+            return CompletableFuture.failedFuture(new IllegalStateException("Dungeon level is not available"));
+        }
+
+        MinecraftServer server = DungeonManager.getServer();
+        if (server == null) {
+            return CompletableFuture.failedFuture(new IllegalStateException("Server instance is not available"));
+        }
+
+        ServerChunkCache chunkSource = dungeonLevel.getChunkSource();
+        ChunkPos centerChunk = new ChunkPos(dungeonCenter);
+
+        List<CompletableFuture<?>> chunkFutures = new ArrayList<>();
+        this.loadedTickets.clear();
+
+        for (int dx = -CHUNK_RADIUS; dx <= CHUNK_RADIUS; dx++) {
+            for (int dz = -CHUNK_RADIUS; dz <= CHUNK_RADIUS; dz++) {
+                ChunkPos targetPos = new ChunkPos(centerChunk.x + dx, centerChunk.z + dz);
+                chunkSource.addRegionTicket(DUNGEON_LOAD_TICKET, targetPos, 2, targetPos);
+                this.loadedTickets.add(targetPos);
+                chunkFutures.add(chunkSource.getChunkFuture(targetPos.x, targetPos.z, ChunkStatus.FULL, true));
+            }
+        }
+
+        this.preparationFuture = CompletableFuture.allOf(chunkFutures.toArray(new CompletableFuture[0]))
+                .thenRunAsync(() -> {
+                    this.scanAndPopulateRooms(dungeonLevel);
+                    this.isGeneratedAndReady = true;
+                }, server);
+
+        return this.preparationFuture;
+    }
+
+    public void scanAndPopulateRooms(ServerLevel level) {
+        StructureStart start = null;
+        for (DungeonManager.DungeonType type : DungeonManager.DungeonType.values()) {
+            Structure structure = level.registryAccess()
+                    .registryOrThrow(Registries.STRUCTURE)
+                    .get(type.getKey());
+
+            if (structure == null) continue;
+
+            ChunkPos centerChunk = new ChunkPos(this.dungeonCenter);
+            SectionPos sectionPos = SectionPos.of(this.dungeonCenter);
+
+            start = level.structureManager().getStartForStructure(
+                    sectionPos,
+                    structure,
+                    level.getChunk(centerChunk.x, centerChunk.z)
+            );
+
+            if (start != null) {
+                this.dungeonType = type;
+                break;
+            }
+        }
+
+        if (start == null || !start.isValid()) return;
+
+        this.roomGrid.clear();
+        this.rooms.clear();
+
+        for (StructurePiece piece : start.getPieces()) {
+            if (piece instanceof PoolElementStructurePiece poolPiece) {
+                BoundingBox bb = poolPiece.getBoundingBox();
+
+                BlockPos pieceCenter = new BlockPos(
+                        bb.minX() + (bb.getXSpan() / 2),
+                        bb.minY() + (bb.getYSpan() / 2),
+                        bb.minZ() + (bb.getZSpan() / 2)
+                );
+
+                Vec3i gridPos = worldToGridPos(pieceCenter);
+                BlockPos originPos = gridToWorldPos(gridPos);
+                ResourceLocation templateLocation = DungeonStructureScanner.resolveElementTemplate(poolPiece.getElement());
+
+                DungeonRoom room = new DungeonRoom(this, gridPos, originPos, templateLocation);
+
+                this.roomGrid.put(gridPos, room);
+                this.rooms.add(room);
+            }
+        }
+    }
+
+    public BlockPos gridToWorldPos(Vec3i gridPos) {
+        int originX = this.dungeonCenter.getX() + (gridPos.getX() * DungeonRoom.ROOM_WIDTH) - (DungeonRoom.ROOM_WIDTH / 2);
+        int originY = this.dungeonCenter.getY() + (gridPos.getY() * DungeonRoom.ROOM_HEIGHT);
+        int originZ = this.dungeonCenter.getZ() + (gridPos.getZ() * DungeonRoom.ROOM_LENGTH) - (DungeonRoom.ROOM_LENGTH / 2);
+        return new BlockPos(originX, originY, originZ);
+    }
+
+    /**
+     * Converts a world BlockPos into its logical grid coordinate.
+     */
+    public Vec3i worldToGridPos(BlockPos pos) {
+        int adjustedX = pos.getX() - (this.dungeonCenter.getX() - (DungeonRoom.ROOM_WIDTH / 2));
+        int adjustedY = pos.getY() - this.dungeonCenter.getY();
+        int adjustedZ = pos.getZ() - (this.dungeonCenter.getZ() - (DungeonRoom.ROOM_LENGTH / 2));
+
+        int gx = Math.floorDiv(adjustedX, DungeonRoom.ROOM_WIDTH);
+        int gy = Math.floorDiv(adjustedY, DungeonRoom.ROOM_HEIGHT);
+        int gz = Math.floorDiv(adjustedZ, DungeonRoom.ROOM_LENGTH);
+
+        return new Vec3i(gx, gy, gz);
     }
 
     private void checkExpireAndCleanup() {
@@ -135,13 +311,11 @@ public class DungeonInstance {
         for (UUID uuid : this.players) {
             ServerPlayer player = playerList.getPlayer(uuid);
 
-            // Skip if offline or dead/removed
             if (player == null || player.isRemoved() || !player.isAlive()) {
                 continue;
             }
 
-            // Verify player is in this dungeon dimension and within the instance bounding box
-            if (player.level() == dungeonLevel && this.boundingBox.contains(player.position())) {
+            if (player.level() == dungeonLevel && this.getBoundingBox().contains(player.position())) {
                 return true;
             }
         }
@@ -182,6 +356,14 @@ public class DungeonInstance {
     }
 
     public void remove() {
+        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
+        if (dungeonLevel != null) {
+            ServerChunkCache chunkSource = dungeonLevel.getChunkSource();
+            for (ChunkPos chunkPos : this.loadedTickets) {
+                chunkSource.removeRegionTicket(DUNGEON_LOAD_TICKET, chunkPos, 2, chunkPos);
+            }
+        }
+        this.loadedTickets.clear();
         DungeonManager.removeDungeon(this.getId());
     }
 }

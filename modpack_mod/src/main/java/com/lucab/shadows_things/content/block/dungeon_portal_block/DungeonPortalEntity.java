@@ -5,6 +5,7 @@ import com.lucab.shadows_things.dungeon.DungeonInstance;
 import com.lucab.shadows_things.dungeon.DungeonManager;
 import com.lucab.shadows_things.dungeon.DungeonPlayerData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -176,15 +177,29 @@ public class DungeonPortalEntity extends BlockEntity {
         if (!portal.isInDungeon()) {
             if (portal.dungeonInstance == null) {
                 portal.dungeonInstance = DungeonManager.createDungeonInstance();
-                portal.dungeonInstance.addPlayers(nearbyPlayers);
+                if (portal.dungeonInstance != null) {
+                    portal.dungeonInstance.addPlayers(nearbyPlayers);
+                    portal.dungeonInstance.prepareStructure();
+                }
             }
 
-            if (portal.tickCount >= ENTRANCE_TICK) {
-                portal.dungeonInstance.teleportPlayers(
-                        portal.getBlockPos(),
-                        level.getBlockState(portal.getBlockPos()).getValue(DungeonPortalBlock.FACING)
-                );
+            if (portal.tickCount >= ENTRANCE_TICK && portal.dungeonInstance != null) {
+                BlockPos portalBlockPos = portal.getBlockPos();
+                Direction facing = level.getBlockState(portalBlockPos).getValue(DungeonPortalBlock.FACING);
+                DungeonInstance instanceToEnter = portal.dungeonInstance;
+
+                // Release reference so tick doesn't re-trigger
                 portal.dungeonInstance = null;
+                portal.tickCount = 0;
+
+                // If structure ready, teleports immediately; otherwise teleports upon completion
+                if (instanceToEnter.isGeneratedAndReady()) {
+                    instanceToEnter.teleportPlayers(portalBlockPos, facing);
+                } else {
+                    instanceToEnter.prepareStructure().thenRun(() -> {
+                        instanceToEnter.teleportPlayers(portalBlockPos, facing);
+                    });
+                }
             }
         } else {
             long currentGameTime = level.getGameTime();

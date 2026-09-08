@@ -1,6 +1,8 @@
 package com.lucab.shadows_things.dungeon;
 
 import com.lucab.shadows_things.ShadowsThings;
+import com.lucab.shadows_things.dungeon.spawns.DungeonSpawnConfig;
+import com.lucab.shadows_things.dungeon.spawns.DungeonSpawnEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -11,14 +13,41 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DungeonManager {
+    public enum DungeonType {
+        JUNGLE("jungle", new DungeonSpawnConfig(4, 8, List.of(
+                new DungeonSpawnEntry("minecraft:zombie", 1),
+                new DungeonSpawnEntry("minecraft:skeleton", 1),
+                new DungeonSpawnEntry("minecraft:wither_skeleton", 1)
+        )));
+
+        private final ResourceKey<Structure> key;
+        private final DungeonSpawnConfig spawnConfig;
+
+        DungeonType(String path, DungeonSpawnConfig spawnConfig) {
+            this.key = ResourceKey.create(
+                    Registries.STRUCTURE,
+                    ResourceLocation.fromNamespaceAndPath(ShadowsThings.MODID, "dungeons/" + path)
+            );
+            this.spawnConfig = spawnConfig;
+        }
+
+        public ResourceKey<Structure> getKey() {
+            return key;
+        }
+
+        public DungeonSpawnConfig getSpawnConfig() {
+            return spawnConfig;
+        }
+    }
+
     protected static final int DUNGEON_SIZE = 200;
     private static final int DUNGEON_OFFSET = 512;
 
@@ -101,7 +130,7 @@ public class DungeonManager {
         for (UUID player : players) {
             result.add(exitPlayer(player));
         }
-        return  result;
+        return result;
     }
 
     public static boolean exitPlayer(UUID playerUuid) {

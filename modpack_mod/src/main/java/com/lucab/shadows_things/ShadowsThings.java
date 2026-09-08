@@ -2,8 +2,10 @@ package com.lucab.shadows_things;
 
 import com.lucab.shadows_things.content.ContentRegister;
 import com.lucab.shadows_things.deep_cave.DeepCavePlayerAttachment;
+import com.lucab.shadows_things.dungeon.ClientDungeonRenderer;
 import com.lucab.shadows_things.dungeon.DungeonCommand;
 import com.lucab.shadows_things.dungeon.DungeonPlayerData;
+import com.lucab.shadows_things.dungeon.SyncDungeonHighlightsPayload;
 import com.lucab.shadows_things.entity.carcas_entity.CarcassEntityRegistry;
 import com.lucab.shadows_things.exhaustion.ExhaustionData;
 import com.lucab.shadows_things.menus.MenuRegistries;
@@ -158,6 +160,15 @@ public class ShadowsThings {
                 ClassActionExecutePacket.TYPE,
                 ClassActionExecutePacket.STREAM_CODEC,
                 ClassActionExecutePacket::handle
+        );
+
+        // Dungeon
+        registrar.playToClient(
+                SyncDungeonHighlightsPayload.TYPE,
+                SyncDungeonHighlightsPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    ClientDungeonRenderer.updateHighlightedRooms(payload.roomBoxes());
+                })
         );
 
         // Toast

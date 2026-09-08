@@ -9,9 +9,24 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class DungeonStructureScanner {
+    public static final Set<UUID> HIGHLIGHTED_PLAYERS = new HashSet<>();
+
+    public static boolean toggleHighlight(UUID playerUuid) {
+        if (HIGHLIGHTED_PLAYERS.contains(playerUuid)) {
+            HIGHLIGHTED_PLAYERS.remove(playerUuid);
+            return false;
+        } else {
+            HIGHLIGHTED_PLAYERS.add(playerUuid);
+            return true;
+        }
+    }
+
     private static Field templateField;
 
     static {
@@ -19,7 +34,6 @@ public class DungeonStructureScanner {
             templateField = SinglePoolElement.class.getDeclaredField("template");
             templateField.setAccessible(true);
         } catch (NoSuchFieldException ignored) {
-
         }
     }
 

@@ -136,7 +136,7 @@ public class DungeonCommand {
             return 0;
         }
 
-        boolean active = DungeonHandler.toggleHighlight(player.getUUID());
+        boolean active = DungeonStructureScanner.toggleHighlight(player.getUUID());
         List<AABB> boxes = active
                 ? instance.getRooms().stream().map(DungeonRoom::getBoundingBox).toList()
                 : List.of();

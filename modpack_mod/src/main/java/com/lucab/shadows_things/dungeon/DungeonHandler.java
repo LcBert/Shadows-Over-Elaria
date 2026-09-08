@@ -2,6 +2,7 @@ package com.lucab.shadows_things.dungeon;
 
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
@@ -14,28 +15,16 @@ import java.util.*;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
 public class DungeonHandler {
-    private static final Set<UUID> HIGHLIGHTED_PLAYERS = new HashSet<>();
-
-    public static boolean toggleHighlight(UUID playerUuid) {
-        if (HIGHLIGHTED_PLAYERS.contains(playerUuid)) {
-            HIGHLIGHTED_PLAYERS.remove(playerUuid);
-            return false;
-        } else {
-            HIGHLIGHTED_PLAYERS.add(playerUuid);
-            return true;
-        }
-    }
-
     @SubscribeEvent
     public static void onServerStart(ServerStartedEvent event) {
         DungeonManager.initializeServer(event.getServer());
-        HIGHLIGHTED_PLAYERS.clear();
+        DungeonStructureScanner.HIGHLIGHTED_PLAYERS.clear();
     }
 
     @SubscribeEvent
     public static void onServerStop(ServerStoppedEvent event) {
         DungeonManager.clearServer();
-        HIGHLIGHTED_PLAYERS.clear();
+        DungeonStructureScanner.HIGHLIGHTED_PLAYERS.clear();
     }
 
     @SubscribeEvent
@@ -60,8 +49,34 @@ public class DungeonHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (DungeonManager.isPlayerInDungeon(event.getEntity()))
-            DungeonManager.exitPlayer(event.getEntity().getUUID());
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            DungeonInstance instance = DungeonManager.getInstanceForPlayer(player);
+            if (instance != null) {
+                instance.removePlayer(player.getUUID());
+                player.removeData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getFrom().equals(DungeonManager.DUNGEON_LEVEL_KEY) && event.getEntity() instanceof ServerPlayer player) {
+            DungeonInstance instance = DungeonManager.getInstanceForPlayer(player);
+            if (instance != null) {
+                instance.removePlayer(player.getUUID());
+                player.removeData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            DungeonInstance instance = DungeonManager.getInstanceForPlayer(player);
+            if (instance != null) {
+                instance.removePlayer(player.getUUID());
+            }
+        }
     }
 }

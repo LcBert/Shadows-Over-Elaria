@@ -270,4 +270,17 @@ public class DungeonRoom {
         AABB mobBox = entityType.getDimensions().makeBoundingBox(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         return level.noCollision(mobBox);
     }
+
+    public void cleanupEntities() {
+        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
+        if (dungeonLevel == null) return;
+
+        for (UUID entityUUID : this.spawnedEntities) {
+            Entity entity = dungeonLevel.getEntity(entityUUID);
+            if (entity != null && entity.isAlive()) {
+                entity.discard();
+            }
+        }
+        this.spawnedEntities.clear();
+    }
 }

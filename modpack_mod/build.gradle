@@ -58,8 +58,16 @@ runs {
     }
 
     client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        workingDirectory = project.file('runs/client/1')
+        arguments.addAll('--username', 'Dev1')
+    }
+
+    create("client2") {
+        runType "client"
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        workingDirectory = project.file('runs/client/2')
+        arguments.addAll('--username', 'Dev2')
     }
 
     server {

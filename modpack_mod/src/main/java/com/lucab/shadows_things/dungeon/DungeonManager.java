@@ -142,7 +142,8 @@ public class DungeonManager {
 
         if (!isPlayerInDungeon(player)) return false;
 
-        if (DungeonManager.getInstanceForPlayer(player) == null) return false;
+        DungeonInstance instance = DungeonManager.getInstanceForPlayer(player);
+        if (instance == null) return false;
 
         DungeonPlayerData playerData = player.getData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
 
@@ -167,8 +168,11 @@ public class DungeonManager {
                 DimensionTransition.DO_NOTHING
         );
         player.changeDimension(transition);
-        getInstanceForPlayer(player).removePlayer(playerUuid);
+
+        instance.removePlayer(playerUuid);
         player.removeData(DungeonPlayerData.DUNGEON_PLAYER_DATA);
+
+        if (instance.isEmpty()) instance.remove();
 
         return true;
     }

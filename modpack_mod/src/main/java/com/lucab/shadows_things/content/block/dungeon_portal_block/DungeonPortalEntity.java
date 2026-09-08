@@ -3,7 +3,6 @@ package com.lucab.shadows_things.content.block.dungeon_portal_block;
 import com.lucab.shadows_things.Utils;
 import com.lucab.shadows_things.dungeon.DungeonInstance;
 import com.lucab.shadows_things.dungeon.DungeonManager;
-import com.lucab.shadows_things.dungeon.DungeonPlayerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -22,7 +21,6 @@ import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DungeonPortalEntity extends BlockEntity {
     protected static final int ENTRANCE_RADIUS = 3;
@@ -177,10 +175,6 @@ public class DungeonPortalEntity extends BlockEntity {
         if (!portal.isInDungeon()) {
             if (portal.dungeonInstance == null) {
                 portal.dungeonInstance = DungeonManager.createDungeonInstance();
-                if (portal.dungeonInstance != null) {
-                    portal.dungeonInstance.addPlayers(nearbyPlayers);
-                    portal.dungeonInstance.prepareStructure();
-                }
             }
 
             if (portal.tickCount >= ENTRANCE_TICK && portal.dungeonInstance != null) {
@@ -191,6 +185,8 @@ public class DungeonPortalEntity extends BlockEntity {
                 // Release reference so tick doesn't re-trigger
                 portal.dungeonInstance = null;
                 portal.tickCount = 0;
+
+                instanceToEnter.addPlayers(nearbyPlayers);
 
                 // If structure ready, teleports immediately; otherwise teleports upon completion
                 if (instanceToEnter.isGeneratedAndReady()) {

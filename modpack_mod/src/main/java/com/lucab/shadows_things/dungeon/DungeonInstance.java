@@ -1,11 +1,9 @@
 package com.lucab.shadows_things.dungeon;
 
-import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.content.block.dungeon_portal_block.DungeonPortalEntity;
 import com.lucab.shadows_things.rpg.classes.ClassPlayerData;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
@@ -14,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.structure.*;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -43,7 +42,7 @@ public class DungeonInstance {
 
     private final Map<Vec3i, DungeonRoom> roomGrid = new HashMap<>();
     private final List<DungeonRoom> rooms = new ArrayList<>();
-    private final Set<ChunkPos> loadedTickets = new HashSet<>();
+    private ChunkPos loadedTicket = null;
 
     private CompletableFuture<Void> preparationFuture = null;
     private boolean isGeneratedAndReady = false;
@@ -159,21 +158,24 @@ public class DungeonInstance {
     public void tick() {
         this.checkExpireAndCleanup();
 
-        for (DungeonRoom room : this.rooms) {
-            room.tick();
+        if (this.isGeneratedAndReady() && !this.rooms.isEmpty()) {
+            for (DungeonRoom room : this.rooms) {
+                room.tick();
+            }
         }
     }
 
     public CompletableFuture<Void> prepareAndTeleportPlayers(@Nullable BlockPos portalPos, @Nullable Direction portalDir) {
         MinecraftServer server = DungeonManager.getServer();
+        if (server == null) return CompletableFuture.completedFuture(null);
+
         return this.prepareStructure().thenRunAsync(() -> {
             this.teleportPlayers(portalPos, portalDir);
-        }, server != null ? server : Runnable::run);
+        }, server);
     }
 
     public CompletableFuture<Void> prepareStructure() {
         if (isGeneratedAndReady()) return CompletableFuture.completedFuture(null);
-
         if (this.preparationFuture != null) return this.preparationFuture;
 
         ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
@@ -189,29 +191,24 @@ public class DungeonInstance {
         ServerChunkCache chunkSource = dungeonLevel.getChunkSource();
         ChunkPos centerChunk = new ChunkPos(dungeonCenter);
 
-        List<CompletableFuture<?>> chunkFutures = new ArrayList<>();
-        this.loadedTickets.clear();
+        chunkSource.addRegionTicket(DUNGEON_LOAD_TICKET, centerChunk, 2, centerChunk);
+        this.loadedTicket = centerChunk;
 
-        for (int dx = -CHUNK_RADIUS; dx <= CHUNK_RADIUS; dx++) {
-            for (int dz = -CHUNK_RADIUS; dz <= CHUNK_RADIUS; dz++) {
-                ChunkPos targetPos = new ChunkPos(centerChunk.x + dx, centerChunk.z + dz);
-                chunkSource.addRegionTicket(DUNGEON_LOAD_TICKET, targetPos, 2, targetPos);
-                this.loadedTickets.add(targetPos);
-                chunkFutures.add(chunkSource.getChunkFuture(targetPos.x, targetPos.z, ChunkStatus.FULL, true));
-            }
-        }
-
-        this.preparationFuture = CompletableFuture.allOf(chunkFutures.toArray(new CompletableFuture[0]))
-                .thenRunAsync(() -> {
-                    this.scanAndPopulateRooms(dungeonLevel);
-                    this.isGeneratedAndReady = true;
-                }, server);
+        this.preparationFuture = chunkSource.getChunkFuture(centerChunk.x, centerChunk.z, ChunkStatus.FULL, true)
+                .thenAcceptAsync(fullResult -> {
+                    fullResult.ifSuccess(chunk -> {
+                        this.scanAndPopulateRooms(dungeonLevel, chunk);
+                        this.isGeneratedAndReady = true;
+                    });
+                });
 
         return this.preparationFuture;
     }
 
-    public void scanAndPopulateRooms(ServerLevel level) {
+    public void scanAndPopulateRooms(ServerLevel level, ChunkAccess centerChunkAccess) {
         StructureStart start = null;
+        SectionPos sectionPos = SectionPos.of(this.dungeonCenter);
+
         for (DungeonManager.DungeonType type : DungeonManager.DungeonType.values()) {
             Structure structure = level.registryAccess()
                     .registryOrThrow(Registries.STRUCTURE)
@@ -219,16 +216,13 @@ public class DungeonInstance {
 
             if (structure == null) continue;
 
-            ChunkPos centerChunk = new ChunkPos(this.dungeonCenter);
-            SectionPos sectionPos = SectionPos.of(this.dungeonCenter);
-
             start = level.structureManager().getStartForStructure(
                     sectionPos,
                     structure,
-                    level.getChunk(centerChunk.x, centerChunk.z)
+                    centerChunkAccess
             );
 
-            if (start != null) {
+            if (start != null && start.isValid()) {
                 this.dungeonType = type;
                 break;
             }
@@ -358,12 +352,21 @@ public class DungeonInstance {
     public void remove() {
         ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
         if (dungeonLevel != null) {
-            ServerChunkCache chunkSource = dungeonLevel.getChunkSource();
-            for (ChunkPos chunkPos : this.loadedTickets) {
-                chunkSource.removeRegionTicket(DUNGEON_LOAD_TICKET, chunkPos, 2, chunkPos);
+            for (DungeonRoom room : this.rooms) {
+                room.cleanupEntities();
+            }
+
+            if (this.loadedTicket != null) {
+                ServerChunkCache chunkSource = dungeonLevel.getChunkSource();
+                chunkSource.removeRegionTicket(DUNGEON_LOAD_TICKET, this.loadedTicket, 2, this.loadedTicket);
+                this.loadedTicket = null;
             }
         }
-        this.loadedTickets.clear();
+
+        this.rooms.clear();
+        this.roomGrid.clear();
+        this.players.clear();
+
         DungeonManager.removeDungeon(this.getId());
     }
 }

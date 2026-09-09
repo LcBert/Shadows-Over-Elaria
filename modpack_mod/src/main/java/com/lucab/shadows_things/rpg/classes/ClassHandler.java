@@ -3,6 +3,7 @@ package com.lucab.shadows_things.rpg.classes;
 import com.lucab.shadows_things.ShadowsThings;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -68,17 +69,18 @@ public class ClassHandler {
     @SubscribeEvent
     public static void onPlayerAttack(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof Player player)) return;
-        if (!(event.getEntity() instanceof Monster monster)) return;
         if (player.level().isClientSide) return;
         if (player.getAbilities().instabuild) return;
         if (!ClassManager.hasClass(player)) return;
+
+        LivingEntity target = event.getEntity();
 
         Item heldItem = player.getMainHandItem().getItem();
 
         if (!ClassItemsManager.isCorrectItem(player, heldItem)) {
             event.setCanceled(true);
         } else {
-            ClassEntityData classEntityData = monster.getData(ClassEntityData.CLASS_ENTITY_DATA);
+            ClassEntityData classEntityData = target.getData(ClassEntityData.CLASS_ENTITY_DATA);
             classEntityData.addDamage(player.getUUID(), event.getAmount());
         }
     }

@@ -109,6 +109,9 @@ public class ShadowsThings {
         //Recipes Register
         RecipesRegistries.register(modEventBus);
 
+        // Game Rules
+        ModGameRules.registerGameRules();
+
         // Attachment Register
         ATTACHMENT_TYPES.register(modEventBus);
         ExhaustionData.register();

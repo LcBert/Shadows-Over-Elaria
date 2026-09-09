@@ -1,7 +1,9 @@
 package com.lucab.shadows_things.entity.carcas_entity;
 
+import com.lucab.shadows_things.ModGameRules;
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.recipe.CarcassCuttingRecipe;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -12,14 +14,15 @@ import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
-public class HandleCarcassEntity {
+public class CarcassEntityHandler {
 
     @SubscribeEvent
     public static void handleCarcassSpawn(EntityLeaveLevelEvent event) {
-        Level level = event.getLevel();
         Entity entity = event.getEntity();
+        Level level = event.getLevel();
 
-        if (level.isClientSide()) return;
+        if (level.isClientSide || !level.getGameRules().getBoolean(ModGameRules.DO_CARCASS_SPAWN)) return;
+
         if (!CarcassCuttingRecipe.hasRecipe(level, entity.getType())) return;
 
         // Check if the entity is a LivingEntity and was removed via death
@@ -43,8 +46,8 @@ public class HandleCarcassEntity {
     public static void handleMobDrop(LivingDropsEvent event) {
         LivingEntity living = event.getEntity();
         Level level = living.level();
+        if (level.isClientSide || !level.getGameRules().getBoolean(ModGameRules.DO_CARCASS_SPAWN)) return;
 
-        if (level.isClientSide()) return;
         if (living instanceof Player) return;
         if (CarcassCuttingRecipe.hasRecipe(level, living.getType())) event.setCanceled(true);
     }

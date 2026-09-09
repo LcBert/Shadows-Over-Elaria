@@ -3,7 +3,6 @@ package com.lucab.shadows_things.entity.carcas_entity;
 import com.lucab.shadows_things.ModGameRules;
 import com.lucab.shadows_things.ShadowsThings;
 import com.lucab.shadows_things.recipe.CarcassCuttingRecipe;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;

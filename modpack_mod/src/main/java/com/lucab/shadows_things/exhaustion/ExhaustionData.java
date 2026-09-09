@@ -1,29 +1,38 @@
 package com.lucab.shadows_things.exhaustion;
 
 import com.lucab.shadows_things.ShadowsThings;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.Mth;
+import net.minecraft.world.food.FoodData;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.function.Supplier;
 
-public class ExhaustionData implements INBTSerializable<CompoundTag> {
-    public static final int EXHAUSTION_DELAY_INTERVAL = 6000;
+public class ExhaustionData {
+    public static final float VISUAL_MAX_EXHAUSTION = 3.99f;
 
-    private int exhaustionTick = EXHAUSTION_DELAY_INTERVAL;
-    private int foodValue = 20;
+    public static final Codec<ExhaustionData> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    Codec.INT.fieldOf("exhaustion_tick").forGetter(ExhaustionData::getExhaustionTick),
+                    Codec.INT.fieldOf("food_value").forGetter(ExhaustionData::getFoodValue)
+            ).apply(instance, ExhaustionData::new)
+    );
+
+    private int exhaustionTick;
+    private int foodValue;
+
+    public ExhaustionData() {
+        this(0, 20);
+    }
+
+    public ExhaustionData(int exhaustionTick, int foodValue) {
+        this.exhaustionTick = Math.max(0, exhaustionTick);
+        this.foodValue = Mth.clamp(foodValue, 0, 20);
+    }
 
     public int getExhaustionTick() {
         return exhaustionTick;
-    }
-
-    public void decrementTick() {
-        this.exhaustionTick--;
-    }
-
-    public void resetTick() {
-        this.exhaustionTick = EXHAUSTION_DELAY_INTERVAL;
     }
 
     public int getFoodValue() {
@@ -31,25 +40,43 @@ public class ExhaustionData implements INBTSerializable<CompoundTag> {
     }
 
     public void setFoodValue(int foodValue) {
-        this.foodValue = foodValue;
+        this.foodValue = Mth.clamp(foodValue, 0, 20);
     }
 
-    @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putInt("exhaustionTick", exhaustionTick);
-        nbt.putInt("foodValue", foodValue);
-        return nbt;
+    public void resetTick() {
+        this.exhaustionTick = 0;
     }
 
-    @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        exhaustionTick = nbt.getInt("exhaustionTick");
-        foodValue = nbt.getInt("foodValue");
+    public float calculateVisualExhaustion(int exhaustionDelay) {
+        float progress = (float) this.exhaustionTick / exhaustionDelay;
+        return Mth.clamp(progress * VISUAL_MAX_EXHAUSTION, 0.0f, VISUAL_MAX_EXHAUSTION);
     }
 
-    public static final Supplier<AttachmentType<ExhaustionData>> EXHAUSTION = ShadowsThings.ATTACHMENT_TYPES
-            .register("exhaustion", () -> AttachmentType.serializable(ExhaustionData::new).build());
+    public void tick(FoodData foodData, int exhaustionDelay) {
+        if (foodData.getSaturationLevel() > 0.0f) foodData.setSaturation(0.0f);
+
+        if (foodData.getFoodLevel() != this.foodValue) this.setFoodValue(foodData.getFoodLevel());
+
+        this.exhaustionTick++;
+
+        if (this.exhaustionTick > exhaustionDelay) {
+            resetTick();
+            if (foodData.getFoodLevel() > 0) {
+                foodData.setFoodLevel(foodData.getFoodLevel() - 1);
+                this.setFoodValue(foodData.getFoodLevel());
+            }
+        }
+
+        foodData.setExhaustion(calculateVisualExhaustion(exhaustionDelay));
+    }
+
+    public static final Supplier<AttachmentType<ExhaustionData>> EXHAUSTION = ShadowsThings.ATTACHMENT_TYPES.register(
+            "exhaustion",
+            () -> AttachmentType.builder(ExhaustionData::new)
+                    .serialize(ExhaustionData.CODEC)
+                    .copyOnDeath()
+                    .build()
+    );
 
     public static void register() {
     }

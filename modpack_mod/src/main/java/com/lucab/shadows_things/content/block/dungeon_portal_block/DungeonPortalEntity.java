@@ -186,7 +186,7 @@ public class DungeonPortalEntity extends BlockEntity {
                 portal.dungeonInstance = null;
                 portal.tickCount = 0;
 
-                instanceToEnter.addPlayers(nearbyPlayers);
+                DungeonManager.addPlayersToDungeon(nearbyPlayers, instanceToEnter);
 
                 // If structure ready, teleports immediately; otherwise teleports upon completion
                 if (instanceToEnter.isGeneratedAndReady()) {

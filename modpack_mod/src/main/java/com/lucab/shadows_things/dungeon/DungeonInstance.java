@@ -30,26 +30,25 @@ public class DungeonInstance {
             600
     );
 
-    private static final int CHECK_INTERVAL_TICKS = 20; // Check once every second
+    private static final int OCCUPANCY_CHECK_INTERVAL = 20;
     private static final int EMPTY_TIMEOUT_TICKS = DungeonPortalEntity.ENTRANCE_TICK + 100;
-    private static final int CHUNK_RADIUS = 3;
 
     private final long id;
     private final BlockPos dungeonCenter;
     private final AABB boundingBox;
     private final Set<UUID> players = new HashSet<>();
-    private DungeonManager.DungeonType dungeonType;
-
     private final Map<Vec3i, DungeonRoom> roomGrid = new HashMap<>();
     private final List<DungeonRoom> rooms = new ArrayList<>();
-    private ChunkPos loadedTicket = null;
 
+    private DungeonManager.DungeonType dungeonType;
+    private ChunkPos loadedTicket = null;
     private CompletableFuture<Void> preparationFuture = null;
-    private boolean isGeneratedAndReady = false;
-    private boolean isStarted = false;
+
+    private boolean generatedAndReady = false;
+    private boolean started = false;
     private int emptyTicks = 0;
     private int checkCooldown = 0;
-    private boolean isCurrentlyOccupied = true;
+    private boolean currentlyOccupied = true;
 
     public DungeonInstance(long id, BlockPos dungeonCenter) {
         this.id = id;
@@ -74,36 +73,42 @@ public class DungeonInstance {
         return boundingBox;
     }
 
-    public void addPlayer(UUID player) {
-        this.players.add(player);
-    }
-
-    public void addPlayers(List<UUID> players) {
-        for (UUID player : players) this.addPlayer(player);
-    }
-
-    public void removePlayer(UUID player) {
-        this.players.remove(player);
-    }
-
-    public void removePlayers(List<UUID> players) {
-        for (UUID player : players) this.removePlayer(player);
-    }
-
     public Set<UUID> getPlayers() {
-        return players;
+        return Collections.unmodifiableSet(players);
     }
 
-    public int getPlayersCount() {
-        return this.players.size();
+    public List<DungeonRoom> getRooms() {
+        return Collections.unmodifiableList(rooms);
+    }
+
+    public DungeonManager.DungeonType getDungeonType() {
+        return dungeonType;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public boolean isGeneratedAndReady() {
+        return generatedAndReady;
     }
 
     public boolean isEmpty() {
         return this.players.isEmpty();
     }
 
+
+    public void addPlayer(UUID uuid) {
+        this.players.add(uuid);
+    }
+
+    public void removePlayer(UUID uuid) {
+        this.players.remove(uuid);
+        DungeonManager.unregisterPlayerFromDungeon(uuid);
+    }
+
     public int getAverageTier() {
-        if (this.getPlayersCount() == 0) return -1;
+        if (this.isEmpty() || DungeonManager.getServer() == null) return -1;
 
         PlayerList playerList = DungeonManager.getServer().getPlayerList();
 
@@ -118,47 +123,17 @@ public class DungeonInstance {
         );
     }
 
-    public DungeonManager.DungeonType getDungeonType() {
-        return dungeonType;
-    }
-
-    public List<DungeonRoom> getRooms() {
-        return rooms;
-    }
-
     @Nullable
     public DungeonRoom getRoomAtWorld(BlockPos pos) {
-        if (!this.boundingBox.contains(pos.getX(), pos.getY(), pos.getZ())) return null;
-
-        Vec3i gridPos = worldToGridPos(pos);
-        DungeonRoom room = this.roomGrid.get(gridPos);
-
-        if (room != null && room.getBoundingBox().contains(pos.getX(), pos.getY(), pos.getZ())) return room;
-
-        return null;
-    }
-
-    @Nullable
-    public DungeonRoom getRoomAtWorld(ServerPlayer player) {
-        return getRoomAtWorld(player.blockPosition());
-    }
-
-    public void setStarted(boolean started) {
-        isStarted = started;
-    }
-
-    public boolean isStarted() {
-        return isStarted;
-    }
-
-    public boolean isGeneratedAndReady() {
-        return isGeneratedAndReady;
+        if (!boundingBox.contains(pos.getX(), pos.getY(), pos.getZ())) return null;
+        DungeonRoom room = roomGrid.get(worldToGridPos(pos));
+        return (room != null && room.getBoundingBox().contains(pos.getX(), pos.getY(), pos.getZ())) ? room : null;
     }
 
     public void tick() {
         this.checkExpireAndCleanup();
 
-        if (this.isGeneratedAndReady() && !this.rooms.isEmpty()) {
+        if (this.isGeneratedAndReady()) {
             for (DungeonRoom room : this.rooms) {
                 room.tick();
             }
@@ -198,7 +173,7 @@ public class DungeonInstance {
                 .thenAcceptAsync(fullResult -> {
                     fullResult.ifSuccess(chunk -> {
                         this.scanAndPopulateRooms(dungeonLevel, chunk);
-                        this.isGeneratedAndReady = true;
+                        this.generatedAndReady = true;
                     });
                 });
 
@@ -270,11 +245,11 @@ public class DungeonInstance {
         int adjustedY = pos.getY() - this.dungeonCenter.getY();
         int adjustedZ = pos.getZ() - (this.dungeonCenter.getZ() - (DungeonRoom.ROOM_LENGTH / 2));
 
-        int gx = Math.floorDiv(adjustedX, DungeonRoom.ROOM_WIDTH);
-        int gy = Math.floorDiv(adjustedY, DungeonRoom.ROOM_HEIGHT);
-        int gz = Math.floorDiv(adjustedZ, DungeonRoom.ROOM_LENGTH);
-
-        return new Vec3i(gx, gy, gz);
+        return new Vec3i(
+                Math.floorDiv(adjustedX, DungeonRoom.ROOM_WIDTH),
+                Math.floorDiv(adjustedY, DungeonRoom.ROOM_HEIGHT),
+                Math.floorDiv(adjustedZ, DungeonRoom.ROOM_LENGTH)
+        );
     }
 
     private void checkExpireAndCleanup() {
@@ -284,36 +259,32 @@ public class DungeonInstance {
         if (dungeonLevel == null) return;
 
         if (--this.checkCooldown <= 0) {
-            this.checkCooldown = CHECK_INTERVAL_TICKS;
-            this.isCurrentlyOccupied = evaluatePlayerPresence(dungeonLevel);
+            this.checkCooldown = OCCUPANCY_CHECK_INTERVAL;
+            this.currentlyOccupied = checkPlayerPresence();
         }
 
-        if (this.isCurrentlyOccupied) {
+        if (this.currentlyOccupied) {
             this.emptyTicks = 0;
-        } else {
-            this.emptyTicks++;
-            if (this.emptyTicks >= EMPTY_TIMEOUT_TICKS) {
-                this.remove();
-            }
+        } else if (++this.emptyTicks >= EMPTY_TIMEOUT_TICKS) {
+            this.remove();
         }
     }
 
-    private boolean evaluatePlayerPresence(ServerLevel dungeonLevel) {
-        MinecraftServer server = dungeonLevel.getServer();
+    private boolean checkPlayerPresence() {
+        MinecraftServer server = DungeonManager.getServer();
+        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
+        if (server == null || dungeonLevel == null) return false;
+
         PlayerList playerList = server.getPlayerList();
 
         for (UUID uuid : this.players) {
             ServerPlayer player = playerList.getPlayer(uuid);
-
-            if (player == null || player.isRemoved() || !player.isAlive()) {
-                continue;
-            }
-
-            if (player.level() == dungeonLevel && this.getBoundingBox().contains(player.position())) {
-                return true;
+            if (player != null && !player.isRemoved() && player.isAlive() && player.level() == dungeonLevel) {
+                if (this.getBoundingBox().contains(player.position())) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
@@ -344,16 +315,16 @@ public class DungeonInstance {
             player.changeDimension(transition);
         }
 
-        setStarted(true);
+        this.started = true;
         this.emptyTicks = 0;
-        this.isCurrentlyOccupied = true;
+        this.currentlyOccupied = true;
     }
 
     public void remove() {
         ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
         if (dungeonLevel != null) {
             for (DungeonRoom room : this.rooms) {
-                room.cleanupEntities();
+                room.cleanup();
             }
 
             if (this.loadedTicket != null) {
@@ -366,7 +337,6 @@ public class DungeonInstance {
         this.rooms.clear();
         this.roomGrid.clear();
         this.players.clear();
-
         DungeonManager.removeDungeon(this.getId());
     }
 }

@@ -3,7 +3,7 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 5,
+      "weight": 9,
       "element": {
         "element_type": "minecraft:list_pool_element",
         "projection": "rigid",
@@ -18,7 +18,7 @@
       }
     },
     {
-      "weight": 3,
+      "weight": 4,
       "element": {
         "element_type": "minecraft:list_pool_element",
         "projection": "rigid",
@@ -26,6 +26,21 @@
           {
             "element_type": "minecraft:single_pool_element",
             "location": "shadows_things:dungeons/jungle/stairs/1",
+            "processors": "minecraft:empty",
+            "projection": "rigid"
+          }
+        ]
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:list_pool_element",
+        "projection": "rigid",
+        "elements": [
+          {
+            "element_type": "minecraft:single_pool_element",
+            "location": "shadows_things:dungeons/jungle/exits/1",
             "processors": "minecraft:empty",
             "projection": "rigid"
           }

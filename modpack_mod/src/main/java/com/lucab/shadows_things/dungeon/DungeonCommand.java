@@ -7,8 +7,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
@@ -42,12 +44,11 @@ public class DungeonCommand {
     }
 
     private static int getActive(CommandContext<CommandSourceStack> context) {
-        CommandSourceStack source = context.getSource();
-
         int activeInstances = DungeonManager.getDungeonInstances().size();
-
-        source.sendSuccess(() -> Component.literal("Currently active instances: " + activeInstances).withStyle(ChatFormatting.GOLD), false);
-
+        context.getSource().sendSuccess(
+                () -> Component.literal("Currently active instances: " + activeInstances).withStyle(ChatFormatting.GOLD),
+                false
+        );
         return activeInstances;
     }
 
@@ -62,7 +63,7 @@ public class DungeonCommand {
             return 0;
         }
 
-        instance.addPlayers(players.stream().map(Player::getUUID).toList());
+        DungeonManager.addPlayersToDungeon(players.stream().map(Player::getUUID).toList(), instance);
 
         source.sendSuccess(() -> Component.literal("Dungeon is generating, please wait...").withStyle(ChatFormatting.GOLD), false);
         instance.prepareAndTeleportPlayers(null, null).thenRun(() -> {
@@ -118,11 +119,26 @@ public class DungeonCommand {
 
         Vec3i gp = currentRoom.getGridPos();
         String template = currentRoom.getTemplateLocation() != null ? currentRoom.getTemplateLocation().toString() : "NONE";
+        String type = currentRoom.getRoomType().getName().toUpperCase();
+        BlockPos originPos = currentRoom.getOriginPos();
+        boolean activated = currentRoom.isActive();
+        boolean cleared = currentRoom.isCleared();
 
-        context.getSource().sendSuccess(() -> Component.literal(
-                String.format("Current Room: Grid [%d, %d, %d] | Template: %s | Origin: %s",
-                        gp.getX(), gp.getY(), gp.getZ(), template, currentRoom.getOriginPos().toShortString())
-        ).withStyle(ChatFormatting.AQUA), false);
+        MutableComponent output = Component.literal("Current Room:");
+        output.append("\n");
+        output.append(Component.literal(String.format(" - Template: %s", template)));
+        output.append("\n");
+        output.append(Component.literal(String.format(" - Type: %s", type)));
+        output.append("\n");
+        output.append(Component.literal(String.format(" - Grid: [%d, %d, %d]", gp.getX(), gp.getY(), gp.getZ())));
+        output.append("\n");
+        output.append(Component.literal(String.format(" - Origin: %s", originPos.toShortString())));
+        output.append("\n");
+        output.append(Component.literal(String.format(" - Activated: %s", activated)));
+        output.append("\n");
+        output.append(Component.literal(String.format(" - Cleared: %s", cleared)));
+
+        context.getSource().sendSuccess(() -> output.withStyle(ChatFormatting.AQUA), false);
 
         return 1;
     }

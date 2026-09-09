@@ -8,26 +8,32 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 public class DungeonPlayerData implements INBTSerializable<CompoundTag> {
+    private static final String TAG_PORTAL_POS = "portalPos";
+    private static final String TAG_PORTAL_DIR = "portalDir";
+
+    @Nullable
     private BlockPos portalPos;
+    @Nullable
     private Direction portalDir;
 
-    public void setPortalPos(BlockPos portalPos) {
+    public void setPortalPos(@Nullable BlockPos portalPos) {
         this.portalPos = portalPos;
     }
 
-    public BlockPos getPortalPos() {
+    public @Nullable BlockPos getPortalPos() {
         return portalPos;
     }
 
-    public void setPortalDir(Direction portalDir) {
+    public void setPortalDir(@Nullable Direction portalDir) {
         this.portalDir = portalDir;
     }
 
-    public Direction getPortalDir() {
+    public @Nullable Direction getPortalDir() {
         return portalDir;
     }
 
@@ -35,27 +41,23 @@ public class DungeonPlayerData implements INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag nbt = new CompoundTag();
         if (portalPos != null) {
-            nbt.put("portalPos", NbtUtils.writeBlockPos(portalPos));
+            nbt.put(TAG_PORTAL_POS, NbtUtils.writeBlockPos(portalPos));
         }
         if (portalDir != null) {
-            nbt.putInt("portalDir", portalDir.get3DDataValue());
+            nbt.putInt(TAG_PORTAL_DIR, portalDir.get3DDataValue());
         }
         return nbt;
     }
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        if (nbt.contains("portalPos")) {
-            NbtUtils.readBlockPos(nbt, "portalPos").ifPresent(pos -> this.portalPos = pos);
-        } else {
-            portalPos = null;
-        }
+        this.portalPos = nbt.contains(TAG_PORTAL_POS)
+                ? NbtUtils.readBlockPos(nbt, TAG_PORTAL_POS).orElse(null)
+                : null;
 
-        if (nbt.contains("portalDir")) {
-            portalDir = Direction.from3DDataValue(nbt.getInt("portalDir"));
-        } else {
-            portalDir = null;
-        }
+        this.portalDir = nbt.contains(TAG_PORTAL_DIR)
+                ? Direction.from3DDataValue(nbt.getInt(TAG_PORTAL_DIR))
+                : null;
     }
 
     public static final Supplier<AttachmentType<DungeonPlayerData>> DUNGEON_PLAYER_DATA = ShadowsThings.ATTACHMENT_TYPES

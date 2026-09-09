@@ -9,13 +9,35 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class DungeonStructureScanner {
+    private DungeonStructureScanner() {
+    }
+
     public static final Set<UUID> HIGHLIGHTED_PLAYERS = new HashSet<>();
+    private static Field templateField;
+    private static Field elementsField;
+
+    static {
+        try {
+            for (Field f : SinglePoolElement.class.getDeclaredFields()) {
+                if (Either.class.isAssignableFrom(f.getType())) {
+                    templateField = f;
+                    templateField.setAccessible(true);
+                    break;
+                }
+            }
+            for (Field f : ListPoolElement.class.getDeclaredFields()) {
+                if (List.class.isAssignableFrom(f.getType())) {
+                    elementsField = f;
+                    elementsField.setAccessible(true);
+                    break;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
 
     public static boolean toggleHighlight(UUID playerUuid) {
         if (HIGHLIGHTED_PLAYERS.contains(playerUuid)) {
@@ -27,41 +49,25 @@ public class DungeonStructureScanner {
         }
     }
 
-    private static Field templateField;
-
-    static {
-        try {
-            templateField = SinglePoolElement.class.getDeclaredField("template");
-            templateField.setAccessible(true);
-        } catch (NoSuchFieldException ignored) {
-        }
+    public static void clearHighlights() {
+        HIGHLIGHTED_PLAYERS.clear();
     }
 
     @Nullable
     @SuppressWarnings("unchecked")
     public static ResourceLocation resolveElementTemplate(StructurePoolElement element) {
-        if (element instanceof SinglePoolElement single) {
+        if (element instanceof SinglePoolElement single && templateField != null) {
             try {
-                if (templateField != null) {
-                    @SuppressWarnings("unchecked")
-                    Either<ResourceLocation, StructureTemplate> templateEither =
-                            (Either<ResourceLocation, StructureTemplate>) templateField.get(single);
-
-                    return templateEither.map(
-                            res -> res,
-                            template -> null // StructureTemplate instances created dynamically in-memory have no direct ResourceLocation
-                    );
-                }
-            } catch (Exception e) {
+                Either<ResourceLocation, StructureTemplate> either =
+                        (Either<ResourceLocation, StructureTemplate>) templateField.get(single);
+                return either.map(location -> location, template -> null);
+            } catch (ReflectiveOperationException ignored) {
                 return null;
             }
         } else if (element instanceof ListPoolElement listElement) {
-            // Handles list_pool_element wrapper defined in JSON pools
             for (StructurePoolElement child : getListElements(listElement)) {
                 ResourceLocation found = resolveElementTemplate(child);
-                if (found != null) {
-                    return found;
-                }
+                if (found != null) return found;
             }
         }
         return null;
@@ -69,12 +75,11 @@ public class DungeonStructureScanner {
 
     @SuppressWarnings("unchecked")
     private static List<StructurePoolElement> getListElements(ListPoolElement listElement) {
+        if (elementsField == null) return Collections.emptyList();
         try {
-            Field elementsField = ListPoolElement.class.getDeclaredField("elements");
-            elementsField.setAccessible(true);
             return (List<StructurePoolElement>) elementsField.get(listElement);
-        } catch (Exception e) {
-            return List.of();
+        } catch (ReflectiveOperationException e) {
+            return Collections.emptyList();
         }
     }
 }

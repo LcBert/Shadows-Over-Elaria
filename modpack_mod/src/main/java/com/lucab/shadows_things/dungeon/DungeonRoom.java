@@ -18,6 +18,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.EventHooks;
@@ -31,7 +33,8 @@ public class DungeonRoom {
         NONE("none"),
         ENTRANCE("entrances"),
         ROOM("rooms"),
-        STAIR("stairs");
+        STAIR("stairs"),
+        EXIT("exits");
 
         private final String name;
 
@@ -64,13 +67,15 @@ public class DungeonRoom {
     private final Vec3i gridPos;
     private final BlockPos originPos;
     private final AABB boundingBox;
+    private final BlockPos.MutableBlockPos chestPos = new BlockPos.MutableBlockPos();
 
     private final ResourceLocation templateLocation;
     private final RoomType roomType;
 
     private final List<UUID> spawnedEntities = new ArrayList<>();
-    private boolean cleared = false;
+    private boolean chestPlaced = false;
     private boolean active = false;
+    private boolean cleared = false;
 
     public DungeonRoom(DungeonInstance instance, Vec3i gridPos, BlockPos originPos, @Nullable ResourceLocation templateLocation) {
         this.instance = instance;
@@ -92,6 +97,10 @@ public class DungeonRoom {
         return roomType;
     }
 
+    public boolean isRoom() {
+        return this.getRoomType() == RoomType.ROOM;
+    }
+
     public Vec3i getGridPos() {
         return gridPos;
     }
@@ -104,34 +113,103 @@ public class DungeonRoom {
         return boundingBox;
     }
 
-    public boolean containsPlayer(ServerPlayer player) {
-        return this.boundingBox.contains(player.position());
+    public boolean isActive() {
+        return active;
     }
 
     public boolean isCleared() {
         return cleared;
     }
 
-    public void setCleared(boolean cleared) {
-        this.cleared = cleared;
+    public boolean isChestPlaced() {
+        return this.chestPlaced;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public boolean containsPlayer(ServerPlayer player) {
+        return this.boundingBox.contains(player.position());
     }
 
     public void tick() {
-        this.handleSpawner();
+        this.handlePlayerEnter();
+        this.checkCleared();
     }
 
-    public void handleSpawner() {
-        if (this.isCleared()) return;
-        this.checkCleared();
+    private void handlePlayerEnter() {
+        if (!this.isRoom() || this.isActive()) return;
 
+        MinecraftServer server = DungeonManager.getServer();
+        if (server == null) return;
+
+        boolean anyInside = instance.getPlayers().stream()
+                .map(server.getPlayerList()::getPlayer)
+                .filter(Objects::nonNull)
+                .anyMatch(this::containsPlayer);
+
+        if (anyInside) {
+            this.active = true;
+            this.placeRoomChest();
+            this.triggerSpawner();
+        }
+    }
+
+    private void placeRoomChest() {
+        ServerLevel level = DungeonManager.getDungeonLevel();
+        if (level == null) return;
+
+        BlockPos validPos = findValidSurfacePos();
+        if (validPos != null) {
+            this.chestPos.set(validPos);
+            level.setBlock(this.chestPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+            this.chestPlaced = true;
+        }
+    }
+
+    private BlockPos findValidSurfacePos() {
+        ServerLevel level = DungeonManager.getDungeonLevel();
+        if (level == null) return null;
+
+        ThreadLocalRandom rand = ThreadLocalRandom.current();
+        BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos above = new BlockPos.MutableBlockPos();
+
+        List<BlockPos> validPoses = new ArrayList<>();
+
+        int minX = (int) this.getBoundingBox().minX;
+        int minY = (int) this.getBoundingBox().minY;
+        int minZ = (int) this.getBoundingBox().minZ;
+        int maxX = (int) this.getBoundingBox().maxX;
+        int maxY = (int) this.getBoundingBox().maxY;
+        int maxZ = (int) this.getBoundingBox().maxZ;
+
+        for (int attempts = 0; attempts < 64; attempts++) {
+            int rx = rand.nextInt(minX + 1, maxX - 1);
+            int rz = rand.nextInt(minZ + 1, maxZ - 1);
+
+            for (int y = minY; y < maxY; y++) {
+                probe.set(rx, y, rz);
+                below.set(rx, y - 1, rz);
+                above.set(rx, y + 1, rz);
+
+                BlockState stateAtPos = level.getBlockState(probe);
+                BlockState floorState = level.getBlockState(below);
+                BlockState aboveState = level.getBlockState(above);
+
+                boolean canPlaceChestHere = stateAtPos.isAir() || stateAtPos.canBeReplaced();
+                boolean isSturdyFloor = floorState.isFaceSturdy(level, below, Direction.UP) && floorState.getFluidState().isEmpty();
+                boolean isAboveNotObstructed = aboveState.isAir() || !aboveState.isSolidRender(level, above);
+
+                if (canPlaceChestHere && isSturdyFloor && isAboveNotObstructed)
+                    validPoses.add(probe.immutable());
+            }
+            if (!validPoses.isEmpty()) break;
+        }
+
+        if (validPoses.isEmpty()) return null;
+        return validPoses.get(rand.nextInt(validPoses.size()));
+    }
+
+    public void triggerSpawner() {
         MinecraftServer server = DungeonManager.getServer();
         if (server == null) return;
 
@@ -140,86 +218,43 @@ public class DungeonRoom {
 
         RandomSource randomSource = dungeonLevel.getRandom();
 
-        if (this.getRoomType() == RoomType.ROOM && !this.isActive()) {
-            boolean containsPlayer = instance.getPlayers().stream()
-                    .map(server.getPlayerList()::getPlayer)
-                    .filter(Objects::nonNull)
-                    .anyMatch(this::containsPlayer);
+        if (this.isRoom()) {
+            DungeonSpawnConfig spawnConfig = this.instance.getDungeonType().getSpawnConfig();
+            if (spawnConfig == null) return;
 
-            if (containsPlayer) {
-                this.setActive(true);
+            int totalSpawns = randomSource.nextIntBetweenInclusive(spawnConfig.getMinSpawns(), spawnConfig.getMaxSpawns());
+            int spawnedCount = 0;
+            while (spawnedCount < totalSpawns) {
+                Optional<DungeonSpawnEntry> spawnEntryOpt = spawnConfig.getRandomEntry(randomSource);
+                if (spawnEntryOpt.isEmpty()) continue;
+                DungeonSpawnEntry spawnEntry = spawnEntryOpt.get();
 
-                DungeonSpawnConfig spawnConfig = this.instance.getDungeonType().getSpawnConfig();
-                if (spawnConfig == null) return;
+                EntityType<?> entityType = spawnEntry.getEntityType();
+                if (entityType == null) continue;
 
+                Entity spawnedEntity = entityType.create(dungeonLevel);
+                if (spawnedEntity == null) continue;
 
-                int totalSpawns = randomSource.nextIntBetweenInclusive(spawnConfig.getMinSpawns(), spawnConfig.getMaxSpawns());
-                int spawnedCount = 0;
-                while (spawnedCount < totalSpawns) {
-                    Optional<DungeonSpawnEntry> spawnEntryOpt = spawnConfig.getRandomEntry(randomSource);
-                    if (spawnEntryOpt.isEmpty()) continue;
-                    DungeonSpawnEntry spawnEntry = spawnEntryOpt.get();
+                BlockPos spawnPos = findValidSpawns(entityType);
+                if (spawnPos == null) continue;
 
-                    EntityType<?> entityType = spawnEntry.getEntityType();
-                    if (entityType == null) continue;
+                spawnedEntity.moveTo(spawnPos.getCenter());
 
-                    Entity spawnedEntity = entityType.create(dungeonLevel);
-                    if (spawnedEntity == null) return;
-                    List<BlockPos> validSpawns = findValidSpawns(entityType);
-                    if (validSpawns.isEmpty()) return;
-
-                    BlockPos spawnPos = validSpawns.get(ThreadLocalRandom.current().nextInt(validSpawns.size()));
-
-                    spawnedEntity.moveTo(spawnPos.getCenter());
-
-                    if (spawnedEntity instanceof Mob mob) {
-                        DifficultyInstance difficulty = dungeonLevel.getCurrentDifficultyAt(spawnPos);
-                        EventHooks.finalizeMobSpawn(mob, dungeonLevel, difficulty, MobSpawnType.EVENT, null);
-                        mob.setBaby(false);
-                        mob.setPersistenceRequired();
-                        this.spawnedEntities.add(mob.getUUID());
-                    }
-
-                    dungeonLevel.addFreshEntity(spawnedEntity);
-                    spawnedCount++;
+                if (spawnedEntity instanceof Mob mob) {
+                    DifficultyInstance difficulty = dungeonLevel.getCurrentDifficultyAt(spawnPos);
+                    EventHooks.finalizeMobSpawn(mob, dungeonLevel, difficulty, MobSpawnType.EVENT, null);
+                    mob.setBaby(false);
+                    mob.setPersistenceRequired();
+                    this.spawnedEntities.add(mob.getUUID());
                 }
+
+                dungeonLevel.addFreshEntity(spawnedEntity);
+                spawnedCount++;
             }
         }
     }
 
-    private void checkCleared() {
-        if (!this.isActive() || this.isCleared()) return;
-
-        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
-        if (dungeonLevel == null) return;
-
-        this.spawnedEntities.removeIf(uuid -> {
-            Entity entity = dungeonLevel.getEntity(uuid);
-            return entity == null || !entity.isAlive() || entity.isRemoved();
-        });
-
-        if (this.spawnedEntities.isEmpty()) this.onRoomCleared();
-    }
-
-    private void onRoomCleared() {
-        this.setCleared(true);
-
-        MinecraftServer server = DungeonManager.getServer();
-        if (server == null) return;
-
-        this.instance.getPlayers().stream()
-                .map(server.getPlayerList()::getPlayer)
-                .filter(Objects::nonNull)
-                .forEach(player -> {
-                    ToastHelper.addToast(player,
-                            "Room Cleared",
-                            ChatFormatting.GREEN,
-                            100,
-                            SoundEvents.PLAYER_LEVELUP);
-                });
-    }
-
-    private List<BlockPos> findValidSpawns(EntityType<?> entityType) {
+    private BlockPos findValidSpawns(EntityType<?> entityType) {
         List<BlockPos> validSpawns = new ArrayList<>();
 
         int minX = (int) this.getBoundingBox().minX;
@@ -229,20 +264,19 @@ public class DungeonRoom {
         int maxY = (int) this.getBoundingBox().maxY;
         int maxZ = (int) this.getBoundingBox().maxZ;
 
+        int randomX = ThreadLocalRandom.current().nextInt(minX, maxX + 1);
+        int randomZ = ThreadLocalRandom.current().nextInt(minZ, maxZ + 1);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
-        for (int x = minX; x < maxX; x++) {
-            for (int z = minZ; z < maxZ; z++) {
-                for (int y = minY; y < maxY; y++) {
-                    pos.set(x, y, z);
-                    if (this.isValidSpawn(entityType, pos)) {
-                        validSpawns.add(pos.immutable());
-                    }
-                }
+        for (int y = minY; y < maxY; y++) {
+            pos.set(randomX, y, randomZ);
+            if (this.isValidSpawn(entityType, pos)) {
+                validSpawns.add(pos.immutable());
             }
         }
 
-        return Collections.unmodifiableList(validSpawns);
+        if (validSpawns.isEmpty()) return null;
+        return validSpawns.get(ThreadLocalRandom.current().nextInt(validSpawns.size()));
     }
 
     private boolean isValidSpawn(EntityType<?> entityType, BlockPos pos) {
@@ -271,16 +305,49 @@ public class DungeonRoom {
         return level.noCollision(mobBox);
     }
 
-    public void cleanupEntities() {
+    private void checkCleared() {
+        if (!this.isActive() || this.isCleared()) return;
+
         ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
         if (dungeonLevel == null) return;
 
+        this.spawnedEntities.removeIf(uuid -> {
+            Entity entity = dungeonLevel.getEntity(uuid);
+            return entity == null || !entity.isAlive() || entity.isRemoved();
+        });
+
+        if (this.spawnedEntities.isEmpty()) this.onRoomCleared();
+    }
+
+    private void onRoomCleared() {
+        this.cleared = true;
+
+        MinecraftServer server = DungeonManager.getServer();
+        if (server == null) return;
+
+        for (UUID uuid : this.instance.getPlayers()) {
+            ServerPlayer player = server.getPlayerList().getPlayer(uuid);
+            if (player != null) {
+                ToastHelper.addToast(player, "Room Cleared", ChatFormatting.GREEN, 100, SoundEvents.PLAYER_LEVELUP);
+            }
+        }
+    }
+
+    public void cleanup() {
+        ServerLevel level = DungeonManager.getDungeonLevel();
+        if (level == null) return;
+
         for (UUID entityUUID : this.spawnedEntities) {
-            Entity entity = dungeonLevel.getEntity(entityUUID);
+            Entity entity = level.getEntity(entityUUID);
             if (entity != null && entity.isAlive()) {
                 entity.discard();
             }
         }
         this.spawnedEntities.clear();
+
+        if (isChestPlaced()) {
+            level.setBlock(this.chestPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            chestPlaced = false;
+        }
     }
 }

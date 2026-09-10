@@ -1,7 +1,7 @@
 {
   "structures": [
     {
-      "structure": "shadows_things:deep_cave_overworld_portal",
+      "structure": "shadows_things:dungeon_overworld_portal",
       "weight": 1
     }
   ],
@@ -9,6 +9,6 @@
     "type": "minecraft:random_spread",
     "spacing": 16,
     "separation": 8,
-    "salt": 871103365
+    "salt": 481335741
   }
 }

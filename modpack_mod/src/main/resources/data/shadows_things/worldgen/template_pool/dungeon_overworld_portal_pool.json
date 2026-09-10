@@ -1,12 +1,12 @@
 {
-  "name": "shadows_things:dungeons/jungle/start_pool",
+  "name": "shadows_things:dungeon_overworld_portal_pool",
   "fallback": "minecraft:empty",
   "elements": [
     {
       "weight": 1,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "shadows_things:dungeons/jungle/entrances/1",
+        "location": "shadows_things:dungeon_overworld_portal",
         "processors": "minecraft:empty",
         "projection": "rigid"
       }

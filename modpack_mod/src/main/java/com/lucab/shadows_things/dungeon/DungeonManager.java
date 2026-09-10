@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class DungeonManager {
     public enum DungeonType {
-        JUNGLE("jungle", new DungeonSpawnConfig(4, 8, List.of(
+        CRYPT("crypt", new DungeonSpawnConfig(4, 8, List.of(
                 new DungeonSpawnEntry("minecraft:zombie", 1),
                 new DungeonSpawnEntry("minecraft:skeleton", 1),
                 new DungeonSpawnEntry("minecraft:wither_skeleton", 1)

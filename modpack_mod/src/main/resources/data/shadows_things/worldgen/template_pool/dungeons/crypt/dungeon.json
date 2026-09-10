@@ -1,5 +1,5 @@
 {
-  "name": "shadows_things:dungeons/jungle/dungeon",
+  "name": "shadows_things:dungeons/crypt/dungeon",
   "fallback": "minecraft:empty",
   "elements": [
     {
@@ -10,7 +10,7 @@
         "elements": [
           {
             "element_type": "minecraft:single_pool_element",
-            "location": "shadows_things:dungeons/jungle/rooms/1",
+            "location": "shadows_things:dungeons/crypt/rooms/1",
             "processors": "minecraft:empty",
             "projection": "rigid"
           }
@@ -25,7 +25,7 @@
         "elements": [
           {
             "element_type": "minecraft:single_pool_element",
-            "location": "shadows_things:dungeons/jungle/stairs/1",
+            "location": "shadows_things:dungeons/crypt/stairs/1",
             "processors": "minecraft:empty",
             "projection": "rigid"
           }
@@ -40,7 +40,7 @@
         "elements": [
           {
             "element_type": "minecraft:single_pool_element",
-            "location": "shadows_things:dungeons/jungle/exits/1",
+            "location": "shadows_things:dungeons/crypt/exits/1",
             "processors": "minecraft:empty",
             "projection": "rigid"
           }

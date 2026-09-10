@@ -255,9 +255,6 @@ public class DungeonInstance {
     private void checkExpireAndCleanup() {
         if (!isStarted()) return;
 
-        ServerLevel dungeonLevel = DungeonManager.getDungeonLevel();
-        if (dungeonLevel == null) return;
-
         if (--this.checkCooldown <= 0) {
             this.checkCooldown = OCCUPANCY_CHECK_INTERVAL;
             this.currentlyOccupied = checkPlayerPresence();

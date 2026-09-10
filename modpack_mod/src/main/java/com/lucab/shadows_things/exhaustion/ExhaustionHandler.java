@@ -42,13 +42,13 @@ public class ExhaustionHandler {
                 foodData.setFoodLevel(20);
             }
             foodData.setSaturation(0.0f);
-            foodData.setExhaustion(0.0f);
+            foodData.setExhaustion(-1.0f);
             return;
         }
 
         if (!isExhaustionEnabled(level)) return;
 
-        int exhaustionDelay = level.getGameRules().getInt(ModGameRules.EXHAUSTION_DELAY);
+        int exhaustionDelay = ModGameRules.EXHAUSTION_DELAY.getValue(level);
         exhaustionDelay = Math.max(1, exhaustionDelay);
         ExhaustionData data = player.getData(ExhaustionData.EXHAUSTION);
         data.tick(player.getFoodData(), exhaustionDelay);
@@ -75,6 +75,6 @@ public class ExhaustionHandler {
     }
 
     private static boolean isExhaustionEnabled(Level level) {
-        return level.getGameRules().getBoolean(ModGameRules.EXHAUSTION_ENABLED);
+        return ModGameRules.EXHAUSTION_ENABLED.getValue(level);
     }
 }

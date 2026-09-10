@@ -7,7 +7,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 
 @EventBusSubscriber(modid = ShadowsThings.MODID)
-public class DisableModSpawn {
+public class DisableMobSpawn {
     @SubscribeEvent
     public static void onEntitySpawn(MobSpawnEvent.PositionCheck event) {
         if (event.getSpawnType() == MobSpawnType.NATURAL || event.getSpawnType() == MobSpawnType.CHUNK_GENERATION) {

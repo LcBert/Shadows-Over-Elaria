@@ -1,30 +1,46 @@
 package com.lucab.shadows_things;
 
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 
 public class ModGameRules {
-    public static GameRules.Key<GameRules.BooleanValue> EXHAUSTION_ENABLED;
-    public static GameRules.Key<GameRules.IntegerValue> EXHAUSTION_DELAY;
+    public record IntegerGameRule(GameRules.Key<GameRules.IntegerValue> gameRule) {
+        public IntegerGameRule(String name, int value) {
+            this(name, GameRules.Category.MISC, value);
+        }
 
-    public static GameRules.Key<GameRules.BooleanValue> DO_CARCASS_SPAWN;
+        public IntegerGameRule(String name, GameRules.Category category, int value) {
+            this(GameRules.register(name, category, GameRules.IntegerValue.create(value)));
+        }
 
-    public static void registerGameRules() {
-        EXHAUSTION_ENABLED = GameRules.register(
-                "exhaustionEnabled",
-                GameRules.Category.MISC,
-                GameRules.BooleanValue.create(true)
-        );
+        public int getValue(Level level) {
+            return level.getGameRules().getInt(this.gameRule);
+        }
+    }
 
-        EXHAUSTION_DELAY = GameRules.register(
-                "exhaustionDelay",
-                GameRules.Category.MISC,
-                GameRules.IntegerValue.create(6000)
-        );
+    public record BooleanGameRule(GameRules.Key<GameRules.BooleanValue> gameRule) {
+        public BooleanGameRule(String name, boolean value) {
+            this(name, GameRules.Category.MISC, value);
+        }
 
-        DO_CARCASS_SPAWN = GameRules.register(
-                "doCarcassSpawn",
-                GameRules.Category.MISC,
-                GameRules.BooleanValue.create(true)
-        );
+        public BooleanGameRule(String name, GameRules.Category category, boolean value) {
+            this(GameRules.register(name, category, GameRules.BooleanValue.create(value)));
+        }
+
+        public boolean getValue(Level level) {
+            return level.getGameRules().getBoolean(this.gameRule);
+        }
+    }
+
+    public static BooleanGameRule EXHAUSTION_ENABLED =
+            new BooleanGameRule("exhaustionEnabled", true);
+
+    public static IntegerGameRule EXHAUSTION_DELAY =
+            new IntegerGameRule("exhaustionDelay", 6000);
+
+    public static BooleanGameRule DO_CARCASS_SPAWN =
+            new BooleanGameRule("doCarcassSpawn", true);
+
+    public static void register() {
     }
 }

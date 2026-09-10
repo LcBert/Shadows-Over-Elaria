@@ -14,33 +14,22 @@ public class ExhaustionData {
 
     public static final Codec<ExhaustionData> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    Codec.INT.fieldOf("exhaustion_tick").forGetter(ExhaustionData::getExhaustionTick),
-                    Codec.INT.fieldOf("food_value").forGetter(ExhaustionData::getFoodValue)
+                    Codec.INT.fieldOf("exhaustion_tick").forGetter(ExhaustionData::getExhaustionTick)
             ).apply(instance, ExhaustionData::new)
     );
 
     private int exhaustionTick;
-    private int foodValue;
 
     public ExhaustionData() {
-        this(0, 20);
+        this(0);
     }
 
-    public ExhaustionData(int exhaustionTick, int foodValue) {
+    public ExhaustionData(int exhaustionTick) {
         this.exhaustionTick = Math.max(0, exhaustionTick);
-        this.foodValue = Mth.clamp(foodValue, 0, 20);
     }
 
     public int getExhaustionTick() {
         return exhaustionTick;
-    }
-
-    public int getFoodValue() {
-        return foodValue;
-    }
-
-    public void setFoodValue(int foodValue) {
-        this.foodValue = Mth.clamp(foodValue, 0, 20);
     }
 
     public void resetTick() {
@@ -55,15 +44,12 @@ public class ExhaustionData {
     public void tick(FoodData foodData, int exhaustionDelay) {
         if (foodData.getSaturationLevel() > 0.0f) foodData.setSaturation(0.0f);
 
-        if (foodData.getFoodLevel() != this.foodValue) this.setFoodValue(foodData.getFoodLevel());
-
         this.exhaustionTick++;
 
         if (this.exhaustionTick > exhaustionDelay) {
             resetTick();
             if (foodData.getFoodLevel() > 0) {
                 foodData.setFoodLevel(foodData.getFoodLevel() - 1);
-                this.setFoodValue(foodData.getFoodLevel());
             }
         }
 
@@ -72,7 +58,7 @@ public class ExhaustionData {
 
     public static final Supplier<AttachmentType<ExhaustionData>> EXHAUSTION = ShadowsThings.ATTACHMENT_TYPES.register(
             "exhaustion",
-            () -> AttachmentType.builder(ExhaustionData::new)
+            () -> AttachmentType.builder(() -> new ExhaustionData())
                     .serialize(ExhaustionData.CODEC)
                     .copyOnDeath()
                     .build()

@@ -20,7 +20,7 @@ public class CarcassEntityHandler {
         Entity entity = event.getEntity();
         Level level = event.getLevel();
 
-        if (level.isClientSide || !level.getGameRules().getBoolean(ModGameRules.DO_CARCASS_SPAWN)) return;
+        if (level.isClientSide || !ModGameRules.DO_CARCASS_SPAWN.getValue(level)) return;
 
         if (!CarcassCuttingRecipe.hasRecipe(level, entity.getType())) return;
 
@@ -45,7 +45,7 @@ public class CarcassEntityHandler {
     public static void handleMobDrop(LivingDropsEvent event) {
         LivingEntity living = event.getEntity();
         Level level = living.level();
-        if (level.isClientSide || !level.getGameRules().getBoolean(ModGameRules.DO_CARCASS_SPAWN)) return;
+        if (level.isClientSide || !ModGameRules.DO_CARCASS_SPAWN.getValue(level)) return;
 
         if (living instanceof Player) return;
         if (CarcassCuttingRecipe.hasRecipe(level, living.getType())) event.setCanceled(true);
